@@ -65,18 +65,57 @@ in a way that they already enjoy, and at their own pace.
 In the long term, we want a world where people are able to communicate more 
 with distinctive cultures through their native tongue whilist sharing and 
 engaging with their music.
+### Our promise
+
+For Japanese learners who connect with the language through music, UtaStream
+will turn the songs they already love into approachable, self-directed
+learning experiences without taking away the joy of listening.
 
 ### We choose to
 
-- Initally focus on Japanese. Japanese is notably one of the hardest languages 
-to learn for english speakers and since it Japanese has 3 disticting writing 
-systems it serve as a good proof of concept for other languages as well.
+- Put the listening experience first and make learning tools available when
+  the listener wants them.
+- Give learners control over what they study, how deeply they study it, and
+  how quickly they progress.
+- Help listeners move from hearing a song to understanding its words,
+  meaning, and cultural context.
+- Begin with Japanese and use it to prove that the experience can support a
+  linguistically complex writing system.
+- Respect artists, rights holders, translators, and the cultural context
+  surrounding their work.
 
 ### We choose not to
 
-- [Tempting direction that conflicts with the mission]
-- [Behavior or business practice the project should avoid]
-- [Type of complexity or feature that should not become the product's center]
+- Turn every listening session into a mandatory lesson.
+- Use guilt, punishing streaks, or manipulative engagement patterns to force
+  users back into the application.
+- Claim that listening to music alone provides complete language fluency.
+- Sacrifice trustworthy translations and explanations for speed or content
+  volume.
+- Expand into many languages before the Japanese experience is genuinely
+  useful.
+
+### Product identity
+
+UtaStream should feel like a capable and enjoyable music player first. Language
+learning should be woven into the listening experience without preventing users
+from simply enjoying their music.
+
+Over time, UtaStream will develop a more guided learning experience inspired by
+the clarity, progression, and approachability of modern language-learning
+applications. Unlike a traditional course, progression will grow from the songs
+the learner chooses and the language they encounter while listening.
+
+### Product evolution
+
+The initial version will focus on reliable music playback and foundational
+language tools such as synchronized lyrics, readings, translations, saved
+vocabulary, and basic review.
+
+Once this core experience is proven, UtaStream will explore guided song lessons,
+adaptive practice, song mastery, and longer learning paths. The initial
+architecture should preserve this possibility without requiring the complete
+learning system to be built immediately.
 
 ---
 
@@ -104,7 +143,15 @@ feels like considerable steps to be made on a language goal.
 When [situation], I want to [motivation], so I can [desired outcome].
 
 - When [...], I want to [...], so I can [...].
-- When [...], I want to [...], so I can [...].
+
+- When I hear a Japanese song I love, I want to understand its lyrics without
+  constantly switching between unrelated websites and applications.
+- When I encounter an unfamiliar word or expression in a song, I want to save
+  and study it in context so that it becomes memorable.
+- When I simply want to enjoy music, I want learning tools to remain available
+  without interrupting the listening experience.
+- When I return to a familiar song, I want to notice how much more I understand
+  than before.
 
 ---
 
@@ -230,9 +277,12 @@ optional and are at the users discretion.
 
 ### Moments that should feel magical
 
-- [A moment of discovery, understanding, or progress]
-- [A moment of emotional connection to a song]
-- [A moment that makes learning feel effortless or rewarding]
+ Hearing a familiar lyric and understanding it naturally for the first time.
+- Tapping a line to reveal its reading, meaning, and context without leaving
+  the song.
+- Returning to a favorite song and visibly recognizing words that were once
+  unfamiliar.
+- Discovering that vocabulary studied from one song appears in another.
 
 ### Quality bar
 
