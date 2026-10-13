@@ -112,19 +112,79 @@ When [situation], I want to [motivation], so I can [desired outcome].
 
 Use these principles to resolve tradeoffs. Each principle should be specific enough to guide a real decision.
 
-### 1. [Principle name]
+### 1. Education vs. Enjoyment
 
-**We mean:** [Explain the principle.]  
-**In practice:** [Describe what it changes in the product.]  
-**Tradeoff:** [State what you are willing to give up to uphold it.]
+**We mean:**  
+How should enjoyment and educational rigor be balanced?
+**In practice:** 
+It is important that we prioritize enjoyment with this application. Yes, the 
+goal of this app is to aid people in learning Japanese but it is central in 
+doing so that we maintain enjoyment along the way else people wont want to 
+use the application. Starting ratio of 70%/30% for enjoyment vs education is 
+something good to keep in the back of the mind whilist not having an objective 
+metric for this. In this app this means engieering features and UI as 
+appealing as possible.
+**Tradeoff:** 
+By prioritizing enjoyment well have to reinvent how we educate which is also 
+an aim of this app.
 
-### 2. [Principle name]
+### 2. Explicit vs. Implicit Learning
 
-**We mean:** [Explain the principle.]  
-**In practice:** [Describe what it changes in the product.]  
-**Tradeoff:** [State what you are willing to give up to uphold it.]
+**We mean:** 
+Should learning happen explicitly, implicitly, or a combination of both?
+**In practice:** 
+The learning type determines directly what features we'll 
+prioritize in the app. Since this is an app centered around enjoyment I feel 
+like learning should be more explicit, we give the user a choice to learn
+rather than forcing them. But can also implement some implicit features to 
+guide the user to want to expericence the explicit side.
+**Tradeoff:** 
+We cannot control the user at the end of the day so may be a failure point 
+depending on how the user chooses to engage with the app.
 
-### 3. [Principle name]
+### 3. User Autonomy
+
+**We mean:** 
+How much control should listeners have over lesson difficulty and pacing?
+**In practice:** 
+This builds up directly off of principle 2. Initially well give the user full 
+control over difficulty and pacing. We can implement some guides to direct
+but ultimately the user gets to choose their experience.
+**Tradeoff:** 
+Similar trade off with the previous priciple
+
+### 4. Copywright and Licensing
+
+**We mean:** 
+How should UtaStream respect artists, lyrics, translations, and licensing?
+**In practice:** 
+As it stands we have no capital to buy out licenses or make deals with big
+corporations. As a result well have our inital set up have the user import
+their own music or provide a link through youtube and then we could store
+the music files for the user providing lyrics, translations and credits
+where it may be do
+**Tradeoff:** 
+This is a BIG architectural decision because it means that the user will 
+have to be way more hands on with things. Ideally we could provide the music
+in app but since we cannot do that as of now we need to establish a good 
+proof of concept before investing in this capabilities. It may also be a
+potential strength of the app.
+
+### 5. Key -ilities
+
+**We mean:** 
+What -ilities should we proitize with the app?
+**In practice:** 
+Accessibility is always a concern and will be a top ility to consider.
+Maintainability and Reliability is a major concept to keep in mind also.
+**Tradeoff:** 
+These ilities will influence technological selections and how the app
+is formated and structured. Since we value maintainability and reliability
+we should proitize core technologies that aren't that adversive to change
+to make things easy to maintain and serve the user better. Accessibility 
+will influence design decsions also.
+
+### X. [Principle name]
 
 **We mean:** [Explain the principle.]  
 **In practice:** [Describe what it changes in the product.]  
@@ -149,11 +209,24 @@ In one short paragraph, describe the ideal journey from choosing a song to under
 
 ### The essential loop
 
-1. **Discover:** [How the user finds meaningful music.]
-2. **Listen:** [How the listening experience works.]
-3. **Understand:** [How comprehension is supported.]
-4. **Practice:** [How knowledge is reinforced.]
-5. **Return:** [Why the user comes back.]
+1. **Discover:** 
+The user can search from an existing select catalogue of Japanese Songs or 
+could import their own. Import can be done from youtube or personal files.
+2. **Listen:** 
+It is prevelant that we keep the listening experience as similar to established
+standards with music platforms. Click on Song -> Music Window Appears
+3. **Understand:** 
+Lyric capabilities are key here and so are translations. Can mark unknown words
+or characters and those can be highlighted with toggle to show the meaning 
+specifically.
+4. **Practice:** 
+Unknown words, sentences, or concepts get placed into a deck, similar style to
+Anki for spaced repition and reviews.
+5. **Return:**
+Like Anki the user can come on the app everday to do the reviews if they choose
+to do so. Can send out notifications everyday. Have a heatmap streak enabled.
+Essentially since we value enjoyment over education step 4 and 5 are completly 
+optional and are at the users discretion.
 
 ### Moments that should feel magical
 
