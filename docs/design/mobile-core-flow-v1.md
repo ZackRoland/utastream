@@ -58,7 +58,8 @@ because the user has explicitly chosen to study.
    does not pause playback unless the listener chooses to pause or replay a
    segment.
 3. **Learning is invited, not imposed.** No lesson, placement test, streak, or
-   review is required before playing music.
+   review is required before playing music. Streaks and daily review may support
+   motivated learners, but never gate listening or punish absence.
 4. **Progressive disclosure.** Start with Japanese lyrics, then optional
    furigana and translation, then contextual grammar and vocabulary details.
 5. **Return is effortless.** Closing a learning surface restores the same song,
@@ -79,13 +80,33 @@ because the user has explicitly chosen to study.
 | Home | Continue listening, recently played, and music recommendations |
 | Search | Find songs, artists, albums, or imported content |
 | Library | Saved songs, albums, playlists, and user-provided music |
-| Review | Vocabulary decks, due cards, and optional study sessions |
-| Profile | Playback, furigana, translation, accessibility, and account settings |
+| Profile hub | Identity plus secondary destinations such as Settings, Decks, Review, and Recents |
 
-`Review` must be visible enough to feel like a genuine product area, but it
-should not dominate Home, Library, or Now Playing. On narrow devices, the final
-navigation may combine destinations after usability testing; their conceptual
-separation should remain.
+The persistent “home island” should stay focused on primary music navigation.
+Decks and Review remain substantial product areas, but they are reached through
+the Profile hub rather than occupying the limited primary navigation space.
+
+### Profile-hub gesture
+
+On root-level main screens, a rightward swipe across the main content surface
+may reveal the Profile hub. The transition should make the hub feel like a
+secondary layer beside the music application rather than a replacement page.
+
+- Keep a visible avatar/profile control as the discoverable and accessible
+  alternative; the gesture must never be the only route.
+- Do not intercept the operating system or browser's edge-swipe Back gesture.
+- Activate only from an eligible root screen and a deliberate horizontal
+  gesture, not while interacting with a carousel, lyric scrubber, or horizontal
+  control.
+- Disable the gesture on nested screens where rightward navigation means Back.
+- Support closing by swiping left, activating Close, selecting a destination,
+  or using the platform Back action.
+- Respect reduced-motion preferences and keep focus management correct when the
+  hub opens as an overlay/drawer.
+
+The Profile hub should contain at minimum: Profile summary, Settings, Decks and
+Review, Recents/listening history, language-display preferences, playback and
+accessibility preferences, account controls, and help/about information.
 
 ## 5. Primary listening-to-learning flow
 
@@ -233,20 +254,30 @@ interrupting music listening.
 - Recent saves
 - Visible connection from each item back to its source song and lyric
 
-The complete review interaction is a separate prototype flow, but this screen
-must appear in the application shell and design inventory.
+The complete review interaction is a separate prototype flow. It should be
+reachable from the Profile hub rather than permanently occupying the home
+island.
 
-### M09 — Profile / Language-display settings
+### M09 — Profile hub / Secondary navigation
 
-**Purpose:** Give users persistent control over how learning support appears.
+**Purpose:** Provide a consistent secondary layer for identity, learning, history,
+and configuration without crowding primary music navigation.
 
 **Required content**
 
+- Profile identity and account summary
+- Decks and Review destination
+- Recents/listening-history destination
+- Settings destination
 - Default furigana behavior: on, off, or adaptive
 - Default translation behavior
 - Preferred explanation depth or learner level, if supported
 - Playback and accessibility preferences
 - Explanation that in-player toggles temporarily override defaults
+
+**Entry behavior:** Open from the visible profile/avatar control or a deliberate
+rightward swipe on eligible root screens. Both routes must produce the same hub
+state and preserve the underlying screen and playback state.
 
 Furigana may initially default on, while still making Profile the durable place
 to customize that behavior.
@@ -321,6 +352,7 @@ flow replace the music-player experience in the first prototype.
 - Save-to-deck control and confirmation
 - Deck summary card
 - Profile setting row and preference control
+- Profile-hub drawer/overlay with open, closing, and nested-navigation states
 - Loading, buffering, empty, unavailable, and error treatments
 
 Build only the foundations and components demonstrated by these flows. Do not
@@ -339,6 +371,7 @@ create a comprehensive design system before reuse is proven.
 | Expression save | unsaved, saving, saved, failed |
 | Bottom sheet | closed, partial, expanded, overflow content |
 | Deck | new, due, complete for now, empty |
+| Profile hub | closed, gesture-tracking, open, nested destination, closing |
 
 ## 11. Prototype content
 
@@ -366,9 +399,142 @@ The sample should include:
 - Learning accents feel integrated, not gamified by default
 - Original identity; do not visually clone Spotify, Apple Music, or Duolingo
 
+### Brand direction — contemporary woodblock ocean
+
+Use *The Great Wave off Kanagawa* and broader Japanese woodblock printmaking as
+an atmospheric reference, not as a literal background pasted behind a Spotify
+layout. Build an original UtaStream identity from:
+
+- Deep indigo and blue-black foundations
+- Warm paper, foam, and mist neutrals instead of stark white
+- Restrained vermilion or coral accents for learning actions and active states
+- Layered wave contours, asymmetrical framing, and rhythmic curved motion
+- Subtle print grain, imperfect edges, or carved-line texture at display scale
+- Album-art color extraction that remains compatible with the core palette
+
+Avoid decorative stereotypes, direct copies of Hokusai compositions, excessive
+ornament around reading text, or textures that obscure Japanese character
+strokes. The result should feel contemporary and ownable rather than themed.
+
+### Typography direction
+
+Separate expressive brand typography from instructional lyric typography.
+
+- Use a highly legible Japanese sans serif for lyrics, explanations, controls,
+  and furigana. Test `BIZ UDPGothic` first and `Noto Sans JP` as the neutral
+  fallback.
+- Use an expressive Japanese serif or display face only for brand moments,
+  collection headings, or large decorative text—not moving lyrics or furigana.
+- Keep the active lyric at regular or medium weight; avoid very heavy weights
+  that close counters or merge complex strokes.
+- Give lyric Japanese generous line height and letter spacing appropriate to
+  the selected face. Furigana must remain readable without crowding adjacent
+  lines.
+- Validate representative kanji, kana, punctuation, numerals, and mixed Latin
+  artist names before approving a type system.
+
+`BIZ UDPGothic` is preferred for the learning surface because it was designed
+as a universal-design typeface for legibility and accurate information display.
+
+### First-generation review findings
+
+The initial Make prototype successfully validated the music-app shell, embedded
+lyrics, expandable lyrics, optional translation/furigana, and separation of
+Review from listening. The next iteration should address:
+
+1. **Differentiate the identity.** The first result reads too closely as a
+   Spotify visual clone. Preserve familiar interaction patterns while replacing
+   the visual language with the contemporary woodblock-ocean direction.
+2. **Restore the intended 70/30 balance.** The first result feels closer to
+   90/10 music-to-learning. Keep general browsing music-first, but make the
+   expanded lyric surface clearly capable of translation, grammar, sentence
+   replay, expression selection, and saving.
+3. **Preserve lyric context on expansion.** Expanding the embedded lyric panel
+   should promote the currently visible lyric into place rather than animate a
+   long scroll down to it. A brief spatial transition is acceptable; the active
+   line should remain perceptually anchored.
+4. **Differentiate replay from live playback.** Focused sentence replay needs a
+   persistent, unmistakable state such as `Studying line 8 · Live song at 1:42`,
+   with explicit `Return to live` behavior.
+5. **Treat save behavior as product logic.** The prototype only needs a clear
+   UI contract for saving; deck selection, deduplication, persistence, and card
+   generation will be specified during product and engineering design.
+
+### Cross-prototype synthesis
+
+The earlier desktop concept and current mobile concept should not be merged by
+averaging every screen. Assign each prototype's strongest qualities to the
+surfaces where they belong.
+
+**Preserve from the mobile prototype**
+
+- Immersive, emotionally led music discovery
+- Familiar browsing, mini-player, Now Playing, and embedded lyric behavior
+- Restraint on primary listening surfaces
+- Full-screen lyrics as the main bridge into learning
+- Compact navigation and album-art-led atmosphere
+
+**Carry forward from the desktop concept**
+
+- Clear learning continuity and a sense that saved language leads somewhere
+- Editorial warmth in headings and supporting copy
+- “Continue learning” and “review when ready” language without pressure
+- Visible connection among a song, its saved expressions, and its deck
+- Learner-aware curation and progress, used selectively rather than on every song
+- Stronger information hierarchy within Decks, Review, Profile, and focused lyrics
+
+**Hybrid allocation**
+
+- Home remains approximately 80/20 music-to-learning above the fold, then lands
+  closer to the intended 70/30 balance across the complete scroll.
+- Add one compact `Your learning pulse` or `Words worth returning to` module to
+  Home after the first music-led sections, never before the primary music hero.
+- That module may include a daily review, current streak, and study-activity
+  heat map when presented as optional reflection rather than obligation.
+- Song and album cards remain music-first. Learning metadata such as saved-word
+  count, lyric readiness, or level fit appears only when useful and should not
+  resemble a course badge system.
+- Now Playing stays approximately 90/10 until the listener reaches lyrics.
+- Expanded lyrics may move toward 60/40 because entering that surface is an
+  intentional signal of interest in the words.
+- Focused sentence mode, Decks, and Review may be learning-dominant because the
+  user explicitly chose them.
+- Bring the desktop concept's typography, encouragement, progress summaries,
+  and song-to-deck continuity into secondary learning surfaces—not its permanent
+  desktop sidebar or dashboard density.
+
+**Healthy progress mechanics**
+
+- A streak celebrates consistency but does not erase broader progress when a
+  day is missed.
+- Missed days remain neutral empty cells rather than failures or warnings.
+- A study heat map includes an accessible non-color summary and clearly defines
+  which listening, saving, or review actions count as study activity.
+- Daily review shows an estimated duration and can be postponed or skipped.
+- Listening remains fully available regardless of review status.
+
+The result should feel like one product changing emphasis with user intent:
+music while browsing and listening, balanced support in lyrics, and deliberate
+learning only after the user chooses it.
+
 ## 13. Accessibility and responsive requirements
 
 - Validate at 360 × 800 px and 390 × 844 px.
+- Validate representative notched and Dynamic Island devices in addition to a
+  rectangular viewport.
+- Keep every top-bar control below the device safe area. In production, derive
+  top spacing from `env(safe-area-inset-top)` plus a deliberate visual gap. In
+  simulated device previews where the environment inset resolves to zero, use
+  an explicit mobile prototype fallback (for example,
+  `max(env(safe-area-inset-top, 0px), 48px)`) so the hardware overlay cannot
+  cover the header.
+- Treat the top bar as leading and trailing safe zones with the sensor/camera
+  region left unobstructed. The logo must never extend beneath a notch or
+  Dynamic Island.
+- Allow the wordmark to switch to a compact brand mark at constrained widths;
+  never clip, mask, or shrink the full wordmark until it becomes illegible.
+- Keep notification and account controls fully inside the trailing safe zone
+  with adequate separation from each other and the screen edge.
 - Keep interactive targets at least 44 × 44 CSS pixels where practical.
 - Do not encode playback or lyric state using color alone.
 - Support dynamic text without hiding playback, replay, or close controls.
@@ -378,6 +544,21 @@ The sample should include:
 - Treat animation as enhancement and respect reduced-motion preferences.
 - Annotate player, scrubber, sheet, toggle, selection, and replay semantics for
   production accessibility.
+
+### Mobile top-bar geometry
+
+Use these as responsive intent rather than fixed implementation measurements:
+
+- Top inset: device safe-area inset plus approximately 10–16 px breathing room
+- Horizontal inset: approximately 20–24 px
+- Content row: at least 44–48 px tall after the safe-area inset
+- Leading zone: brand symbol or width-constrained wordmark
+- Center exclusion zone: no essential content beneath camera/sensor hardware
+- Trailing zone: notification and account actions with 44 px touch targets
+
+The header should remain visually balanced on devices without a notch. Scroll
+behavior may condense the header only after its initial safe-area position is
+correct, and essential controls must never be cropped during that transition.
 
 ## 14. Figma file structure
 
@@ -410,7 +591,9 @@ M06 Learning B / Focused sentence
 M06 Learning C / Lyric cards
 M07 Expression / Saved
 M08 Review / Deck overview
-M09 Profile / Language display
+M09 Profile hub / Default
+M09 Profile hub / Gesture open
+M09 Profile hub / Secondary destinations
 ```
 
 Exploration must be visually separated from approved work. Use Auto Layout and
