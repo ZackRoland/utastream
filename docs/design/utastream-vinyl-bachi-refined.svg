@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#172650"/>
+      <stop offset="1" stop-color="#243A70"/>
+    </linearGradient>
+    <linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FF684D"/>
+      <stop offset="1" stop-color="#D9352B"/>
+    </linearGradient>
+    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#091126" flood-opacity=".24"/>
+    </filter>
+    <style>
+      .sans { font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif; }
+      .eyebrow { fill:#7D89A8; font-size:16px; font-weight:700; letter-spacing:2.4px; }
+      .title { fill:#142143; font-size:38px; font-weight:700; letter-spacing:-.7px; }
+      .body { fill:#69748F; font-size:17px; font-weight:500; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="900" fill="#F4F1E9"/>
+  <path d="M0 0h1400v900H0z" fill="#F8F6F0"/>
+  <circle cx="1260" cy="80" r="230" fill="#F7DED6" opacity=".45"/>
+  <circle cx="50" cy="850" r="250" fill="#DCE4F4" opacity=".55"/>
+
+  <g class="sans">
+    <text x="80" y="74" class="eyebrow">UTASTREAM · REFINED MARK</text>
+    <text x="80" y="124" class="title">A Japanese musical gesture, carried by the groove.</text>
+    <text x="80" y="158" class="body">A cleaner spiral, controlled proportions, and a bolder small-size silhouette.</text>
+  </g>
+
+  <!-- Primary icon -->
+  <g transform="translate(70 205)" filter="url(#softShadow)">
+    <circle cx="315" cy="315" r="310" fill="url(#navy)"/>
+    <circle cx="315" cy="315" r="286" fill="#FBF1DF"/>
+
+    <!-- Deliberate streaming groove -->
+    <path d="M88 517
+             C160 483 151 390 159 329
+             C172 225 258 145 364 145
+             C490 145 590 245 590 370
+             C590 479 502 568 393 568
+             C297 568 219 490 219 394
+             C219 310 287 242 371 242
+             C445 242 505 302 505 376
+             C505 439 454 490 391 490
+             C337 490 293 446 293 392
+             C293 346 330 309 376 309
+             C414 309 445 340 445 378
+             C445 409 420 434 389 434
+             C364 434 344 414 344 389" 
+          fill="none" stroke="url(#navy)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Compact fan-shaped shamisen gesture, preserving the original character -->
+    <g>
+      <path d="M472 91l28 24-70 81-28-24z" fill="url(#vermilion)"/>
+      <path d="M463 101l28 24M448 119l28 24" stroke="#FBF1DF" stroke-width="7"/>
+      <path d="M420 177C376 166 337 169 302 188l85 88 44-82z" fill="url(#vermilion)" stroke="#FBF1DF" stroke-width="7" stroke-linejoin="round"/>
+      <path d="M420 184l-102 8M417 187l-82 35M414 190l-55 57M410 193l-23 76" fill="none" stroke="#FBF1DF" stroke-width="5" stroke-linecap="round" opacity=".95"/>
+    </g>
+  </g>
+
+  <!-- Brand lockup -->
+  <g transform="translate(770 250)" class="sans">
+    <text y="0" class="eyebrow">PRIMARY LOCKUP</text>
+    <g transform="translate(0 42)">
+      <g transform="translate(0 0) scale(.22)">
+        <circle cx="315" cy="315" r="310" fill="url(#navy)"/>
+        <circle cx="315" cy="315" r="286" fill="#FBF1DF"/>
+        <path d="M88 517C160 483 151 390 159 329C172 225 258 145 364 145C490 145 590 245 590 370C590 479 502 568 393 568C297 568 219 490 219 394C219 310 287 242 371 242C445 242 505 302 505 376C505 439 454 490 391 490C337 490 293 446 293 392C293 346 330 309 376 309C414 309 445 340 445 378C445 409 420 434 389 434C364 434 344 414 344 389" fill="none" stroke="url(#navy)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+        <g>
+          <path d="M472 91l28 24-70 81-28-24z" fill="url(#vermilion)"/>
+          <path d="M463 101l28 24M448 119l28 24" stroke="#FBF1DF" stroke-width="7"/>
+          <path d="M420 177C376 166 337 169 302 188l85 88 44-82z" fill="url(#vermilion)" stroke="#FBF1DF" stroke-width="7" stroke-linejoin="round"/>
+          <path d="M420 184l-102 8M417 187l-82 35M414 190l-55 57M410 193l-23 76" fill="none" stroke="#FBF1DF" stroke-width="5" stroke-linecap="round"/>
+        </g>
+      </g>
+      <text x="164" y="83" fill="#142143" font-size="67" font-weight="750" letter-spacing="-2.5">uta<tspan fill="#E54836">stream</tspan></text>
+      <text x="168" y="117" fill="#69748F" font-size="17" font-weight="600" letter-spacing="1.2">LISTEN · UNDERSTAND · RETURN</text>
+    </g>
+
+    <line x1="0" y1="225" x2="545" y2="225" stroke="#D9D6CF"/>
+    <text y="270" class="eyebrow">WHY IT WORKS BETTER</text>
+    <g transform="translate(0 305)" fill="#142143">
+      <circle cx="8" cy="-6" r="5" fill="#E54836"/><text x="28" class="body">One continuous groove communicates “stream.”</text>
+      <circle cx="8" cy="36" r="5" fill="#E54836"/><text x="28" y="42" class="body">The bachi sits on the outer rhythm, not the focal center.</text>
+      <circle cx="8" cy="78" r="5" fill="#E54836"/><text x="28" y="84" class="body">Three colors retain character without visual noise.</text>
+      <circle cx="8" cy="120" r="5" fill="#E54836"/><text x="28" y="126" class="body">Round geometry matches a record and app icon.</text>
+    </g>
+
+    <text y="500" class="eyebrow">SMALL-SIZE + ONE-COLOR TEST</text>
+    <g transform="translate(0 530)">
+      <circle cx="54" cy="54" r="54" fill="#172650"/>
+      <circle cx="54" cy="54" r="49" fill="#FBF1DF"/>
+      <path d="M15 89C28 83 26 66 28 56C30 38 44 25 62 25C83 25 100 42 100 63C100 82 85 97 67 97C51 97 38 84 38 68C38 54 49 43 63 43C75 43 85 53 85 65C85 75 77 83 67 83C58 83 51 76 51 67" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
+      <path d="M91 20l7 6-17 20-7-6zM78 42c-11-3-20-2-28 3l21 21 10-20z" fill="#E54836"/>
+
+      <circle cx="200" cy="54" r="54" fill="#172650"/>
+      <circle cx="200" cy="54" r="49" fill="#fff"/>
+      <path d="M161 89C174 83 172 66 174 56C176 38 190 25 208 25C229 25 246 42 246 63C246 82 231 97 213 97C197 97 184 84 184 68C184 54 195 43 209 43C221 43 231 53 231 65C231 75 223 83 213 83C204 83 197 76 197 67" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
+      <path d="M237 20l7 6-17 20-7-6zM224 42c-11-3-20-2-28 3l21 21 10-20z" fill="#172650"/>
+
+      <rect x="292" y="0" width="250" height="108" rx="24" fill="#172650"/>
+      <text x="325" y="68" fill="#fff" font-size="42" font-weight="750" letter-spacing="-1.5">utastream</text>
+    </g>
+  </g>
+</svg>
