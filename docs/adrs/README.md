@@ -40,4 +40,5 @@ be made in place and noted in the change history.
 | ADR | Title | Status | Date |
 | --- | --- | --- | --- |
 | [0001](./0001-use-figma-as-design-source-of-truth.md) | Use Figma as the design source of truth | Accepted | 2026-10-12 |
+| [0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md) | Start with a modular monolith and vertical slices | Proposed | 2026-10-19 |
 

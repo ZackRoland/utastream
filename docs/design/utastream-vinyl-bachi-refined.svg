@@ -1,108 +1,104 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1400" height="900" viewBox="0 0 1400 900">
   <defs>
-    <linearGradient id="navy" x1="0" y1="0" x2="1" y2="1">
+    <filter id="filter-1" filterUnits="userSpaceOnUse" x="-17" y="118" width="804" height="804" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceAlpha" stdDeviation="24"/><feOffset dx="0" dy="18" result="shadow"/><feFlood flood-color="#091126" flood-opacity="0.24"/><feComposite in2="shadow" operator="in" result="paint"/><feMerge><feMergeNode in="paint"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="linear-gradient-1" x1="75" y1="210" x2="695" y2="830" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#172650"/>
-      <stop offset="1" stop-color="#243A70"/>
+      <stop offset="1" stop-color="#243a70"/>
     </linearGradient>
-    <linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#FF684D"/>
-      <stop offset="1" stop-color="#D9352B"/>
+    <linearGradient id="linear-gradient-2" x1="169" y1="323.46" x2="585.874" y2="818.19" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#172650"/>
+      <stop offset="1" stop-color="#243a70"/>
     </linearGradient>
-    <filter id="softShadow" x="-30%" y="-30%" width="160%" height="170%">
-      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#091126" flood-opacity=".24"/>
-    </filter>
-    <style>
-      .sans { font-family: "Avenir Next", Avenir, "Helvetica Neue", Arial, sans-serif; }
-      .eyebrow { fill:#7D89A8; font-size:16px; font-weight:700; letter-spacing:2.4px; }
-      .title { fill:#142143; font-size:38px; font-weight:700; letter-spacing:-.7px; }
-      .body { fill:#69748F; font-size:17px; font-weight:500; }
-    </style>
+    <linearGradient id="linear-gradient-3" x1="771.1" y1="293.1" x2="907.5" y2="429.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#172650"/>
+      <stop offset="1" stop-color="#243a70"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-4" x1="789.36" y1="323.9" x2="881.072" y2="432.741" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#172650"/>
+      <stop offset="1" stop-color="#243a70"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-5" x1="858.44" y1="312.02" x2="881.485" y2="333.529" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff684d"/>
+      <stop offset="1" stop-color="#d9352b"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-6" x1="836.44" y1="329.54" x2="859.154" y2="357.348" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff684d"/>
+      <stop offset="1" stop-color="#d9352b"/>
+    </linearGradient>
   </defs>
-
-  <rect width="1400" height="900" fill="#F4F1E9"/>
-  <path d="M0 0h1400v900H0z" fill="#F8F6F0"/>
-  <circle cx="1260" cy="80" r="230" fill="#F7DED6" opacity=".45"/>
-  <circle cx="50" cy="850" r="250" fill="#DCE4F4" opacity=".55"/>
-
-  <g class="sans">
-    <text x="80" y="74" class="eyebrow">UTASTREAM · REFINED MARK</text>
-    <text x="80" y="124" class="title">A Japanese musical gesture, carried by the groove.</text>
-    <text x="80" y="158" class="body">A cleaner spiral, controlled proportions, and a bolder small-size silhouette.</text>
-  </g>
-
-  <!-- Primary icon -->
-  <g transform="translate(70 205)" filter="url(#softShadow)">
-    <circle cx="315" cy="315" r="310" fill="url(#navy)"/>
-    <circle cx="315" cy="315" r="286" fill="#FBF1DF"/>
-
-    <!-- Deliberate streaming groove -->
-    <path d="M88 517
-             C160 483 151 390 159 329
-             C172 225 258 145 364 145
-             C490 145 590 245 590 370
-             C590 479 502 568 393 568
-             C297 568 219 490 219 394
-             C219 310 287 242 371 242
-             C445 242 505 302 505 376
-             C505 439 454 490 391 490
-             C337 490 293 446 293 392
-             C293 346 330 309 376 309
-             C414 309 445 340 445 378
-             C445 409 420 434 389 434
-             C364 434 344 414 344 389" 
-          fill="none" stroke="url(#navy)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <!-- Compact fan-shaped shamisen gesture, preserving the original character -->
+  <title>utastream-vinyl-bachi-refined.svg</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <path d="M0 0 L1400 0 L1400 900 L0 900 Z" fill="#f4f1e9"/>
+    <path d="M0 0 L1400 0 L1400 900 L0 900 Z" fill="#f8f6f0"/>
+    <path d="M1490 80 C1490 207.025 1387.026 310 1260 310 C1132.974 310 1030 207.025 1030 80 C1030 -47.025 1132.974 -150 1260 -150 C1387.026 -150 1490 -47.025 1490 80 Z" fill="#f7ded6" opacity="0.45"/>
+    <path d="M300 850 C300 988.071 188.071 1100 50 1100 C-88.071 1100 -200 988.071 -200 850 C-200 711.929 -88.071 600 50 600 C188.071 600 300 711.929 300 850 Z" fill="#dce4f4" opacity="0.55"/>
     <g>
-      <path d="M472 91l28 24-70 81-28-24z" fill="url(#vermilion)"/>
-      <path d="M463 101l28 24M448 119l28 24" stroke="#FBF1DF" stroke-width="7"/>
-      <path d="M420 177C376 166 337 169 302 188l85 88 44-82z" fill="url(#vermilion)" stroke="#FBF1DF" stroke-width="7" stroke-linejoin="round"/>
-      <path d="M420 184l-102 8M417 187l-82 35M414 190l-55 57M410 193l-23 76" fill="none" stroke="#FBF1DF" stroke-width="5" stroke-linecap="round" opacity=".95"/>
+      <text transform="matrix(1 0 0 1 80 74)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="16" font-weight="bold" fill="#7d89a8" letter-spacing="2.4"><tspan x="0" y="0">UTASTREAM · REFINED MARK</tspan></text>
+      <text transform="matrix(1 0 0 1 80 124)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="38" font-weight="bold" fill="#142143" letter-spacing="-0.7"><tspan x="0" y="0">A Japanese musical gesture, carried by the groove.</tspan></text>
+      <text transform="matrix(1 0 0 1 80 158)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="500" fill="#69748f"><tspan x="0" y="0">A cleaner spiral, controlled proportions, and a bolder small-size silhouette.</tspan></text>
     </g>
-  </g>
-
-  <!-- Brand lockup -->
-  <g transform="translate(770 250)" class="sans">
-    <text y="0" class="eyebrow">PRIMARY LOCKUP</text>
-    <g transform="translate(0 42)">
-      <g transform="translate(0 0) scale(.22)">
-        <circle cx="315" cy="315" r="310" fill="url(#navy)"/>
-        <circle cx="315" cy="315" r="286" fill="#FBF1DF"/>
-        <path d="M88 517C160 483 151 390 159 329C172 225 258 145 364 145C490 145 590 245 590 370C590 479 502 568 393 568C297 568 219 490 219 394C219 310 287 242 371 242C445 242 505 302 505 376C505 439 454 490 391 490C337 490 293 446 293 392C293 346 330 309 376 309C414 309 445 340 445 378C445 409 420 434 389 434C364 434 344 414 344 389" fill="none" stroke="url(#navy)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+    <g filter="url(#filter-1)">
+      <g>
+        <path d="M695 520 C695 691.208 556.208 830 385 830 C213.792 830 75 691.208 75 520 C75 348.792 213.792 210 385 210 C556.208 210 695 348.792 695 520 Z" fill="url(#linear-gradient-1)"/>
+        <path d="M671 520 C671 677.953 542.953 806 385 806 C227.047 806 99 677.953 99 520 C99 362.047 227.047 234 385 234 C542.953 234 671 362.047 671 520 Z" fill="#fbf1df"/>
+        <path d="M169 695.46 C241 661.46 232 568.46 240 507.46 C253 403.46 339 323.46 445 323.46 C571 323.46 671 423.46 671 548.46 C671 657.46 583 746.46 474 746.46 C378 746.46 300 668.46 300 572.46 C300 488.46 368 420.46 452 420.46 C526 420.46 586 480.46 586 554.46 C586 617.46 535 668.46 472 668.46 C418 668.46 374 624.46 374 570.46 C374 524.46 411 487.46 457 487.46 C495 487.46 526 518.46 526 556.46 C526 587.46 501 612.46 470 612.46 C445 612.46 425 592.46 425 567.46" fill="none" stroke="url(#linear-gradient-2)" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
         <g>
-          <path d="M472 91l28 24-70 81-28-24z" fill="url(#vermilion)"/>
-          <path d="M463 101l28 24M448 119l28 24" stroke="#FBF1DF" stroke-width="7"/>
-          <path d="M420 177C376 166 337 169 302 188l85 88 44-82z" fill="url(#vermilion)" stroke="#FBF1DF" stroke-width="7" stroke-linejoin="round"/>
-          <path d="M420 184l-102 8M417 187l-82 35M414 190l-55 57M410 193l-23 76" fill="none" stroke="#FBF1DF" stroke-width="5" stroke-linecap="round"/>
+          <path d="M507.266 332.48 L530.679 358.738 L446.803 436.471 C413.769 487.527 397.07 552.496 396.703 631.379 C316.29 585.244 257.758 519.598 221.108 434.441 C299.517 443.086 365.969 433.916 420.463 406.93 Z" fill="#d9432b" stroke="#ffffff" stroke-width="5" stroke-miterlimit="10"/>
+          <path d="M507.266 332.48 L530.679 358.738 L510.985 376.298 L487.573 350.039 Z" fill="#1f2a4d" stroke="#ffffff" stroke-width="5" stroke-miterlimit="10"/>
+          <g>
+            <path d="M474.443 361.746 L497.856 388.004 M461.314 373.452 L484.727 399.71 M447.307 384.174 L472.476 412.401" fill="none" stroke="#ffffff" stroke-width="5"/>
+            <path d="M427.068 427.553 L291.055 549.611" fill="none" stroke="#ffffff" stroke-width="5"/>
+            <path d="M421.215 420.989 L260.302 511.438" fill="none" stroke="#ffffff" stroke-width="5"/>
+            <path d="M432.922 434.118 L324.687 583.648" fill="none" stroke="#ffffff" stroke-width="5"/>
+            <path d="M418.289 417.707 L237.601 472.762" fill="none" stroke="#ffffff" stroke-width="5"/>
+            <path d="M435.848 437.4 L360.517 610.618" fill="none" stroke="#ffffff" stroke-width="5"/>
+          </g>
         </g>
       </g>
-      <text x="164" y="83" fill="#142143" font-size="67" font-weight="750" letter-spacing="-2.5">uta<tspan fill="#E54836">stream</tspan></text>
-      <text x="168" y="117" fill="#69748F" font-size="17" font-weight="600" letter-spacing="1.2">LISTEN · UNDERSTAND · RETURN</text>
     </g>
-
-    <line x1="0" y1="225" x2="545" y2="225" stroke="#D9D6CF"/>
-    <text y="270" class="eyebrow">WHY IT WORKS BETTER</text>
-    <g transform="translate(0 305)" fill="#142143">
-      <circle cx="8" cy="-6" r="5" fill="#E54836"/><text x="28" class="body">One continuous groove communicates “stream.”</text>
-      <circle cx="8" cy="36" r="5" fill="#E54836"/><text x="28" y="42" class="body">The bachi sits on the outer rhythm, not the focal center.</text>
-      <circle cx="8" cy="78" r="5" fill="#E54836"/><text x="28" y="84" class="body">Three colors retain character without visual noise.</text>
-      <circle cx="8" cy="120" r="5" fill="#E54836"/><text x="28" y="126" class="body">Round geometry matches a record and app icon.</text>
-    </g>
-
-    <text y="500" class="eyebrow">SMALL-SIZE + ONE-COLOR TEST</text>
-    <g transform="translate(0 530)">
-      <circle cx="54" cy="54" r="54" fill="#172650"/>
-      <circle cx="54" cy="54" r="49" fill="#FBF1DF"/>
-      <path d="M15 89C28 83 26 66 28 56C30 38 44 25 62 25C83 25 100 42 100 63C100 82 85 97 67 97C51 97 38 84 38 68C38 54 49 43 63 43C75 43 85 53 85 65C85 75 77 83 67 83C58 83 51 76 51 67" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
-      <path d="M91 20l7 6-17 20-7-6zM78 42c-11-3-20-2-28 3l21 21 10-20z" fill="#E54836"/>
-
-      <circle cx="200" cy="54" r="54" fill="#172650"/>
-      <circle cx="200" cy="54" r="49" fill="#fff"/>
-      <path d="M161 89C174 83 172 66 174 56C176 38 190 25 208 25C229 25 246 42 246 63C246 82 231 97 213 97C197 97 184 84 184 68C184 54 195 43 209 43C221 43 231 53 231 65C231 75 223 83 213 83C204 83 197 76 197 67" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
-      <path d="M237 20l7 6-17 20-7-6zM224 42c-11-3-20-2-28 3l21 21 10-20z" fill="#172650"/>
-
-      <rect x="292" y="0" width="250" height="108" rx="24" fill="#172650"/>
-      <text x="325" y="68" fill="#fff" font-size="42" font-weight="750" letter-spacing="-1.5">utastream</text>
+    <g>
+      <text transform="matrix(1 0 0 1 770 250)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="16" font-weight="bold" fill="#7d89a8" letter-spacing="2.4"><tspan x="0" y="0">PRIMARY LOCKUP</tspan></text>
+      <g>
+        <g>
+          <path d="M907.5 361.3 C907.5 398.966 876.966 429.5 839.3 429.5 C801.634 429.5 771.1 398.966 771.1 361.3 C771.1 323.634 801.634 293.1 839.3 293.1 C876.966 293.1 907.5 323.634 907.5 361.3 Z" fill="url(#linear-gradient-3)"/>
+          <path d="M902.22 361.3 C902.22 396.05 874.05 424.22 839.3 424.22 C804.55 424.22 776.38 396.05 776.38 361.3 C776.38 326.55 804.55 298.38 839.3 298.38 C874.05 298.38 902.22 326.55 902.22 361.3 Z" fill="#fbf1df"/>
+          <path d="M789.36 405.74 C805.2 398.26 803.22 377.8 804.98 364.38 C807.84 341.5 826.76 323.9 850.08 323.9 C877.8 323.9 899.8 345.9 899.8 373.4 C899.8 397.38 880.44 416.96 856.46 416.96 C835.34 416.96 818.18 399.8 818.18 378.68 C818.18 360.2 833.14 345.24 851.62 345.24 C867.9 345.24 881.1 358.44 881.1 374.72 C881.1 388.58 869.88 399.8 856.02 399.8 C844.14 399.8 834.46 390.12 834.46 378.24 C834.46 368.12 842.6 359.98 852.72 359.98 C861.08 359.98 867.9 366.8 867.9 375.16 C867.9 381.98 862.4 387.48 855.58 387.48 C850.08 387.48 845.68 383.08 845.68 377.58" fill="none" stroke="url(#linear-gradient-4)" stroke-width="8.36" stroke-linecap="round" stroke-linejoin="round"/>
+          <g>
+            <path d="M873.84 312.02 L880 317.3 L864.6 335.12 L858.44 329.84 Z" fill="url(#linear-gradient-5)"/>
+            <path d="M871.86 314.22 L878.02 319.5 M868.56 318.18 L874.72 323.46" fill="#000000" stroke="#fbf1df" stroke-width="1.54"/>
+            <path d="M862.4 330.94 C852.72 328.52 844.14 329.18 836.44 333.36 L855.14 352.72 L864.82 334.68 Z" fill="url(#linear-gradient-6)" stroke="#fbf1df" stroke-width="1.54" stroke-linejoin="round"/>
+            <path d="M862.4 332.48 L839.96 334.24 M861.74 333.14 L843.7 340.84 M861.08 333.8 L848.98 346.34 M860.2 334.46 L855.14 351.18" fill="none" stroke="#fbf1df" stroke-width="1.1" stroke-linecap="round"/>
+          </g>
+        </g>
+        <text transform="matrix(1 0 0 1 934 375)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="67" font-weight="800" fill="#142143" letter-spacing="-2.5"><tspan x="0" y="0">uta</tspan><tspan x="96.484" y="0" fill="#e54836">stream</tspan></text>
+        <text transform="matrix(1 0 0 1 938 409)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="600" fill="#69748f" letter-spacing="1.2"><tspan x="0" y="0">LISTEN · UNDERSTAND · RETURN</tspan></text>
+      </g>
+      <path d="M770 475 L1315 475" fill="#000000" stroke="#d9d6cf"/>
+      <text transform="matrix(1 0 0 1 770 520)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="16" font-weight="bold" fill="#7d89a8" letter-spacing="2.4"><tspan x="0" y="0">WHY IT WORKS BETTER</tspan></text>
+      <g>
+        <path d="M783 549 C783 551.761 780.761 554 778 554 C775.239 554 773 551.761 773 549 C773 546.239 775.239 544 778 544 C780.761 544 783 546.239 783 549 Z" fill="#e54836"/>
+        <text transform="matrix(1 0 0 1 798 555)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="500" fill="#69748f"><tspan x="0" y="0">One continuous groove communicates “stream.”</tspan></text>
+        <path d="M783 591 C783 593.761 780.761 596 778 596 C775.239 596 773 593.761 773 591 C773 588.239 775.239 586 778 586 C780.761 586 783 588.239 783 591 Z" fill="#e54836"/>
+        <text transform="matrix(1 0 0 1 798 597)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="500" fill="#69748f"><tspan x="0" y="0">The bachi sits on the outer rhythm, not the focal center.</tspan></text>
+        <path d="M783 633 C783 635.761 780.761 638 778 638 C775.239 638 773 635.761 773 633 C773 630.239 775.239 628 778 628 C780.761 628 783 630.239 783 633 Z" fill="#e54836"/>
+        <text transform="matrix(1 0 0 1 798 639)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="500" fill="#69748f"><tspan x="0" y="0">Three colors retain character without visual noise.</tspan></text>
+        <path d="M783 675 C783 677.761 780.761 680 778 680 C775.239 680 773 677.761 773 675 C773 672.239 775.239 670 778 670 C780.761 670 783 672.239 783 675 Z" fill="#e54836"/>
+        <text transform="matrix(1 0 0 1 798 681)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="17" font-weight="500" fill="#69748f"><tspan x="0" y="0">Round geometry matches a record and app icon.</tspan></text>
+      </g>
+      <text transform="matrix(1 0 0 1 770 750)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="16" font-weight="bold" fill="#7d89a8" letter-spacing="2.4"><tspan x="0" y="0">SMALL-SIZE + ONE-COLOR TEST</tspan></text>
+      <g>
+        <path d="M878 834 C878 863.823 853.823 888 824 888 C794.177 888 770 863.823 770 834 C770 804.177 794.177 780 824 780 C853.823 780 878 804.177 878 834 Z" fill="#172650"/>
+        <path d="M873 834 C873 861.062 851.062 883 824 883 C796.938 883 775 861.062 775 834 C775 806.938 796.938 785 824 785 C851.062 785 873 806.938 873 834 Z" fill="#fbf1df"/>
+        <path d="M785 869 C798 863 796 846 798 836 C800 818 814 805 832 805 C853 805 870 822 870 843 C870 862 855 877 837 877 C821 877 808 864 808 848 C808 834 819 823 833 823 C845 823 855 833 855 845 C855 855 847 863 837 863 C828 863 821 856 821 847" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
+        <path d="M861 800 L868 806 L851 826 L844 820 Z M848 822 C837 819 828 820 820 825 L841 846 L851 826 Z" fill="#e54836"/>
+        <path d="M1024 834 C1024 863.823 999.823 888 970 888 C940.177 888 916 863.823 916 834 C916 804.177 940.177 780 970 780 C999.823 780 1024 804.177 1024 834 Z" fill="#172650"/>
+        <path d="M1019 834 C1019 861.062 997.062 883 970 883 C942.938 883 921 861.062 921 834 C921 806.938 942.938 785 970 785 C997.062 785 1019 806.938 1019 834 Z" fill="#ffffff"/>
+        <path d="M931 869 C944 863 942 846 944 836 C946 818 960 805 978 805 C999 805 1016 822 1016 843 C1016 862 1001 877 983 877 C967 877 954 864 954 848 C954 834 965 823 979 823 C991 823 1001 833 1001 845 C1001 855 993 863 983 863 C974 863 967 856 967 847" fill="none" stroke="#172650" stroke-width="7" stroke-linecap="round"/>
+        <path d="M1007 800 L1014 806 L997 826 L990 820 Z M994 822 C983 819 974 820 966 825 L987 846 L997 826 Z" fill="#172650"/>
+        <path d="M1086 780 L1288 780 C1301.255 780 1312 790.745 1312 804 L1312 864 C1312 877.255 1301.255 888 1288 888 L1086 888 C1072.745 888 1062 877.255 1062 864 L1062 804 C1062 790.745 1072.745 780 1086 780 Z" fill="#172650"/>
+        <text transform="matrix(1 0 0 1 1095 848)" x="0" y="0" xml:space="preserve" font-family="&apos;Avenir Next&apos;" font-size="42" font-weight="800" fill="#ffffff" letter-spacing="-1.5"><tspan x="0" y="0">utastream</tspan></text>
+      </g>
     </g>
   </g>
 </svg>
