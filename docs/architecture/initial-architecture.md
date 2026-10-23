@@ -135,17 +135,13 @@ for the governing cost and upgrade constraints.
 
 Write these only as their decisions become necessary:
 
-1. **Application stack and repository layout** — client framework, server
-   runtime, package manager, contract strategy, and test layers.
-2. **Media-source and rights boundary** — what content the prototype may play,
+1. **Media-source and rights boundary** — what content the prototype may play,
    whether uploads or provider links are allowed, retention, and deletion.
-3. **Lyric document and timing model** — line/word granularity, versions,
+2. **Lyric document and timing model** — line/word granularity, versions,
    readings, translations, and attribution.
-4. **Background job mechanism** — database-backed jobs versus a dedicated
-   broker, plus retry and idempotency policy.
-5. **Authentication and privacy baseline** — account boundary, sensitive data,
+3. **Authentication and privacy baseline** — account boundary, sensitive data,
    analytics, and retention.
-6. **Explanation provenance** — dictionaries, translation or model providers,
+4. **Explanation provenance** — dictionaries, translation or model providers,
    confidence, review, and how generated content is labeled.
 
 ## Questions to answer before accepting ADR-0002
