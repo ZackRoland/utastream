@@ -1,8 +1,8 @@
 # UtaStream Initial Architecture
 
 **Status:** Working proposal  
-**Last updated:** 2026-10-19  
-**Governing decision:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md)
+**Last updated:** 2026-10-22
+**Governing decisions:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md)
 
 This document turns the current product flow into an initial system map. It is
 deliberately one level less permanent than an ADR: names and boundaries should
@@ -99,6 +99,11 @@ production cloud environment.
 6. Deleting source content must make its derived artifacts discoverable for
    deletion; this should be tested before user uploads are enabled.
 7. Playback continuity is an explicit cross-screen invariant.
+8. Local development and automated tests must not require paid hosted services.
+9. A new infrastructure dependency must document its present purpose, cost
+   driver, exhaustion behavior, data-export path, and smallest replacement.
+10. Paid microservice adoption requires measured technical need and a defined
+    sustainable funding or revenue basis.
 
 ## Suggested build order
 
@@ -111,6 +116,20 @@ production cloud environment.
 | 5. Processing skeleton | A fixture job progresses, retries safely, and publishes a versioned result. | Queue/job implementation choice. |
 | 6. Accounts and sync | Preferences, library, and saves persist per user. | Authentication and privacy ADR. |
 | 7. User content experiment | One tightly scoped import route is validated. | Rights, retention, security, and source-specific ADRs. |
+
+## Initial capacity targets
+
+The system should preserve a practical path to 10,000 monthly active users
+without pre-provisioning or paying for that capacity. At 1,000 monthly active
+users, the project will conduct a proof-of-scale review and evaluate the
+smallest justified capacity upgrades using observed workload, cost, and a
+credible funding or revenue path.
+
+Readiness cannot be inferred from account count alone. Capacity validation must
+cover peak concurrent sessions, listening hours and media egress, catalog and
+learning-record volume, database access patterns, and background processing.
+See [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md)
+for the governing cost and upgrade constraints.
 
 ## Next ADR candidates
 
