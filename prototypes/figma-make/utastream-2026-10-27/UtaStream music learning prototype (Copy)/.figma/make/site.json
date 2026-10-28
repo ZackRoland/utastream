@@ -1,0 +1,10 @@
+{
+  "description": "Experience music while learning Japanese with synchronized lyrics, contextual translations, and vocabulary tools, all in a seamless, enjoyable interface.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
