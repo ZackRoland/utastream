@@ -40,9 +40,11 @@ be made in place and noted in the change history.
 | ADR | Title | Status | Date |
 | --- | --- | --- | --- |
 | [0001](./0001-use-figma-as-design-source-of-truth.md) | Use Figma as the design source of truth | Accepted | 2026-10-12 |
-| [0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md) | Start with a modular monolith and vertical slices | Proposed | 2026-10-19 |
-| [0003](./0003-use-cost-aware-evolutionary-infrastructure.md) | Use cost-aware evolutionary infrastructure | Proposed | 2026-10-22 |
-| [0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md) | Use React, FastAPI, and PostgreSQL as the baseline stack | Proposed | 2026-10-23 |
-| [0005](./0005-generate-typescript-api-contracts-from-openapi.md) | Generate TypeScript API contracts from OpenAPI | Proposed | 2026-10-23 |
-| [0006](./0006-use-governed-ai-agents-for-alternate-build-evaluations.md) | Use governed AI agents for alternate-build evaluations | Proposed | 2026-10-23 |
+| [0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md) | Start with a modular monolith and vertical slices | Accepted | 2026-10-19 |
+| [0003](./0003-use-cost-aware-evolutionary-infrastructure.md) | Use cost-aware evolutionary infrastructure | Accepted | 2026-10-22 |
+| [0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md) | Use React, FastAPI, and PostgreSQL as the baseline stack | Accepted | 2026-10-23 |
+| [0005](./0005-generate-typescript-api-contracts-from-openapi.md) | Generate TypeScript API contracts from OpenAPI | Accepted | 2026-10-23 |
+| [0006](./0006-use-governed-ai-agents-for-alternate-build-evaluations.md) | Use governed AI agents for alternate-build evaluations | Accepted | 2026-10-23 |
+| [0007](./0007-use-browser-first-provider-based-media-and-lyrics.md) | Use browser-first provider-based media and lyrics | Accepted | 2026-10-27 |
+| [0008](./0008-identify-tracks-with-metadata-confirmation-and-fingerprinting.md) | Identify tracks with metadata, confirmation, and deferred fingerprinting | Accepted | 2026-10-27 |
 

@@ -1,6 +1,6 @@
 # ADR-0005: Generate TypeScript API Contracts from OpenAPI
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-23
 - **Decision owners:** Zack Roland
 - **Related documents:** [ADR-0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md)
@@ -268,3 +268,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-23 | Initial proposal following review of cross-language contract costs and risks | Codex with Zack Roland |
+| 2026-10-23 | Accepted by the decision owner | Zack Roland |

@@ -1,6 +1,6 @@
 # ADR-0002: Start with a Modular Monolith and Vertical Slices
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-19
 - **Decision owners:** Zack Roland
 - **Related documents:** [Project manifesto](./manifesto-v1.md), [ADR-0001](./0001-use-figma-as-design-source-of-truth.md), [mobile core flow](../design/mobile-core-flow-v1.md), [initial architecture](../architecture/initial-architecture.md)
@@ -285,3 +285,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-19 | Initial proposal based on the core prototype and current project stage | Codex with Zack Roland |
+| 2026-10-23 | Accepted by the decision owner | Zack Roland |

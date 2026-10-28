@@ -14,3 +14,4 @@ architecture and implementation planning.
 - [Architecture Decision Records](docs/adrs/README.md)
 - [Initial architecture](docs/architecture/initial-architecture.md)
 - [Mobile core-flow design brief](docs/design/mobile-core-flow-v1.md)
+- [Walking skeleton v1](docs/product/walking-skeleton-v1.md)

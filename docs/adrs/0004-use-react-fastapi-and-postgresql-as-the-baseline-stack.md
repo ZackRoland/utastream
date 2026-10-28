@@ -1,6 +1,6 @@
 # ADR-0004: Use React, FastAPI, and PostgreSQL as the Baseline Stack
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-23
 - **Decision owners:** Zack Roland
 - **Related documents:** [ADR-0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0005](./0005-generate-typescript-api-contracts-from-openapi.md), [initial architecture](../architecture/initial-architecture.md)
@@ -352,3 +352,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-23 | Initial proposal following stack evaluation with the project owner | Codex with Zack Roland |
+| 2026-10-23 | Accepted by the decision owner | Zack Roland |

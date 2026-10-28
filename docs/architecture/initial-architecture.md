@@ -1,8 +1,8 @@
 # UtaStream Initial Architecture
 
 **Status:** Working proposal  
-**Last updated:** 2026-10-22
-**Governing decisions:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md)
+**Last updated:** 2026-10-27
+**Governing decisions:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0007](../adrs/0007-use-browser-first-provider-based-media-and-lyrics.md), [ADR-0008](../adrs/0008-identify-tracks-with-metadata-confirmation-and-fingerprinting.md)
 
 This document turns the current product flow into an initial system map. It is
 deliberately one level less permanent than an ADR: names and boundaries should
@@ -27,7 +27,8 @@ change as the walking skeleton teaches us more.
 flowchart LR
     U[Listener] --> W[Mobile-first web client]
     W -->|HTTPS / product API| A[Application API]
-    W -->|range requests or provider SDK| M[(Permitted media source)]
+    W -->|local media element| M[(Permitted fixture or local file)]
+    W -->|official visible embed| Y[YouTube IFrame Player]
 
     subgraph Modular monolith
       A --> I[Identity & preferences]
@@ -47,6 +48,7 @@ flowchart LR
     J --> D
     J --> O[(Object storage)]
     J --> X[External provider adapters]
+    L --> R[LRCLIB adapter]
     A --> O
 ```
 
@@ -54,6 +56,11 @@ Media delivery is shown separately from the application API because audio
 bytes should not normally pass through ordinary JSON request handlers. The
 eventual implementation may use signed object-storage URLs or a licensed
 provider SDK. That choice requires a rights and media-source ADR.
+
+ADR-0007 now defines the first provider experiment. The fixture path remains
+the deterministic walking skeleton. A follow-on connected slice uses a visible
+YouTube embed for playback and an independent LRCLIB adapter for lyric
+candidates. Neither provider payload becomes the canonical domain model.
 
 ## First walking skeleton
 
@@ -87,6 +94,9 @@ production cloud environment.
 | Selected lyric and open panels | Web client | Ephemeral UI state, not a server concern. |
 | Saved expression and source context | Learning module | Reference lyric document and segment versions. |
 | Import and enrichment progress | Processing module | Persistent, observable, retryable job state. |
+| Source metadata, match candidates, confidence, and confirmation | Catalog module | Preserve original metadata; store provider associations as external references. |
+| YouTube player state and current time | Web client through playback adapter | The official player stays visible and unobscured. |
+| LRCLIB lookup and timed lyric candidate | Lyrics module through provider adapter | Playback remains usable if lookup fails. |
 
 ## Boundary rules
 
@@ -104,6 +114,12 @@ production cloud environment.
    driver, exhaustion behavior, data-export path, and smallest replacement.
 10. Paid microservice adoption requires measured technical need and a defined
     sustainable funding or revenue basis.
+11. YouTube media must remain in the official visible player and must not be
+    downloaded, proxied, separated, fingerprinted, or transcribed.
+12. A free or open-source provider is not presumed to grant rights to all
+    content it returns; provenance and known capabilities remain explicit.
+13. Lyric association is metadata-first, confidence-scored, and confirmed by
+    the user on first import; fingerprinting is a deferred local-file fallback.
 
 ## Suggested build order
 
@@ -116,6 +132,7 @@ production cloud environment.
 | 5. Processing skeleton | A fixture job progresses, retries safely, and publishes a versioned result. | Queue/job implementation choice. |
 | 6. Accounts and sync | Preferences, library, and saves persist per user. | Authentication and privacy ADR. |
 | 7. User content experiment | One tightly scoped import route is validated. | Rights, retention, security, and source-specific ADRs. |
+| 8. Connected playback experiment | A pasted YouTube URL plays in the official embed and a confirmed LRCLIB lyric follows it. | ADR-0007 and ADR-0008. |
 
 ## Initial capacity targets
 
@@ -135,14 +152,15 @@ for the governing cost and upgrade constraints.
 
 Write these only as their decisions become necessary:
 
-1. **Media-source and rights boundary** — what content the prototype may play,
-   whether uploads or provider links are allowed, retention, and deletion.
-2. **Lyric document and timing model** — line/word granularity, versions,
+1. **Lyric document and timing model** — line/word granularity, versions,
    readings, translations, and attribution.
-3. **Authentication and privacy baseline** — account boundary, sensitive data,
+2. **Authentication and privacy baseline** — account boundary, sensitive data,
    analytics, and retention.
-4. **Explanation provenance** — dictionaries, translation or model providers,
+3. **Explanation provenance** — dictionaries, translation or model providers,
    confidence, review, and how generated content is labeled.
+4. **Connected-content production gate** — licensing evidence and permitted
+   lyric display, translation, annotation, caching, and excerpt behavior before
+   monetization or general public distribution.
 
 ## Questions to answer before accepting ADR-0002
 

@@ -1,6 +1,6 @@
 # ADR-0003: Use Cost-Aware Evolutionary Infrastructure
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-22
 - **Decision owners:** Zack Roland
 - **Related documents:** [Project manifesto](./manifesto-v1.md), [ADR-0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md), [initial architecture](../architecture/initial-architecture.md)
@@ -407,3 +407,4 @@ Reconsider this decision if:
 | --- | --- | --- |
 | 2026-10-22 | Initial proposal incorporating no-cost-first, dependency-minimization, and revenue-gated microservice constraints | Codex with Zack Roland |
 | 2026-10-22 | Added 1,000-MAU proof-of-scale gate and 10,000-MAU early-growth target | Codex with Zack Roland |
+| 2026-10-23 | Accepted by the decision owner | Zack Roland |

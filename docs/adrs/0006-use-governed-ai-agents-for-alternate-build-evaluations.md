@@ -1,6 +1,6 @@
 # ADR-0006: Use Governed AI Agents for Alternate-Build Evaluations
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-10-23
 - **Decision owners:** Zack Roland
 - **Related documents:** [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md), [ADR-0005](./0005-generate-typescript-api-contracts-from-openapi.md)
@@ -365,3 +365,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-23 | Initial proposal defining baseline-gated alternate builds and governed future agent use | Codex with Zack Roland |
+| 2026-10-23 | Accepted by the decision owner; execution remains subject to the documented gates | Zack Roland |
