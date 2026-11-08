@@ -1,0 +1,89 @@
+.shell {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 80% 15%, rgb(65 101 117 / 18%), transparent 34rem),
+    var(--color-background);
+}
+
+.header {
+  min-height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) clamp(var(--space-5), 5vw, var(--space-10));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.increment {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.main {
+  min-height: calc(100dvh - 5rem);
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--space-5);
+}
+
+.checkpoint {
+  width: min(100%, 44rem);
+  padding: clamp(var(--space-6), 6vw, var(--space-10));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgb(21 36 58 / 78%);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(18px);
+}
+
+.eyebrow {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.checkpoint h1 {
+  max-width: 13ch;
+  margin-top: var(--space-4);
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.checkpoint > p {
+  max-width: 58ch;
+  margin-top: var(--space-5);
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 2.75rem;
+  color: var(--color-text-secondary);
+}
+
+.list svg {
+  color: var(--color-accent);
+}
+
+@media (max-width: 36rem) {
+  .increment {
+    display: none;
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "utastream",
+  "private": true,
+  "packageManager": "pnpm@10.34.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:web": "pnpm --filter @utastream/web dev",
+    "build:web": "pnpm --filter @utastream/web build",
+    "test:web": "pnpm --filter @utastream/web test",
+    "typecheck:web": "pnpm --filter @utastream/web typecheck"
+  }
+}
