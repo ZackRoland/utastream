@@ -1,0 +1,105 @@
+.artwork {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-high);
+  isolation: isolate;
+}
+
+.artwork img,
+.tint {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.artwork img {
+  z-index: -2;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.tint {
+  z-index: -1;
+  background: linear-gradient(180deg, transparent 35%, rgb(7 15 27 / 65%));
+}
+
+.label,
+.japanese,
+.caption {
+  position: absolute;
+  text-shadow: 0 1px 5px rgb(5 12 23 / 65%);
+}
+
+.label {
+  top: 9%;
+  left: 9%;
+  font-size: clamp(0.65rem, 3.7cqw, 1rem);
+  font-weight: 650;
+  letter-spacing: 0.16em;
+}
+
+.japanese {
+  top: 28%;
+  right: 9%;
+  writing-mode: vertical-rl;
+  font-family: var(--font-learning);
+  font-size: clamp(0.75rem, 5cqw, 1.3rem);
+  letter-spacing: 0.2em;
+}
+
+.caption {
+  right: 9%;
+  bottom: 8%;
+  left: 9%;
+  overflow: hidden;
+  font-size: clamp(0.55rem, 2.2cqw, 0.7rem);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gold img {
+  filter: saturate(0.5) sepia(0.5);
+}
+
+.blue img {
+  filter: saturate(0.55);
+}
+
+.red {
+  color: #ffb9a2;
+}
+
+.red .japanese,
+.blue .japanese,
+.green .japanese {
+  display: none;
+}
+
+.red .label {
+  font-size: clamp(2rem, 14cqw, 4rem);
+  letter-spacing: -0.07em;
+}
+
+.green img {
+  filter: saturate(0.4) sepia(0.2);
+}
+
+.green .label {
+  top: 18%;
+  left: 17%;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 10cqw, 3rem);
+  font-style: italic;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .artwork:hover img {
+    transform: scale(1.025);
+  }
+}

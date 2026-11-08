@@ -1,0 +1,68 @@
+import type { Track } from "../model/track"
+
+export const seededTracks = [
+  {
+    id: "yoru",
+    japaneseTitle: "夜の向こう",
+    englishTitle: "Beyond the Night",
+    artist: "haruno",
+    genre: "Indie pop",
+    durationSeconds: 218,
+    artwork: {
+      src: "/images/beyond-the-night.jpg",
+      alt: "Beyond the Night album artwork",
+      tone: "gold",
+      label: "HARUNO",
+      caption: "BEYOND THE NIGHT",
+    },
+    lyricStatus: "ready",
+  },
+  {
+    id: "blue",
+    japaneseTitle: "青い余白",
+    englishTitle: "Room for Blue",
+    artist: "sora & the sea",
+    genre: "Dream pop",
+    durationSeconds: 218,
+    artwork: {
+      src: "/images/room-for-blue.jpg",
+      alt: "Room for Blue album artwork",
+      tone: "blue",
+      label: "青い余白",
+      caption: "SORA & THE SEA",
+    },
+    lyricStatus: "unavailable",
+  },
+  {
+    id: "city",
+    japaneseTitle: "午前二時",
+    englishTitle: "2 AM",
+    artist: "mizu",
+    genre: "City pop",
+    durationSeconds: 218,
+    artwork: {
+      src: "/images/two-am.jpg",
+      alt: "2 AM album artwork",
+      tone: "red",
+      label: "02:00",
+      caption: "MIZU / NIGHT TAPES",
+    },
+    lyricStatus: "unavailable",
+  },
+  {
+    id: "wind",
+    japaneseTitle: "風待ち",
+    englishTitle: "Waiting for the Wind",
+    artist: "komorebi",
+    genre: "Acoustic",
+    durationSeconds: 218,
+    artwork: {
+      src: "/images/waiting-for-the-wind.jpg",
+      alt: "Waiting for the Wind album artwork",
+      tone: "green",
+      label: "風待ち",
+      caption: "KOMOREBI",
+    },
+    lyricStatus: "unavailable",
+  },
+] satisfies Track[]

@@ -1,0 +1,59 @@
+.card {
+  display: grid;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.artworkWrap {
+  position: relative;
+}
+
+.play {
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--radius-round);
+  color: var(--color-background);
+  background: var(--color-accent);
+  box-shadow: var(--shadow-lifted);
+  opacity: 0;
+  transform: translateY(0.3rem);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.card:hover .play,
+.card:focus-visible .play,
+.card[aria-pressed="true"] .play {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.title {
+  margin-top: var(--space-3);
+  overflow: hidden;
+  font-family: var(--font-learning);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.details {
+  margin-top: var(--space-2);
+  overflow: hidden;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  margin-top: var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--font-size-xs);
+}

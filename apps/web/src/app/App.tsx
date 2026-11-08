@@ -1,40 +1,36 @@
+import { useState } from "react"
+
+import {
+  SeededCollection,
+  seededTracks,
+  type TrackId,
+} from "../features/catalog"
 import { Brand } from "../shared/ui/Brand"
-import { Icon } from "../shared/ui/Icon"
 import styles from "./App.module.css"
 
-const foundations = [
-  "Production React and Vite entrypoint",
-  "Design tokens and licensed local fonts",
-  "Accessible brand and icon primitives",
-  "Catalog, playback, lyrics, and learning feature boundaries",
-]
-
 export function App() {
+  const [selectedTrackId, setSelectedTrackId] = useState<TrackId | null>(null)
+  const selectedTrack = seededTracks.find((track) => track.id === selectedTrackId)
+
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
         <Brand />
-        <span className={styles.increment}>Migration increment 1</span>
+        <span className={styles.increment}>Catalog migration</span>
       </header>
 
       <main className={styles.main}>
-        <section className={styles.checkpoint} aria-labelledby="checkpoint-title">
-          <span className={styles.eyebrow}>FOUNDATION CHECKPOINT</span>
-          <h1 id="checkpoint-title">A maintainable home for the first slice.</h1>
-          <p>
-            The production client now has explicit boundaries. Prototype behavior
-            will enter one feature at a time after this structure is reviewed.
-          </p>
+        <SeededCollection
+          tracks={seededTracks}
+          selectedTrackId={selectedTrackId}
+          onTrackSelect={setSelectedTrackId}
+        />
 
-          <ul className={styles.list}>
-            {foundations.map((foundation) => (
-              <li key={foundation}>
-                <Icon name="check" size={18} />
-                {foundation}
-              </li>
-            ))}
-          </ul>
-        </section>
+        <p className={styles.selection} aria-live="polite">
+          {selectedTrack
+            ? `${selectedTrack.englishTitle} is ready for the playback increment.`
+            : "Choose a song to establish the catalog-to-playback boundary."}
+        </p>
       </main>
     </div>
   )

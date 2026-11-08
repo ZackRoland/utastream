@@ -18,6 +18,17 @@ body {
   margin: 0;
 }
 
+button {
+  border: 0;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
 button,
 input,
 select {
@@ -36,7 +47,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 [role="button"]:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
 
