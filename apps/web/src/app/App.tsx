@@ -3,6 +3,7 @@ import {
   seededTracks,
   type TrackId,
 } from "../features/catalog"
+import { beyondTheNightLyrics, LyricsPreview } from "../features/lyrics"
 import { MiniPlayer, useFixturePlayback } from "../features/playback"
 import { Brand } from "../shared/ui/Brand"
 import styles from "./App.module.css"
@@ -27,7 +28,7 @@ export function App() {
     <div className={styles.shell}>
       <header className={styles.header}>
         <Brand />
-        <span className={styles.increment}>Catalog migration</span>
+        <span className={styles.increment}>Synchronized lyric preview</span>
       </header>
 
       <main className={styles.main}>
@@ -42,6 +43,13 @@ export function App() {
             ? `${selectedTrack.englishTitle} is loaded in the fixture player.`
             : "Choose a song to establish the catalog-to-playback boundary."}
         </p>
+
+        {selectedTrack?.id === beyondTheNightLyrics.trackId && (
+          <LyricsPreview
+            document={beyondTheNightLyrics}
+            currentTimeSeconds={playback.state.currentTime}
+          />
+        )}
       </main>
 
       {selectedTrack && (
