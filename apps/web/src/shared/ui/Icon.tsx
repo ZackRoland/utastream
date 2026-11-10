@@ -3,6 +3,12 @@ import type { ReactNode } from "react"
 const paths = {
   check: <path d="m5 12 4 4L19 6" />,
   play: <path d="m9 5 11 7-11 7Z" />,
+  pause: (
+    <>
+      <path d="M8 5v14" strokeWidth="4" />
+      <path d="M16 5v14" strokeWidth="4" />
+    </>
+  ),
   search: (
     <>
       <circle cx="10.5" cy="10.5" r="6.5" />

@@ -1,0 +1,129 @@
+.player {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) minmax(18rem, 2fr) minmax(7rem, 1fr);
+  align-items: center;
+  gap: var(--space-5);
+  min-height: 6rem;
+  padding: var(--space-3) clamp(var(--space-5), 4vw, var(--space-10));
+  border-top: 1px solid var(--color-border);
+  background: rgb(10 19 36 / 95%);
+  box-shadow: 0 -1rem 3rem rgb(2 8 18 / 28%);
+  backdrop-filter: blur(18px);
+}
+
+.track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.track img {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: 0 0 auto;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.metadata {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.metadata strong,
+.metadata > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metadata strong {
+  font-family: var(--font-learning);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.metadata > span,
+.time,
+.fixture {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.transport {
+  display: grid;
+  grid-template-columns: auto minmax(8rem, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.toggle {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--radius-round);
+  color: var(--color-background);
+  background: var(--color-accent);
+}
+
+.timeline input {
+  width: 100%;
+  height: 0.25rem;
+  margin: 0;
+  appearance: none;
+  border-radius: var(--radius-round);
+  background: linear-gradient(
+    to right,
+    var(--color-accent) var(--progress),
+    var(--color-border) var(--progress)
+  );
+  cursor: pointer;
+}
+
+.timeline input::-webkit-slider-thumb {
+  width: 0.8rem;
+  height: 0.8rem;
+  appearance: none;
+  border-radius: var(--radius-round);
+  background: var(--color-accent);
+}
+
+.fixture {
+  justify-self: end;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  .player {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 5.25rem;
+  }
+
+  .transport {
+    display: flex;
+  }
+
+  .timeline,
+  .time,
+  .fixture {
+    display: none;
+  }
+}
