@@ -10,12 +10,17 @@ import {
   LyricsPreview,
   LyricsWorkspace,
 } from "../features/lyrics"
+import {
+  beyondTheNightExplanations,
+  ExpressionExplanationPanel,
+} from "../features/learning"
 import { MiniPlayer, useFixturePlayback } from "../features/playback"
 import { Brand } from "../shared/ui/Brand"
 import styles from "./App.module.css"
 
 export function App() {
   const [lyricsOpen, setLyricsOpen] = useState(false)
+  const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null)
   const lyricsTrigger = useRef<HTMLButtonElement>(null)
   const playback = useFixturePlayback()
   const selectedTrack = seededTracks.find(
@@ -23,9 +28,28 @@ export function App() {
   )
   const openLyrics = useCallback(() => setLyricsOpen(true), [])
   const closeLyrics = useCallback(() => {
+    setSelectedSegmentId(null)
     setLyricsOpen(false)
     requestAnimationFrame(() => lyricsTrigger.current?.focus())
   }, [])
+  const closeExplanation = useCallback(() => {
+    setSelectedSegmentId((segmentId) => {
+      requestAnimationFrame(() => {
+        if (segmentId) {
+          window.document
+            .querySelector<HTMLButtonElement>(`[data-segment-id="${segmentId}"]`)
+            ?.focus()
+        }
+      })
+      return null
+    })
+  }, [])
+  const selectedSegment = beyondTheNightLyrics.segments.find(
+    (segment) => segment.id === selectedSegmentId,
+  )
+  const selectedExplanation = beyondTheNightExplanations.find(
+    (explanation) => explanation.segmentId === selectedSegmentId,
+  )
 
   function selectTrack(trackId: TrackId) {
     const track = seededTracks.find((candidate) => candidate.id === trackId)
@@ -42,7 +66,7 @@ export function App() {
       <div inert={lyricsOpen || undefined} aria-hidden={lyricsOpen || undefined}>
         <header className={styles.header}>
           <Brand />
-          <span className={styles.increment}>Full lyrics workspace</span>
+          <span className={styles.increment}>Expression explanation</span>
         </header>
 
         <main className={styles.main}>
@@ -85,19 +109,35 @@ export function App() {
       </div>
 
       {selectedTrack?.id === beyondTheNightLyrics.trackId && lyricsOpen && (
-        <LyricsWorkspace
-          document={beyondTheNightLyrics}
-          track={{
-            japaneseTitle: selectedTrack.japaneseTitle,
-            englishTitle: selectedTrack.englishTitle,
-            artist: selectedTrack.artist,
-            artworkSrc: selectedTrack.artwork.src,
-            artworkAlt: selectedTrack.artwork.alt,
-          }}
-          playback={playback.state}
-          onClose={closeLyrics}
-          onTogglePlayback={playback.toggle}
-          onSeek={playback.seek}
+        <div
+          inert={selectedExplanation ? true : undefined}
+          aria-hidden={selectedExplanation ? true : undefined}
+        >
+          <LyricsWorkspace
+            document={beyondTheNightLyrics}
+            track={{
+              japaneseTitle: selectedTrack.japaneseTitle,
+              englishTitle: selectedTrack.englishTitle,
+              artist: selectedTrack.artist,
+              artworkSrc: selectedTrack.artwork.src,
+              artworkAlt: selectedTrack.artwork.alt,
+            }}
+            playback={playback.state}
+            onClose={closeLyrics}
+            onTogglePlayback={playback.toggle}
+            onSeek={playback.seek}
+            selectedSegmentId={selectedSegmentId}
+            onSelectSegment={setSelectedSegmentId}
+          />
+        </div>
+      )}
+
+      {selectedSegment && selectedExplanation && (
+        <ExpressionExplanationPanel
+          explanation={selectedExplanation}
+          sentence={selectedSegment.parts.map((part) => part.text).join("")}
+          translation={selectedSegment.translation}
+          onClose={closeExplanation}
         />
       )}
     </div>

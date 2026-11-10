@@ -16,6 +16,7 @@ describe("LyricsWorkspace", () => {
   it("shows the complete document and preserves external playback commands", () => {
     const onClose = vi.fn()
     const onTogglePlayback = vi.fn()
+    const onSelectSegment = vi.fn()
 
     render(
       <LyricsWorkspace
@@ -30,6 +31,8 @@ describe("LyricsWorkspace", () => {
         onClose={onClose}
         onTogglePlayback={onTogglePlayback}
         onSeek={vi.fn()}
+        selectedSegmentId={null}
+        onSelectSegment={onSelectSegment}
       />,
     )
 
@@ -40,6 +43,9 @@ describe("LyricsWorkspace", () => {
     ).toHaveAttribute("aria-current", "true")
     expect(screen.getAllByText("May this song find its way to you.")).toHaveLength(1)
 
+    fireEvent.click(
+      screen.getByRole("button", { name: /名前のない風を追いかけた。 Open explanation/ }),
+    )
     fireEvent.click(screen.getByRole("button", { name: "Pause" }))
     fireEvent.click(
       screen.getByRole("button", {
@@ -49,5 +55,6 @@ describe("LyricsWorkspace", () => {
 
     expect(onTogglePlayback).toHaveBeenCalledOnce()
     expect(onClose).toHaveBeenCalledOnce()
+    expect(onSelectSegment).toHaveBeenCalledWith("yoru-2")
   })
 })

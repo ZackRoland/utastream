@@ -154,6 +154,9 @@
   min-height: 7rem;
   padding: var(--space-5) var(--space-3);
   border-radius: var(--radius-sm) var(--radius-lg) var(--radius-sm) var(--radius-sm);
+  width: 100%;
+  color: inherit;
+  text-align: left;
 }
 
 .line time {
@@ -187,6 +190,16 @@
 
 .current {
   background: rgb(181 210 211 / 4%);
+}
+
+.line:hover,
+.selected {
+  background: rgb(181 210 211 / 7%);
+}
+
+.selected {
+  outline: 1px dashed rgb(181 210 211 / 32%);
+  outline-offset: -1px;
 }
 
 .current::before {

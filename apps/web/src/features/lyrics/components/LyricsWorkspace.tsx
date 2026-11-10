@@ -23,6 +23,8 @@ type LyricsWorkspaceProps = {
   onClose: () => void
   onTogglePlayback: () => void
   onSeek: (time: number) => void
+  selectedSegmentId: string | null
+  onSelectSegment: (segmentId: string) => void
 }
 
 export function LyricsWorkspace({
@@ -32,9 +34,11 @@ export function LyricsWorkspace({
   onClose,
   onTogglePlayback,
   onSeek,
+  selectedSegmentId,
+  onSelectSegment,
 }: LyricsWorkspaceProps) {
   const activeIndex = findActiveSegmentIndex(document, playback.currentTime)
-  const activeLine = useRef<HTMLDivElement>(null)
+  const activeLine = useRef<HTMLButtonElement>(null)
   const closeButton = useRef<HTMLButtonElement>(null)
   const playing = playback.status === "playing"
 
@@ -109,11 +113,15 @@ export function LyricsWorkspace({
                     : styles.upcoming
 
               return (
-                <div
+                <button
+                  type="button"
                   ref={index === activeIndex ? activeLine : undefined}
-                  className={`${styles.line} ${state}`}
+                  className={`${styles.line} ${state} ${selectedSegmentId === segment.id ? styles.selected : ""}`}
                   key={segment.id}
+                  data-segment-id={segment.id}
                   aria-current={index === activeIndex ? "true" : undefined}
+                  aria-label={`${index === activeIndex ? "Current lyric. " : ""}${segment.parts.map((part) => part.text).join("")} Open explanation`}
+                  onClick={() => onSelectSegment(segment.id)}
                 >
                   <time>{formatPlaybackTime(segment.startSeconds)}</time>
                   <div>
@@ -122,7 +130,7 @@ export function LyricsWorkspace({
                     </p>
                     <span>{segment.translation}</span>
                   </div>
-                </div>
+                </button>
               )
             })}
             <p className={styles.credit}>
