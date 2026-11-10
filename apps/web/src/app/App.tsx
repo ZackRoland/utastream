@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useReducer, useRef, useState } from "react"
 
 import {
   SeededCollection,
@@ -13,6 +13,9 @@ import {
 import {
   beyondTheNightExplanations,
   ExpressionExplanationPanel,
+  initialLearningCollectionState,
+  isExpressionSaved,
+  learningCollectionReducer,
 } from "../features/learning"
 import { MiniPlayer, useFixturePlayback } from "../features/playback"
 import { Brand } from "../shared/ui/Brand"
@@ -21,6 +24,10 @@ import styles from "./App.module.css"
 export function App() {
   const [lyricsOpen, setLyricsOpen] = useState(false)
   const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null)
+  const [learningCollection, dispatchLearningCollection] = useReducer(
+    learningCollectionReducer,
+    initialLearningCollectionState,
+  )
   const lyricsTrigger = useRef<HTMLButtonElement>(null)
   const playback = useFixturePlayback()
   const selectedTrack = seededTracks.find(
@@ -50,6 +57,9 @@ export function App() {
   const selectedExplanation = beyondTheNightExplanations.find(
     (explanation) => explanation.segmentId === selectedSegmentId,
   )
+  const selectedExpressionSaved = selectedExplanation
+    ? isExpressionSaved(learningCollection, selectedExplanation.id)
+    : false
 
   function selectTrack(trackId: TrackId) {
     const track = seededTracks.find((candidate) => candidate.id === trackId)
@@ -66,7 +76,7 @@ export function App() {
       <div inert={lyricsOpen || undefined} aria-hidden={lyricsOpen || undefined}>
         <header className={styles.header}>
           <Brand />
-          <span className={styles.increment}>Expression explanation</span>
+          <span className={styles.increment}>Save learning item</span>
         </header>
 
         <main className={styles.main}>
@@ -137,6 +147,18 @@ export function App() {
           explanation={selectedExplanation}
           sentence={selectedSegment.parts.map((part) => part.text).join("")}
           translation={selectedSegment.translation}
+          saved={selectedExpressionSaved}
+          onSave={() =>
+            dispatchLearningCollection({
+              type: "save",
+              item: {
+                id: `${beyondTheNightLyrics.trackId}:${selectedSegment.id}`,
+                trackId: beyondTheNightLyrics.trackId,
+                segmentId: selectedSegment.id,
+                explanationId: selectedExplanation.id,
+              },
+            })
+          }
           onClose={closeExplanation}
         />
       )}

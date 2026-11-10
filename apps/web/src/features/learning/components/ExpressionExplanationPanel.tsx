@@ -8,6 +8,8 @@ type ExpressionExplanationPanelProps = {
   explanation: ExpressionExplanation
   sentence: string
   translation: string
+  saved: boolean
+  onSave: () => void
   onClose: () => void
 }
 
@@ -15,6 +17,8 @@ export function ExpressionExplanationPanel({
   explanation,
   sentence,
   translation,
+  saved,
+  onSave,
   onClose,
 }: ExpressionExplanationPanelProps) {
   const closeButton = useRef<HTMLButtonElement>(null)
@@ -76,6 +80,25 @@ export function ExpressionExplanationPanel({
             </div>
           ))}
         </section>
+
+        <footer className={styles.saveArea}>
+          <button
+            className={saved ? styles.savedButton : styles.saveButton}
+            type="button"
+            aria-disabled={saved}
+            aria-label={saved ? "Expression saved" : "Save expression"}
+            onClick={saved ? undefined : onSave}
+          >
+            <Icon name={saved ? "check" : "bookmark"} size={18} />
+            {saved ? "Saved" : "Save expression"}
+          </button>
+          {saved && (
+            <p role="status">
+              <Icon name="check" size={14} />
+              Saved with its song and lyric.
+            </p>
+          )}
+        </footer>
       </div>
     </aside>
   )

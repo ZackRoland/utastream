@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 const paths = {
+  bookmark: <path d="M7 4h10v16l-5-3-5 3Z" />,
   check: <path d="m5 12 4 4L19 6" />,
   close: (
     <>

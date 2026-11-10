@@ -9,9 +9,11 @@
 }
 
 .panel {
+  --panel-padding: clamp(var(--space-6), 5vw, var(--space-8));
+
   width: min(100%, 29rem);
   overflow-y: auto;
-  padding: clamp(var(--space-6), 5vw, var(--space-8));
+  padding: var(--panel-padding);
   border-left: 1px solid rgb(181 210 211 / 24%);
   background: #17293f;
   box-shadow: -1.5rem 0 5rem rgb(2 8 18 / 40%);
@@ -120,6 +122,50 @@
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   text-align: right;
+}
+
+.saveArea {
+  position: sticky;
+  bottom: calc(var(--panel-padding) * -1);
+  margin: var(--space-8) calc(var(--panel-padding) * -1)
+    calc(var(--panel-padding) * -1);
+  padding: var(--space-4) var(--panel-padding);
+  border-top: 1px solid var(--color-border);
+  background: rgb(23 41 63 / 97%);
+}
+
+.saveButton,
+.savedButton {
+  display: flex;
+  width: 100%;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border-radius: var(--radius-sm) var(--radius-lg) var(--radius-sm) var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.saveButton {
+  color: var(--color-background);
+  background: var(--color-coral);
+}
+
+.savedButton:disabled {
+  opacity: 1;
+  color: var(--color-text-secondary);
+  background: rgb(181 210 211 / 9%);
+}
+
+.saveArea p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
 }
 
 @media (max-width: 36rem) {
