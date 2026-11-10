@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { beyondTheNightLyrics } from "../fixtures/beyondTheNightLyrics"
 import { LyricsPreview } from "./LyricsPreview"
@@ -10,6 +10,7 @@ describe("LyricsPreview", () => {
       <LyricsPreview
         document={beyondTheNightLyrics}
         currentTimeSeconds={17}
+        onOpen={vi.fn()}
       />,
     )
 

@@ -2,6 +2,12 @@ import type { ReactNode } from "react"
 
 const paths = {
   check: <path d="m5 12 4 4L19 6" />,
+  close: (
+    <>
+      <path d="m6 6 12 12" />
+      <path d="M18 6 6 18" />
+    </>
+  ),
   play: <path d="m9 5 11 7-11 7Z" />,
   pause: (
     <>

@@ -1,19 +1,21 @@
+import type { RefObject } from "react"
+
 import { findActiveSegmentIndex } from "../lib/findActiveSegmentIndex"
-import type { LyricDocument, LyricPart } from "../model/lyricDocument"
+import type { LyricDocument } from "../model/lyricDocument"
+import { JapaneseText } from "./JapaneseText"
 import styles from "./LyricsPreview.module.css"
 
 type LyricsPreviewProps = {
   document: LyricDocument
   currentTimeSeconds: number
+  onOpen: () => void
+  openButtonRef?: RefObject<HTMLButtonElement | null>
 }
-
-function JapaneseLine({ parts }: { parts: LyricPart[] }) {
-  return <>{parts.map((part) => part.text).join("")}</>
-}
-
 export function LyricsPreview({
   document,
   currentTimeSeconds,
+  onOpen,
+  openButtonRef,
 }: LyricsPreviewProps) {
   const activeIndex = findActiveSegmentIndex(document, currentTimeSeconds)
   const firstVisibleIndex = Math.max(0, activeIndex - 1)
@@ -29,7 +31,14 @@ export function LyricsPreview({
           <span className={styles.eyebrow}>Following playback</span>
           <h2 id="lyrics-preview-title">Lyrics</h2>
         </div>
-        <span className={styles.previewLabel}>Preview</span>
+        <button
+          ref={openButtonRef}
+          className={styles.openButton}
+          type="button"
+          onClick={onOpen}
+        >
+          Open lyrics
+        </button>
       </div>
 
       <div className={styles.lines} aria-live="off">
@@ -42,7 +51,7 @@ export function LyricsPreview({
               key={segment.id}
               aria-current={isActive ? "true" : undefined}
             >
-              <JapaneseLine parts={segment.parts} />
+              <JapaneseText parts={segment.parts} />
               {isActive && <span className={styles.liveMarker}>Live</span>}
             </p>
           )
