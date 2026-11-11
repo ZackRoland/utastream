@@ -16,6 +16,8 @@ the accepted architecture and interaction prototype.
 - pnpm 10.34.3, as pinned by the root `packageManager` field.
 - Python 3.14 for local development; the server package supports 3.13 and 3.14.
 - uv for the locked Python environment.
+- PostgreSQL 18 server tools for migration and persistence tests. On macOS,
+  `brew install postgresql@18` provides the supported local version.
 
 You do not need to install pnpm globally. The commands below use the pinned
 version through `npx`, which also avoids accidentally building with a different
@@ -29,6 +31,22 @@ Run from the repository root:
 npx pnpm@10.34.3 install
 uv sync
 ```
+
+### Create or migrate a local database
+
+Create an empty PostgreSQL database, then provide its SQLAlchemy connection URL
+when applying migrations:
+
+```sh
+createdb utastream
+UTASTREAM_DATABASE_URL=postgresql+psycopg://localhost/utastream \
+  npx pnpm@10.34.3 migrate:api
+```
+
+Use `migration:status:api` with the same environment variable to inspect the
+current revision. The API test suite does not use your development database: it
+starts a disposable PostgreSQL cluster, creates an isolated database per test,
+and removes the cluster when the suite finishes.
 
 For a clean, reproducible install that must match `pnpm-lock.yaml` exactly:
 
@@ -87,6 +105,10 @@ These commands perform the following checks:
 
 The production output is written to `apps/web/dist/`. That directory is
 generated, ignored by Git, and should not be committed.
+
+The API suite now includes real PostgreSQL migration and repository tests. It
+requires the PostgreSQL server tools listed above, but it does not require a
+background PostgreSQL service to be running.
 
 If the matching pnpm version is already installed and `pnpm --version` reports
 `10.34.3`, the shorter `pnpm install`, `pnpm dev:web`, and other root scripts are

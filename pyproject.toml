@@ -8,8 +8,11 @@ version = "0.1.0"
 description = "UtaStream application API and shared server modules"
 requires-python = ">=3.13,<3.15"
 dependencies = [
+  "alembic>=1.14,<2",
   "fastapi>=0.115,<1",
+  "psycopg[binary]>=3.2,<4",
   "pydantic>=2.10,<3",
+  "sqlalchemy>=2.0,<3",
   "uvicorn[standard]>=0.32,<1",
 ]
 
