@@ -56,7 +56,12 @@ export function playbackReducer(
       return {
         ...state,
         currentTime,
-        status: currentTime === state.duration ? "ended" : state.status,
+        status:
+          currentTime === state.duration
+            ? "ended"
+            : state.status === "ended"
+              ? "paused"
+              : state.status,
       }
     }
     case "tick": {

@@ -5,12 +5,14 @@ export type {
   VocabularyEntry,
 } from "./model/expressionExplanation"
 export {
+  createSavedLearningItemId,
   initialLearningCollectionState,
-  isExpressionSaved,
+  isLearningItemSaved,
   learningCollectionReducer,
 } from "./model/learningCollection"
 export type {
   LearningCollectionAction,
   LearningCollectionState,
-  SavedExpression,
+  SavedLearningItem,
+  SavedLearningItemIdentity,
 } from "./model/learningCollection"

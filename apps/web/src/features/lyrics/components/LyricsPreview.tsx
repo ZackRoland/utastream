@@ -18,10 +18,19 @@ export function LyricsPreview({
   openButtonRef,
 }: LyricsPreviewProps) {
   const activeIndex = findActiveSegmentIndex(document, currentTimeSeconds)
-  const firstVisibleIndex = Math.max(0, activeIndex - 1)
+  const upcomingIndex = document.segments.findIndex(
+    (segment) => segment.startSeconds > currentTimeSeconds,
+  )
+  const displayIndex =
+    activeIndex >= 0
+      ? activeIndex
+      : upcomingIndex >= 0
+        ? upcomingIndex
+        : Math.max(0, document.segments.length - 1)
+  const firstVisibleIndex = Math.max(0, displayIndex - 1)
   const visibleSegments = document.segments.slice(
     firstVisibleIndex,
-    activeIndex + 2,
+    displayIndex + 2,
   )
 
   return (

@@ -152,7 +152,8 @@
   background: var(--color-coral);
 }
 
-.savedButton:disabled {
+.savedButton,
+.savedButton[aria-disabled="true"] {
   opacity: 1;
   color: var(--color-text-secondary);
   background: rgb(181 210 211 / 9%);

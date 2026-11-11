@@ -38,4 +38,23 @@ describe("MiniPlayer", () => {
     expect(onToggle).toHaveBeenCalledOnce()
     expect(onSeek).toHaveBeenCalledWith(90)
   })
+
+  it("exposes an ended state independently from the play command", () => {
+    render(
+      <MiniPlayer
+        track={track}
+        playback={{
+          trackId: "yoru",
+          status: "ended",
+          currentTime: 218,
+          duration: 218,
+        }}
+        onToggle={vi.fn()}
+        onSeek={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole("status")).toHaveTextContent("Playback ended")
+    expect(screen.getByRole("button", { name: "Play" })).toBeVisible()
+  })
 })

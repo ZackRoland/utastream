@@ -33,6 +33,9 @@ export function MiniPlayer({
 
   return (
     <aside className={styles.player} aria-label="Now playing">
+      <span className={styles.srOnly} role="status">
+        Playback {playback.status}
+      </span>
       <div className={styles.track}>
         <img src={track.artworkSrc} alt={track.artworkAlt} />
         <span className={styles.metadata}>

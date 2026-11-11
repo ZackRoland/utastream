@@ -12,9 +12,10 @@ import {
 } from "../features/lyrics"
 import {
   beyondTheNightExplanations,
+  createSavedLearningItemId,
   ExpressionExplanationPanel,
   initialLearningCollectionState,
-  isExpressionSaved,
+  isLearningItemSaved,
   learningCollectionReducer,
 } from "../features/learning"
 import { MiniPlayer, useFixturePlayback } from "../features/playback"
@@ -23,7 +24,9 @@ import styles from "./App.module.css"
 
 export function App() {
   const [lyricsOpen, setLyricsOpen] = useState(false)
-  const [selectedSegmentId, setSelectedSegmentId] = useState<string | null>(null)
+  const [selectedExplanationId, setSelectedExplanationId] = useState<
+    string | null
+  >(null)
   const [learningCollection, dispatchLearningCollection] = useReducer(
     learningCollectionReducer,
     initialLearningCollectionState,
@@ -35,31 +38,61 @@ export function App() {
   )
   const openLyrics = useCallback(() => setLyricsOpen(true), [])
   const closeLyrics = useCallback(() => {
-    setSelectedSegmentId(null)
+    setSelectedExplanationId(null)
     setLyricsOpen(false)
     requestAnimationFrame(() => lyricsTrigger.current?.focus())
   }, [])
   const closeExplanation = useCallback(() => {
-    setSelectedSegmentId((segmentId) => {
+    setSelectedExplanationId((explanationId) => {
       requestAnimationFrame(() => {
-        if (segmentId) {
+        if (explanationId) {
           window.document
-            .querySelector<HTMLButtonElement>(`[data-segment-id="${segmentId}"]`)
+            .querySelector<HTMLButtonElement>(
+              `[data-explanation-id="${explanationId}"]`,
+            )
             ?.focus()
         }
       })
       return null
     })
   }, [])
-  const selectedSegment = beyondTheNightLyrics.segments.find(
-    (segment) => segment.id === selectedSegmentId,
-  )
   const selectedExplanation = beyondTheNightExplanations.find(
-    (explanation) => explanation.segmentId === selectedSegmentId,
+    (explanation) => explanation.id === selectedExplanationId,
   )
-  const selectedExpressionSaved = selectedExplanation
-    ? isExpressionSaved(learningCollection, selectedExplanation.id)
+  const selectedSegment = beyondTheNightLyrics.segments.find(
+    (segment) => segment.id === selectedExplanation?.segmentId,
+  )
+  const selectedItemId = selectedExplanation
+    ? createSavedLearningItemId({
+        testUserId: "fixture-user",
+        lyricDocumentId: beyondTheNightLyrics.id,
+        lyricDocumentVersion: beyondTheNightLyrics.version,
+        explanationId: selectedExplanation.id,
+      })
+    : null
+  const selectedItemSaved = selectedItemId
+    ? isLearningItemSaved(learningCollection, selectedItemId)
     : false
+
+  function saveSelectedItem() {
+    if (!selectedExplanation || !selectedSegment || !selectedItemId) return
+
+    dispatchLearningCollection({
+      type: "save",
+      item: {
+        id: selectedItemId,
+        testUserId: "fixture-user",
+        trackId: beyondTheNightLyrics.trackId,
+        lyricDocumentId: beyondTheNightLyrics.id,
+        lyricDocumentVersion: beyondTheNightLyrics.version,
+        segmentId: selectedSegment.id,
+        explanationId: selectedExplanation.id,
+        selectedText: selectedExplanation.selectedText,
+        selectionKind: selectedExplanation.selectionKind,
+        savedAt: new Date().toISOString(),
+      },
+    })
+  }
 
   function selectTrack(trackId: TrackId) {
     const track = seededTracks.find((candidate) => candidate.id === trackId)
@@ -76,7 +109,7 @@ export function App() {
       <div inert={lyricsOpen || undefined} aria-hidden={lyricsOpen || undefined}>
         <header className={styles.header}>
           <Brand />
-          <span className={styles.increment}>Save learning item</span>
+          <span className={styles.increment}>Client skeleton acceptance</span>
         </header>
 
         <main className={styles.main}>
@@ -99,6 +132,16 @@ export function App() {
               onOpen={openLyrics}
               openButtonRef={lyricsTrigger}
             />
+          )}
+
+          {selectedTrack?.lyricStatus === "unavailable" && (
+            <section className={styles.lyricsUnavailable} role="status">
+              <span>Playback remains available</span>
+              <h2>Lyrics aren’t available for this fixture.</h2>
+              <p>
+                Choose the lyric-ready track to continue the learning walkthrough.
+              </p>
+            </section>
           )}
         </main>
 
@@ -136,8 +179,14 @@ export function App() {
             onClose={closeLyrics}
             onTogglePlayback={playback.toggle}
             onSeek={playback.seek}
-            selectedSegmentId={selectedSegmentId}
-            onSelectSegment={setSelectedSegmentId}
+            annotations={beyondTheNightExplanations.map((explanation) => ({
+              explanationId: explanation.id,
+              segmentId: explanation.segmentId,
+              selectedText: explanation.selectedText,
+              selectionKind: explanation.selectionKind,
+            }))}
+            selectedExplanationId={selectedExplanationId}
+            onSelectExplanation={setSelectedExplanationId}
           />
         </div>
       )}
@@ -147,18 +196,8 @@ export function App() {
           explanation={selectedExplanation}
           sentence={selectedSegment.parts.map((part) => part.text).join("")}
           translation={selectedSegment.translation}
-          saved={selectedExpressionSaved}
-          onSave={() =>
-            dispatchLearningCollection({
-              type: "save",
-              item: {
-                id: `${beyondTheNightLyrics.trackId}:${selectedSegment.id}`,
-                trackId: beyondTheNightLyrics.trackId,
-                segmentId: selectedSegment.id,
-                explanationId: selectedExplanation.id,
-              },
-            })
-          }
+          saved={selectedItemSaved}
+          onSave={saveSelectedItem}
           onClose={closeExplanation}
         />
       )}

@@ -20,5 +20,8 @@ describe("SeededCollection", () => {
 
     expect(onTrackSelect).toHaveBeenCalledWith("yoru")
     expect(onTrackSelect).toHaveBeenCalledTimes(1)
+    expect(
+      screen.getByRole("button", { name: /Beyond the Night.*3:38/ }),
+    ).toBeVisible()
   })
 })

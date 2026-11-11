@@ -45,4 +45,27 @@ describe("ExpressionExplanationPanel", () => {
     )
     expect(screen.getByText("Saved with its song and lyric.")).toBeVisible()
   })
+
+  it("labels the shared interaction model for a kanji selection", () => {
+    const kanjiExplanation = beyondTheNightExplanations.find(
+      (explanation) => explanation.selectionKind === "kanji",
+    )
+    expect(kanjiExplanation).toBeDefined()
+
+    render(
+      <ExpressionExplanationPanel
+        explanation={kanjiExplanation!}
+        sentence="夜の街に、灯りがともる。"
+        translation="Lights come on in the city at night."
+        saved={false}
+        onSave={vi.fn()}
+        onClose={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByRole("button", { name: "Save kanji" })).toBeVisible()
+    expect(
+      screen.getByRole("button", { name: "Close kanji explanation" }),
+    ).toBeVisible()
+  })
 })

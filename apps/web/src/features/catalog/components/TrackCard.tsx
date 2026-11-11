@@ -9,6 +9,13 @@ type TrackCardProps = {
   onSelect: (trackId: TrackId) => void
 }
 
+function formatTrackDuration(durationSeconds: number) {
+  const minutes = Math.floor(durationSeconds / 60)
+  const seconds = Math.floor(durationSeconds % 60)
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
+}
+
 export function TrackCard({ track, selected, onSelect }: TrackCardProps) {
   return (
     <button
@@ -27,7 +34,9 @@ export function TrackCard({ track, selected, onSelect }: TrackCardProps) {
         {track.japaneseTitle}
       </strong>
       <span className={styles.details}>
-        {track.artist} <span aria-hidden="true">·</span> {track.genre}
+        {track.artist} <span aria-hidden="true">·</span> {track.genre}{" "}
+        <span aria-hidden="true">·</span>{" "}
+        {formatTrackDuration(track.durationSeconds)}
       </span>
       {track.lyricStatus === "ready" && (
         <span className={styles.status}>Lyrics ready</span>

@@ -22,6 +22,8 @@ export function ExpressionExplanationPanel({
   onClose,
 }: ExpressionExplanationPanelProps) {
   const closeButton = useRef<HTMLButtonElement>(null)
+  const itemLabel = explanation.selectionKind === "kanji" ? "kanji" : "expression"
+  const itemName = explanation.selectionKind === "kanji" ? "Kanji" : "Expression"
 
   useEffect(() => {
     closeButton.current?.focus()
@@ -44,13 +46,16 @@ export function ExpressionExplanationPanel({
       <div className={styles.panel}>
         <header className={styles.header}>
           <div>
-            <span>In this song</span>
+            <span>
+              {explanation.selectionKind === "kanji" ? "Kanji" : "Expression"}
+              {" · In this song"}
+            </span>
             <h2 id="expression-title" lang="ja">{explanation.expression}</h2>
           </div>
           <button
             ref={closeButton}
             type="button"
-            aria-label="Close expression explanation"
+            aria-label={`Close ${itemLabel} explanation`}
             onClick={onClose}
           >
             <Icon name="close" size={20} />
@@ -86,11 +91,11 @@ export function ExpressionExplanationPanel({
             className={saved ? styles.savedButton : styles.saveButton}
             type="button"
             aria-disabled={saved}
-            aria-label={saved ? "Expression saved" : "Save expression"}
+            aria-label={saved ? `${itemName} saved` : `Save ${itemLabel}`}
             onClick={saved ? undefined : onSave}
           >
             <Icon name={saved ? "check" : "bookmark"} size={18} />
-            {saved ? "Saved" : "Save expression"}
+            {saved ? "Saved" : `Save ${itemLabel}`}
           </button>
           {saved && (
             <p role="status">

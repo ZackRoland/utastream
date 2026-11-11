@@ -6,12 +6,9 @@ export function findActiveSegmentIndex(
 ) {
   if (document.segments.length === 0) return -1
 
-  let activeIndex = -1
-
-  for (const [index, segment] of document.segments.entries()) {
-    if (segment.startSeconds > currentTimeSeconds) break
-    activeIndex = index
-  }
-
-  return Math.max(0, activeIndex)
+  return document.segments.findIndex(
+    (segment) =>
+      segment.startSeconds <= currentTimeSeconds &&
+      currentTimeSeconds < segment.endSeconds,
+  )
 }

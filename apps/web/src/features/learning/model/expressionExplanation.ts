@@ -8,6 +8,8 @@ export type ExpressionExplanation = {
   id: string
   segmentId: string
   version: number
+  selectionKind: "expression" | "kanji"
+  selectedText: string
   expression: string
   reading: string
   meaning: string

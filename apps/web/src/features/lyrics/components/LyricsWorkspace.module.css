@@ -55,6 +55,15 @@
   text-transform: uppercase;
 }
 
+.toolbar {
+  display: flex;
+  min-height: 3rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
 .heading h1 {
   margin-top: var(--space-1);
   font-family: var(--font-learning);
@@ -114,8 +123,21 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  min-height: 3rem;
-  flex: 0 0 auto;
+}
+
+.translationToggle {
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.translationToggle[aria-pressed="true"] {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+  background: rgb(181 210 211 / 8%);
 }
 
 .liveDot,
@@ -172,7 +194,7 @@
   line-height: 1.8;
 }
 
-.line div > span {
+.translation {
   display: block;
   margin-top: var(--space-1);
   color: var(--color-text-muted);
@@ -180,26 +202,20 @@
   line-height: 1.7;
 }
 
-.past {
+.past > time,
+.past > div > p,
+.past .translation {
   opacity: 0.48;
 }
 
-.upcoming {
+.upcoming > time,
+.upcoming > div > p,
+.upcoming .translation {
   opacity: 0.68;
 }
 
 .current {
   background: rgb(181 210 211 / 4%);
-}
-
-.line:hover,
-.selected {
-  background: rgb(181 210 211 / 7%);
-}
-
-.selected {
-  outline: 1px dashed rgb(181 210 211 / 32%);
-  outline-offset: -1px;
 }
 
 .current::before {
@@ -211,6 +227,48 @@
   border-radius: var(--radius-round);
   background: var(--color-text-secondary);
   content: "";
+}
+
+.annotations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.annotation,
+.selectedAnnotation {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-round);
+  color: var(--color-text-secondary);
+  background: rgb(8 20 35 / 30%);
+}
+
+.annotation > span,
+.selectedAnnotation > span {
+  font-family: var(--font-interface);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.annotation > strong,
+.selectedAnnotation > strong {
+  font-family: var(--font-learning);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.annotation:hover,
+.selectedAnnotation {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+  background: rgb(181 210 211 / 8%);
 }
 
 .credit {

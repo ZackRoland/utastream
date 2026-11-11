@@ -30,4 +30,20 @@ describe("playbackReducer", () => {
       status: "ended",
     })
   })
+
+  it("can seek backward and resume after reaching the end", () => {
+    const ended = {
+      trackId: "yoru",
+      status: "ended" as const,
+      currentTime: 218,
+      duration: 218,
+    }
+    const sought = playbackReducer(ended, { type: "seek", time: 120 })
+
+    expect(sought).toMatchObject({ currentTime: 120, status: "paused" })
+    expect(playbackReducer(sought, { type: "toggle" })).toMatchObject({
+      currentTime: 120,
+      status: "playing",
+    })
+  })
 })

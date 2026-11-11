@@ -1,6 +1,8 @@
 import type { ExpressionExplanation } from "../model/expressionExplanation"
 
-export const beyondTheNightExplanations: ExpressionExplanation[] = [
+const expressionExplanations: Array<
+  Omit<ExpressionExplanation, "selectionKind" | "selectedText">
+> = [
   {
     id: "explanation-yoru-1", segmentId: "yoru-1", version: 1,
     expression: "灯りがともる", reading: "あかりがともる", meaning: "The lights come on.",
@@ -73,4 +75,32 @@ export const beyondTheNightExplanations: ExpressionExplanation[] = [
     grammar: { title: "ますように · a quiet wish", body: "The polite form followed by ように can express a wish. Here it is less a statement and more a hope sent out into the night." },
     vocabulary: [{ word: "届く", reading: "とどく", meaning: "to reach; arrive" }, { word: "歌", reading: "うた", meaning: "song" }],
   },
+]
+
+const kanjiExplanation: ExpressionExplanation = {
+  id: "explanation-yoru-kanji-akari",
+  segmentId: "yoru-1",
+  version: 1,
+  selectionKind: "kanji",
+  selectedText: "灯",
+  expression: "灯",
+  reading: "あか",
+  meaning: "Light; lamp.",
+  grammar: {
+    title: "A light in this lyric",
+    body: "Here 灯 appears in 灯り and is read あか. The word describes a visible light or glow coming on in the city.",
+  },
+  vocabulary: [
+    { word: "灯り", reading: "あかり", meaning: "light; glow" },
+    { word: "灯る", reading: "ともる", meaning: "to be lit; come on" },
+  ],
+}
+
+export const beyondTheNightExplanations: ExpressionExplanation[] = [
+  ...expressionExplanations.map((explanation) => ({
+    ...explanation,
+    selectionKind: "expression" as const,
+    selectedText: explanation.expression,
+  })),
+  kanjiExplanation,
 ]

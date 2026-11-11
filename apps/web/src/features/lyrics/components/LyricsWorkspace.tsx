@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Icon } from "../../../shared/ui/Icon"
 import { formatPlaybackTime } from "../../playback/lib/formatPlaybackTime"
@@ -23,8 +23,14 @@ type LyricsWorkspaceProps = {
   onClose: () => void
   onTogglePlayback: () => void
   onSeek: (time: number) => void
-  selectedSegmentId: string | null
-  onSelectSegment: (segmentId: string) => void
+  annotations: Array<{
+    explanationId: string
+    segmentId: string
+    selectedText: string
+    selectionKind: "expression" | "kanji"
+  }>
+  selectedExplanationId: string | null
+  onSelectExplanation: (explanationId: string) => void
 }
 
 export function LyricsWorkspace({
@@ -34,32 +40,49 @@ export function LyricsWorkspace({
   onClose,
   onTogglePlayback,
   onSeek,
-  selectedSegmentId,
-  onSelectSegment,
+  annotations,
+  selectedExplanationId,
+  onSelectExplanation,
 }: LyricsWorkspaceProps) {
+  const [translationsVisible, setTranslationsVisible] = useState(true)
   const activeIndex = findActiveSegmentIndex(document, playback.currentTime)
-  const activeLine = useRef<HTMLButtonElement>(null)
+  const activeLine = useRef<HTMLDivElement>(null)
   const closeButton = useRef<HTMLButtonElement>(null)
   const playing = playback.status === "playing"
+  const lyricStatus = playing
+    ? "Live lyrics"
+    : playback.status === "ended"
+      ? "Lyrics ended"
+      : "Lyrics paused"
 
   useEffect(() => {
     const previousOverflow = documentElementOverflow()
     window.document.body.style.overflow = "hidden"
     closeButton.current?.focus()
+    return () => {
+      window.document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
+  useEffect(() => {
+    if (selectedExplanationId !== null) return
 
     function closeOnEscape(event: KeyboardEvent) {
       if (event.key === "Escape") onClose()
     }
 
     window.document.addEventListener("keydown", closeOnEscape)
-    return () => {
-      window.document.body.style.overflow = previousOverflow
-      window.document.removeEventListener("keydown", closeOnEscape)
-    }
-  }, [onClose])
+    return () => window.document.removeEventListener("keydown", closeOnEscape)
+  }, [onClose, selectedExplanationId])
 
   useEffect(() => {
-    activeLine.current?.scrollIntoView?.({ block: "center", behavior: "smooth" })
+    const reducedMotion = window.matchMedia?.(
+      "(prefers-reduced-motion: reduce)",
+    ).matches
+    activeLine.current?.scrollIntoView?.({
+      block: "center",
+      behavior: reducedMotion ? "auto" : "smooth",
+    })
   }, [activeIndex])
 
   return (
@@ -99,38 +122,83 @@ export function LyricsWorkspace({
         </aside>
 
         <section className={styles.lyrics} aria-label="Complete synchronized lyrics">
-          <div className={styles.liveState} role="status">
-            <span className={playing ? styles.liveDot : styles.pausedDot} />
-            {playing ? "Live lyrics" : "Lyrics paused"}
+          <div className={styles.toolbar}>
+            <div className={styles.liveState} role="status">
+              <span className={playing ? styles.liveDot : styles.pausedDot} />
+              {lyricStatus}
+            </div>
+            <button
+              className={styles.translationToggle}
+              type="button"
+              aria-pressed={translationsVisible}
+              onClick={() => setTranslationsVisible((visible) => !visible)}
+            >
+              Translations {translationsVisible ? "on" : "off"}
+            </button>
           </div>
           <div className={styles.scroller}>
             {document.segments.map((segment, index) => {
-              const state =
-                index < activeIndex
+              const state = activeIndex === -1
+                ? segment.endSeconds <= playback.currentTime
+                  ? styles.past
+                  : styles.upcoming
+                : index < activeIndex
                   ? styles.past
                   : index === activeIndex
                     ? styles.current
                     : styles.upcoming
+              const segmentAnnotations = annotations.filter(
+                (annotation) => annotation.segmentId === segment.id,
+              )
 
               return (
-                <button
-                  type="button"
+                <div
                   ref={index === activeIndex ? activeLine : undefined}
-                  className={`${styles.line} ${state} ${selectedSegmentId === segment.id ? styles.selected : ""}`}
+                  className={`${styles.line} ${state}`}
                   key={segment.id}
                   data-segment-id={segment.id}
                   aria-current={index === activeIndex ? "true" : undefined}
-                  aria-label={`${index === activeIndex ? "Current lyric. " : ""}${segment.parts.map((part) => part.text).join("")} Open explanation`}
-                  onClick={() => onSelectSegment(segment.id)}
                 >
                   <time>{formatPlaybackTime(segment.startSeconds)}</time>
                   <div>
                     <p lang="ja">
                       <JapaneseText parts={segment.parts} />
                     </p>
-                    <span>{segment.translation}</span>
+                    {translationsVisible && (
+                      <span className={styles.translation}>
+                        {segment.translation}
+                      </span>
+                    )}
+                    <div
+                      className={styles.annotations}
+                      role="group"
+                      aria-label={`Learning items for line ${index + 1}`}
+                    >
+                      {segmentAnnotations.map((annotation) => (
+                        <button
+                          className={
+                            selectedExplanationId === annotation.explanationId
+                              ? styles.selectedAnnotation
+                              : styles.annotation
+                          }
+                          type="button"
+                          key={annotation.explanationId}
+                          data-explanation-id={annotation.explanationId}
+                          onClick={() =>
+                            onSelectExplanation(annotation.explanationId)
+                          }
+                        >
+                          <span>
+                            {annotation.selectionKind === "kanji"
+                              ? "Kanji"
+                              : "Expression"}
+                          </span>
+                          <strong lang="ja">{annotation.selectedText}</strong>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </button>
+                </div>
               )
             })}
             <p className={styles.credit}>

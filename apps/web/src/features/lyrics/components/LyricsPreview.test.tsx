@@ -20,4 +20,25 @@ describe("LyricsPreview", () => {
     )
     expect(screen.getAllByText("Live")).toHaveLength(1)
   })
+
+  it("keeps nearby lyrics stable without marking a line active in a gap", () => {
+    const documentWithGap = {
+      ...beyondTheNightLyrics,
+      segments: [
+        { ...beyondTheNightLyrics.segments[0], endSeconds: 10 },
+        { ...beyondTheNightLyrics.segments[1], startSeconds: 16 },
+      ],
+    }
+    const { container } = render(
+      <LyricsPreview
+        document={documentWithGap}
+        currentTimeSeconds={12}
+        onOpen={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText("名前のない風を追いかけた。")).toBeVisible()
+    expect(container.querySelector("[aria-current]")).toBeNull()
+    expect(screen.queryByText("Live")).not.toBeInTheDocument()
+  })
 })
