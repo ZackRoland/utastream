@@ -2,7 +2,7 @@
 
 **Status:** Working proposal  
 **Last updated:** 2026-10-27
-**Governing decisions:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0007](../adrs/0007-use-browser-first-provider-based-media-and-lyrics.md), [ADR-0008](../adrs/0008-identify-tracks-with-metadata-confirmation-and-fingerprinting.md)
+**Governing decisions:** [ADR-0002](../adrs/0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](../adrs/0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0007](../adrs/0007-use-browser-first-provider-based-media-and-lyrics.md), [ADR-0008](../adrs/0008-identify-tracks-with-metadata-confirmation-and-fingerprinting.md), [ADR-0009](../adrs/0009-model-library-tracks-independently-from-playback-sources.md)
 
 This document turns the current product flow into an initial system map. It is
 deliberately one level less permanent than an ADR: names and boundaries should
@@ -89,6 +89,7 @@ production cloud environment.
 | --- | --- | --- |
 | Audio element, current time, play/pause, transient queue | Web client | Must survive opening and closing lyric-learning surfaces. |
 | Track and collection metadata | Catalog module | Stable UtaStream IDs; retain content source. |
+| Personal-library membership and preferred source | Catalog and library module | Reference the UtaStream track; attach replaceable playback sources rather than making provider items the library identity. |
 | Playable source resolution | Playback module | Returns authorized, short-lived playback information. |
 | Lyric text, timing, readings, and translations | Lyrics module | Version the document and its derived annotations. |
 | Selected lyric and open panels | Web client | Ephemeral UI state, not a server concern. |
@@ -97,6 +98,7 @@ production cloud environment.
 | Source metadata, match candidates, confidence, and confirmation | Catalog module | Preserve original metadata; store provider associations as external references. |
 | YouTube player state and current time | Web client through playback adapter | The official player stays visible and unobscured. |
 | LRCLIB lookup and timed lyric candidate | Lyrics module through provider adapter | Playback remains usable if lookup fails. |
+| Confirmed source-to-lyric timing | Lyrics module | Bind a playback source to a versioned lyric document with confidence, policy version, confirmation, and timing offset. |
 
 ## Boundary rules
 
@@ -120,6 +122,10 @@ production cloud environment.
     content it returns; provenance and known capabilities remain explicit.
 13. Lyric association is metadata-first, confidence-scored, and confirmed by
     the user on first import; fingerprinting is a deferred local-file fallback.
+14. Library identity belongs to the canonical UtaStream track; local-file,
+    YouTube, fixture, and future licensed sources remain replaceable attachments.
+15. Local-file selection does not imply server upload, and a YouTube source is
+    stored as a validated provider reference rather than iframe markup or media.
 
 ## Suggested build order
 

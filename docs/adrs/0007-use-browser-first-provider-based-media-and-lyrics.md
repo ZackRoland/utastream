@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-27
 - **Decision owners:** Zack Roland
-- **Related documents:** [ADR-0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md), [walking skeleton](../product/walking-skeleton-v1.md), [initial architecture](../architecture/initial-architecture.md)
+- **Related documents:** [ADR-0002](./0002-start-with-a-modular-monolith-and-vertical-slices.md), [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0004](./0004-use-react-fastapi-and-postgresql-as-the-baseline-stack.md), [ADR-0009](./0009-model-library-tracks-independently-from-playback-sources.md), [walking skeleton](../product/walking-skeleton-v1.md), [initial architecture](../architecture/initial-architecture.md)
 - **Supersedes:** N/A
 - **Superseded by:** N/A
 
@@ -58,6 +58,11 @@ Two product modes will be implemented incrementally:
 2. **Experimental connected mode** accepts a user-supplied YouTube URL, plays
    it through the official visible YouTube IFrame Player, and attempts to match
    it with timed lyrics from LRCLIB.
+
+ADR-0009 governs how these modes coexist in a personal library. A library item
+references a stable UtaStream track, while fixture, local-file, YouTube, and
+future licensed playback sources attach as replaceable source records. Provider
+loss or source replacement must not invalidate the library or learning record.
 
 Connected mode is intended for personal learning and portfolio demonstration.
 It will not be described as a licensed commercial catalog. Before any broader
@@ -302,8 +307,8 @@ source's restrictions from becoming the entire application's domain model.
 
 1. Complete the deterministic fixture walking skeleton before relying on live
    providers.
-2. Define application-owned playback, lyrics, provenance, and capability
-   contracts.
+2. Define the application-owned playback, source-neutral library, lyrics,
+   provenance, timing-binding, and capability contracts in ADR-0009.
 3. Build the connected-mode responsive shell around a visible YouTube embed.
 4. Accept and validate one user-supplied YouTube URL without adding general
    YouTube search.
@@ -358,3 +363,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-27 | Accepted browser-first fixture/local and experimental YouTube plus LRCLIB strategy | Codex with Zack Roland |
+| 2026-11-10 | Clarified that fixture, local-file, and YouTube modes attach to source-neutral library tracks under ADR-0009 | Codex with Zack Roland |

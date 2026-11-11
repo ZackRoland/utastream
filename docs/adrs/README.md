@@ -47,4 +47,5 @@ be made in place and noted in the change history.
 | [0006](./0006-use-governed-ai-agents-for-alternate-build-evaluations.md) | Use governed AI agents for alternate-build evaluations | Accepted | 2026-10-23 |
 | [0007](./0007-use-browser-first-provider-based-media-and-lyrics.md) | Use browser-first provider-based media and lyrics | Accepted | 2026-10-27 |
 | [0008](./0008-identify-tracks-with-metadata-confirmation-and-fingerprinting.md) | Identify tracks with metadata, confirmation, and deferred fingerprinting | Accepted | 2026-10-27 |
+| [0009](./0009-model-library-tracks-independently-from-playback-sources.md) | Model library tracks independently from playback sources | Accepted | 2026-11-10 |
 

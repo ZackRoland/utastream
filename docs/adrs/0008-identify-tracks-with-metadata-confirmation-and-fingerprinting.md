@@ -3,7 +3,7 @@
 - **Status:** Accepted
 - **Date:** 2026-10-27
 - **Decision owners:** Zack Roland
-- **Related documents:** [ADR-0007](./0007-use-browser-first-provider-based-media-and-lyrics.md), [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [initial architecture](../architecture/initial-architecture.md)
+- **Related documents:** [ADR-0007](./0007-use-browser-first-provider-based-media-and-lyrics.md), [ADR-0003](./0003-use-cost-aware-evolutionary-infrastructure.md), [ADR-0009](./0009-model-library-tracks-independently-from-playback-sources.md), [initial architecture](../architecture/initial-architecture.md)
 - **Supersedes:** N/A
 - **Superseded by:** N/A
 
@@ -145,6 +145,12 @@ not domain identity. A learning record references the UtaStream track and a
 versioned lyric document so a later provider correction does not silently
 rewrite historical context.
 
+Under ADR-0009, a user library item also references the UtaStream track rather
+than a YouTube video or local file. Confirmed playback sources attach to that
+track as replaceable records. A source-to-lyric binding retains the confirmed
+lyric-document version, matching-policy version, confidence, and timing offset
+for the particular recording or performance.
+
 ### Failure and correction behavior
 
 - Playback remains available when identification or lyric lookup fails.
@@ -269,8 +275,8 @@ that the simpler path is inadequate.
 
 ## Adoption Plan
 
-1. Define the `TrackIdentity`, source metadata, candidate, and confirmation
-   contracts in the catalog module.
+1. Define the `TrackIdentity`, `PlaybackSource`, source metadata, candidate,
+   confirmation, and source-to-lyric binding contracts with ADR-0009.
 2. Read tags and duration from fixture and local-file sources without uploading
    local audio.
 3. Normalize source-specific metadata while preserving original values.
@@ -324,3 +330,4 @@ Reconsider this decision if:
 | Date | Change | Author |
 | --- | --- | --- |
 | 2026-10-27 | Accepted metadata-first identification, confirmation, and deferred fingerprinting strategy | Codex with Zack Roland |
+| 2026-11-10 | Clarified canonical library and source-to-lyric identity under ADR-0009 | Codex with Zack Roland |
