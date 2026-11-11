@@ -6,8 +6,13 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev:api": "uv run uvicorn apps.api.main:app --reload",
     "dev:web": "pnpm --filter @utastream/web dev",
+    "contract:export": "uv run python scripts/export_openapi.py",
+    "format:check:api": "uv run ruff format --check apps python scripts tests/python",
+    "lint:api": "uv run ruff check apps python scripts tests/python",
     "build:web": "pnpm --filter @utastream/web build",
+    "test:api": "uv run pytest",
     "test:web": "pnpm --filter @utastream/web test",
     "typecheck:web": "pnpm --filter @utastream/web typecheck"
   }

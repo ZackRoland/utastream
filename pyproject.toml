@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "utastream-server"
+version = "0.1.0"
+description = "UtaStream application API and shared server modules"
+requires-python = ">=3.13,<3.15"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "pydantic>=2.10,<3",
+  "uvicorn[standard]>=0.32,<1",
+]
+
+[dependency-groups]
+dev = [
+  "httpx2>=2,<3",
+  "pytest>=8.3,<10",
+  "ruff>=0.9,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/utastream"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = [".", "python"]
+testpaths = ["tests/python"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "RUF", "UP"]
