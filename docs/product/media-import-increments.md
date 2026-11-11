@@ -65,5 +65,6 @@ The connected/local media objective is complete only when:
 | Increment | Status | Evidence |
 | --- | --- | --- |
 | 1. API and OpenAPI foundation | Complete | FastAPI process, locked uv environment, shared system/error contracts, generated `openapi.json`, Python tests, and root documentation added on 2026-11-10. |
-| 2. Catalog and library persistence | Complete — pending owner review | PostgreSQL/Alembic foundation, source-neutral domain models, repositories, schema constraints, migration parity, restart persistence, and isolated PostgreSQL tests added on 2026-11-10. |
-| 3–9 | Not started | Begin only after the preceding increment is reviewed and committed. |
+| 2. Catalog and library persistence | Complete | PostgreSQL/Alembic foundation, source-neutral domain models, repositories, schema constraints, migration parity, restart persistence, and isolated PostgreSQL tests added on 2026-11-10. |
+| 3. Generated client contract | Complete — pending owner review | Pinned type-only OpenAPI generation, committed TypeScript contract, drift checks, owned fetch transport, base URL/proxy configuration, and transport tests added on 2026-11-11. |
+| 4–9 | Not started | Begin only after the preceding increment is reviewed and committed. |

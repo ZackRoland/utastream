@@ -78,8 +78,18 @@ It does not require PostgreSQL until the catalog persistence increment.
 Export the committed OpenAPI contract after changing an API model or route:
 
 ```sh
-npx pnpm@10.34.3 contract:export
+npx pnpm@10.34.3 contract:generate
 ```
+
+This updates both `packages/api-contract/openapi.json` and its generated
+TypeScript types. Confirm that neither artifact has drifted with:
+
+```sh
+npx pnpm@10.34.3 contract:check
+```
+
+The web client sends API requests through the Vite `/api` development proxy by
+default. Set `VITE_API_BASE_URL` when the API lives at another origin or path.
 
 ### Run the verification gate
 
@@ -87,6 +97,7 @@ Before committing a completed increment, run:
 
 ```sh
 npx pnpm@10.34.3 typecheck:web
+npx pnpm@10.34.3 contract:check
 npx pnpm@10.34.3 format:check:api
 npx pnpm@10.34.3 lint:api
 npx pnpm@10.34.3 test:api
@@ -97,11 +108,12 @@ npx pnpm@10.34.3 build:web
 These commands perform the following checks:
 
 1. `typecheck:web` validates the TypeScript project without producing a bundle.
-2. `format:check:api` verifies deterministic Python formatting.
-3. `lint:api` checks the Python process, shared modules, scripts, and tests.
-4. `test:api` runs the Python API and contract suite.
-5. `test:web` runs the Vitest unit and integration suite once.
-6. `build:web` runs the TypeScript build and creates an optimized Vite bundle.
+2. `contract:check` verifies the OpenAPI and generated TypeScript artifacts.
+3. `format:check:api` verifies deterministic Python formatting.
+4. `lint:api` checks the Python process, shared modules, scripts, and tests.
+5. `test:api` runs the Python API and contract suite.
+6. `test:web` runs the Vitest unit and integration suite once.
+7. `build:web` runs the TypeScript build and creates an optimized Vite bundle.
 
 The production output is written to `apps/web/dist/`. That directory is
 generated, ignored by Git, and should not be committed.

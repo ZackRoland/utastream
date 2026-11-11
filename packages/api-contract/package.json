@@ -1,0 +1,19 @@
+{
+  "name": "@utastream/api-contract",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "types": "./src/generated.ts",
+  "exports": {
+    ".": {
+      "types": "./src/generated.ts"
+    }
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.10.1"
+  }
+}

@@ -1,13 +1,17 @@
-# UtaStream API contract
+# API Contract
 
-`openapi.json` is generated from the FastAPI application and committed for
-review and client generation. It must not be edited manually.
+This workspace package contains UtaStream's committed HTTP boundary artifacts:
 
-Generate it from the repository root:
+- `openapi.json` is deterministically exported from FastAPI and Pydantic.
+- `src/generated.ts` is generated from that document by the pinned
+  `openapi-typescript` dependency.
+
+Neither artifact should be edited manually. From the repository root, run:
 
 ```sh
-uv run python scripts/export_openapi.py
+pnpm contract:generate
 ```
 
-Generated TypeScript types and the application-owned fetch transport arrive in
-the dedicated contract increment defined by ADR-0005.
+`pnpm contract:check` compares both committed artifacts with freshly generated
+content and exits unsuccessfully on drift. The package exports types only; the
+web application owns fetch configuration and runtime behavior.
