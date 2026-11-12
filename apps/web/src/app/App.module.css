@@ -23,6 +23,27 @@
   text-transform: uppercase;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.addTrack {
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--color-text-secondary);
+  border-radius: var(--radius-round);
+  color: var(--color-background);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  background: var(--color-accent);
+}
+
+.addTrack:hover {
+  filter: brightness(1.06);
+}
+
 .main {
   width: min(100%, 76rem);
   margin: 0 auto;

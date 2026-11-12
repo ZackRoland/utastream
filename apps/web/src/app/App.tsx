@@ -19,6 +19,11 @@ import {
   learningCollectionReducer,
 } from "../features/learning"
 import { MiniPlayer, useAudioPlayback } from "../features/playback"
+import {
+  AddTrackFlow,
+  initialTrackImportState,
+  trackImportReducer,
+} from "../features/track-import"
 import { Brand } from "../shared/ui/Brand"
 import styles from "./App.module.css"
 
@@ -31,8 +36,14 @@ export function App() {
     learningCollectionReducer,
     initialLearningCollectionState,
   )
+  const [trackImport, dispatchTrackImport] = useReducer(
+    trackImportReducer,
+    initialTrackImportState,
+  )
   const lyricsTrigger = useRef<HTMLButtonElement>(null)
+  const addTrackTrigger = useRef<HTMLButtonElement>(null)
   const playback = useAudioPlayback()
+  const importOpen = trackImport.step !== "closed"
   const selectedTrack = seededTracks.find(
     (track) => track.id === playback.state.trackId,
   )
@@ -55,6 +66,10 @@ export function App() {
       })
       return null
     })
+  }, [])
+  const closeTrackImport = useCallback(() => {
+    dispatchTrackImport({ type: "close" })
+    requestAnimationFrame(() => addTrackTrigger.current?.focus())
   }, [])
   const selectedExplanation = beyondTheNightExplanations.find(
     (explanation) => explanation.id === selectedExplanationId,
@@ -112,10 +127,23 @@ export function App() {
 
   return (
     <div className={styles.shell}>
-      <div inert={lyricsOpen || undefined} aria-hidden={lyricsOpen || undefined}>
+      <div
+        inert={lyricsOpen || importOpen || undefined}
+        aria-hidden={lyricsOpen || importOpen || undefined}
+      >
         <header className={styles.header}>
           <Brand />
-          <span className={styles.increment}>Client skeleton acceptance</span>
+          <div className={styles.headerActions}>
+            <span className={styles.increment}>Client skeleton acceptance</span>
+            <button
+              ref={addTrackTrigger}
+              className={styles.addTrack}
+              type="button"
+              onClick={() => dispatchTrackImport({ type: "open" })}
+            >
+              Add track
+            </button>
+          </div>
         </header>
 
         <main className={styles.main}>
@@ -213,6 +241,12 @@ export function App() {
           onClose={closeExplanation}
         />
       )}
+
+      <AddTrackFlow
+        state={trackImport}
+        dispatch={dispatchTrackImport}
+        onClose={closeTrackImport}
+      />
 
       <audio ref={playback.mediaRef} preload="metadata" hidden />
     </div>

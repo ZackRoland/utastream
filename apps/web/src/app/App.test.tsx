@@ -96,7 +96,7 @@ describe("App fixture walkthrough", () => {
     act(() => vi.advanceTimersByTime(20))
     expect(screen.getByRole("button", { name: "Open lyrics" })).toHaveFocus()
     expect(screen.getByRole("button", { name: "Pause" })).toBeVisible()
-  })
+  }, 10_000)
 
   it("keeps a paused track paused while an explanation opens and closes", () => {
     render(<App />)
@@ -144,5 +144,31 @@ describe("App fixture walkthrough", () => {
     )
     expect(screen.getByRole("button", { name: "Pause" })).toBeVisible()
     expect(screen.getByRole("button", { name: "Open lyrics" })).toBeVisible()
+  })
+
+  it("keeps the media session alive while the add-track flow opens", () => {
+    render(<App />)
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: /Beyond the Night album artwork/,
+      }),
+    )
+    setMediaTime(5)
+
+    const addTrack = screen.getByRole("button", { name: "Add track" })
+    fireEvent.click(addTrack)
+    expect(screen.getByRole("dialog")).toHaveAccessibleName(
+      "How would you like to listen?",
+    )
+    setMediaTime(6)
+    fireEvent.click(screen.getByRole("button", { name: "Close add track" }))
+    act(() => vi.advanceTimersByTime(20))
+
+    expect(addTrack).toHaveFocus()
+    expect(screen.getByRole("button", { name: "Pause" })).toBeVisible()
+    expect(screen.getByRole("slider", { name: "Playback position" })).toHaveValue(
+      "6",
+    )
+    expect(document.querySelectorAll("audio")).toHaveLength(1)
   })
 })

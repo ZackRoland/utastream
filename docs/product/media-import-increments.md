@@ -67,5 +67,6 @@ The connected/local media objective is complete only when:
 | 1. API and OpenAPI foundation | Complete | FastAPI process, locked uv environment, shared system/error contracts, generated `openapi.json`, Python tests, and root documentation added on 2026-11-10. |
 | 2. Catalog and library persistence | Complete | PostgreSQL/Alembic foundation, source-neutral domain models, repositories, schema constraints, migration parity, restart persistence, and isolated PostgreSQL tests added on 2026-11-10. |
 | 3. Generated client contract | Complete | Pinned type-only OpenAPI generation, committed TypeScript contract, drift checks, owned fetch transport, base URL/proxy configuration, and transport tests added on 2026-11-11. |
-| 4. Real fixture media | Complete — pending owner review | Project-authored CC0 audio, media provenance, persistent browser audio session, media-event playback state, source availability, adapter tests, and real-browser verification added on 2026-11-11. |
-| 5–9 | Not started | Begin only after the preceding increment is reviewed and committed. |
+| 4. Real fixture media | Complete | Project-authored CC0 audio, media provenance, persistent browser audio session, media-event playback state, source availability, adapter tests, and real-browser verification added on 2026-11-11. |
+| 5. Shared add-track experience | Complete — pending owner review | Source-neutral import state machine, local/YouTube choice, rights-aware how-to guidance, adapter handoff, focus restoration, responsive dialog, and playback-continuity tests added on 2026-11-11. |
+| 6–9 | Not started | Begin only after the preceding increment is reviewed and committed. |
