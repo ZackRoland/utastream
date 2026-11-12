@@ -5,6 +5,7 @@ export {
 } from "./model/trackImport"
 export type {
   ImportSourceKind,
+  PlaybackSourceProbe,
   TrackImportAction,
   TrackImportState,
   TrackImportStep,

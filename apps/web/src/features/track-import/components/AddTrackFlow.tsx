@@ -1,7 +1,9 @@
 import { useEffect, useRef } from "react"
 
+import { YouTubeSourceStep } from "../adapters/youtube/YouTubeSourceStep"
 import type {
   ImportSourceKind,
+  PlaybackSourceProbe,
   TrackImportAction,
   TrackImportState,
 } from "../model/trackImport"
@@ -38,9 +40,9 @@ const sourceGuidance = {
       "YouTube controls and branding remain visible during playback.",
       "A removed, private, restricted, or non-embeddable video may need replacement.",
     ],
-    handoffTitle: "YouTube connection isn’t connected yet",
+    handoffTitle: "Connect a YouTube video",
     handoffBody:
-      "This review build stops before link entry. A later implementation adds URL validation, the official IFrame player, permitted metadata, capability states, and source replacement.",
+      "Enter a link to validate its video ID and inspect it through the official visible IFrame player.",
   },
 } satisfies Record<
   ImportSourceKind,
@@ -113,10 +115,39 @@ export function AddTrackFlow({ state, dispatch, onClose }: AddTrackFlowProps) {
           />
         )}
 
-        {state.step === "awaiting_source" && guidance && (
+        {state.step === "awaiting_source" &&
+          state.sourceKind === "youtube" && (
+            <div className={styles.content}>
+              <YouTubeSourceStep
+                onBack={() => dispatch({ type: "back" })}
+                onSourceReady={(sourceProbe) =>
+                  dispatch({ type: "source_ready", sourceProbe })
+                }
+              />
+            </div>
+          )}
+
+        {state.step === "awaiting_source" &&
+          state.sourceKind === "local_file" &&
+          guidance && (
           <AdapterHandoff
             guidance={guidance}
             onBack={() => dispatch({ type: "back" })}
+          />
+          )}
+
+        {state.step === "confirm_source" && state.sourceProbe && (
+          <SourceConfirmation
+            sourceProbe={state.sourceProbe}
+            onConfirm={() => dispatch({ type: "confirm_source" })}
+            onReplace={() => dispatch({ type: "replace_source" })}
+          />
+        )}
+
+        {state.step === "source_confirmed" && state.sourceProbe && (
+          <SourceConfirmed
+            sourceProbe={state.sourceProbe}
+            onReplace={() => dispatch({ type: "replace_source" })}
           />
         )}
       </div>
@@ -131,7 +162,7 @@ function ChooseSource({
 }) {
   return (
     <div className={styles.content}>
-      <span className={styles.step}>STEP 1 OF 3 · CHOOSE A SOURCE</span>
+      <span className={styles.step}>STEP 1 OF 5 · CHOOSE A SOURCE</span>
       <h2 id="add-track-title">How would you like to listen?</h2>
       <p className={styles.intro}>
         Both choices lead to one source-neutral library track, the same lyric
@@ -176,7 +207,7 @@ function Guidance({
 }) {
   return (
     <div className={styles.content}>
-      <span className={styles.step}>STEP 2 OF 3 · REVIEW GUIDANCE</span>
+      <span className={styles.step}>STEP 2 OF 5 · REVIEW GUIDANCE</span>
       <span className={styles.eyebrow}>{guidance.eyebrow}</span>
       <h2 id="add-track-title">{guidance.title}</h2>
       <p className={styles.intro}>{guidance.summary}</p>
@@ -211,7 +242,7 @@ function AdapterHandoff({
 }) {
   return (
     <div className={styles.content}>
-      <span className={styles.step}>STEP 3 OF 3 · CONNECT SOURCE</span>
+      <span className={styles.step}>STEP 3 OF 5 · CONNECT SOURCE</span>
       <h2 id="add-track-title">{guidance.handoffTitle}</h2>
       <p className={styles.intro}>{guidance.handoffBody}</p>
       <div className={styles.adapterBoundary} role="status">
@@ -225,6 +256,90 @@ function AdapterHandoff({
       <footer className={styles.actions}>
         <button type="button" onClick={onBack}>
           Review guidance
+        </button>
+      </footer>
+    </div>
+  )
+}
+
+function SourceConfirmation({
+  sourceProbe,
+  onConfirm,
+  onReplace,
+}: {
+  sourceProbe: PlaybackSourceProbe
+  onConfirm: () => void
+  onReplace: () => void
+}) {
+  return (
+    <div className={styles.content}>
+      <span className={styles.step}>STEP 4 OF 5 · CONFIRM SOURCE</span>
+      <h2 id="add-track-title">Use this YouTube video?</h2>
+      <p className={styles.intro}>
+        Confirm the playback reference before UtaStream searches for the
+        canonical recording and lyrics.
+      </p>
+      <dl className={styles.sourceFacts}>
+        <div>
+          <dt>Provider reference</dt>
+          <dd>{sourceProbe.externalId}</dd>
+        </div>
+        <div>
+          <dt>Duration</dt>
+          <dd>
+            {sourceProbe.durationSeconds === null
+              ? "Unavailable"
+              : `${Math.round(sourceProbe.durationSeconds)} seconds`}
+          </dd>
+        </div>
+        <div>
+          <dt>Playback</dt>
+          <dd>Official visible YouTube player</dd>
+        </div>
+      </dl>
+      <p className={styles.notice}>
+        UtaStream will retain the validated video ID and normalized URL. It will
+        not retain iframe HTML or copy the media.
+      </p>
+      <footer className={styles.actions}>
+        <button type="button" onClick={onReplace}>
+          Replace source
+        </button>
+        <button className={styles.primary} type="button" onClick={onConfirm}>
+          Use this source
+        </button>
+      </footer>
+    </div>
+  )
+}
+
+function SourceConfirmed({
+  sourceProbe,
+  onReplace,
+}: {
+  sourceProbe: PlaybackSourceProbe
+  onReplace: () => void
+}) {
+  return (
+    <div className={styles.content}>
+      <span className={styles.step}>STEP 5 OF 5 · SOURCE READY</span>
+      <h2 id="add-track-title">Ready for recording and lyric matching</h2>
+      <p className={styles.intro}>
+        Video {sourceProbe.externalId} is represented as a replaceable playback
+        source. The source-neutral library track has not been created or changed
+        yet.
+      </p>
+      <div className={styles.adapterBoundary} role="status">
+        <span>YouTube source ready</span>
+        <strong>Lyric query and confirmation comes next</strong>
+        <p>
+          If this source later becomes private, deleted, restricted, or
+          non-embeddable, it can be replaced without changing library identity.
+        </p>
+      </div>
+      <footer className={styles.actions}>
+        <button type="button" onClick={onReplace}>
+          Replace source
         </button>
       </footer>
     </div>

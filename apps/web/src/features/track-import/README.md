@@ -10,6 +10,11 @@ file inputs, object URLs, YouTube player objects, provider payloads, and iframe
 markup do not enter the shared state machine. Each adapter will return a common
 probe result in its own increment.
 
-The current flow stops at the adapter handoff. It must not pretend that a file
-was selected, a YouTube URL was validated, or a track was persisted before the
-corresponding implementation exists.
+The YouTube adapter validates supported URL forms, loads the official visible
+IFrame player only after an explicit user action, and returns normalized source
+facts. It never returns a player object or iframe markup to shared state. Live
+provider calls are not used in automated tests.
+
+The local-file path still stops at the adapter handoff. Neither path may pretend
+that a canonical track was persisted before the integrated persistence
+increment exists.

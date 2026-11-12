@@ -1,0 +1,140 @@
+.step {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.intro {
+  max-width: 42rem;
+  margin-top: var(--space-4);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+.form label {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.inputRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-3);
+}
+
+.inputRow input {
+  min-width: 0;
+  min-height: 3rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  background: rgb(255 255 255 / 4%);
+}
+
+.inputRow input:focus {
+  border-color: var(--color-text-secondary);
+  outline: 0.15rem solid rgb(181 210 211 / 24%);
+}
+
+.inputRow button,
+.actions button,
+.failure button {
+  min-height: 2.75rem;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-round);
+}
+
+.error {
+  color: #ffaaa0;
+  font-size: var(--font-size-sm);
+}
+
+.preview {
+  margin-top: var(--space-5);
+}
+
+.player {
+  width: 100%;
+  min-width: 200px;
+  min-height: 200px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: #000;
+}
+
+.player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  border: 0;
+}
+
+.status,
+.failure,
+.ready {
+  margin-top: var(--space-3);
+  padding: var(--space-4);
+  border-left: 0.2rem solid var(--color-text-secondary);
+  color: var(--color-text-muted);
+  background: rgb(181 210 211 / 5%);
+}
+
+.failure,
+.ready {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.failure strong,
+.ready span {
+  color: var(--color-text);
+}
+
+.failure button {
+  width: fit-content;
+  margin-top: var(--space-2);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-7);
+}
+
+.actions .primary {
+  border-color: var(--color-accent);
+  color: var(--color-background);
+  font-weight: 700;
+  background: var(--color-accent);
+}
+
+.actions .primary:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+@media (max-width: 40rem) {
+  .inputRow {
+    grid-template-columns: 1fr;
+  }
+
+  .inputRow button {
+    width: 100%;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+}
