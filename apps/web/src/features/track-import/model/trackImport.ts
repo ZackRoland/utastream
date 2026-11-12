@@ -10,17 +10,22 @@ export type TrackImportStep =
 
 export type PlaybackSourceProbe = {
   kind: ImportSourceKind
-  externalId: string
-  normalizedUrl: string
+  externalId: string | null
+  normalizedUrl: string | null
   durationSeconds: number | null
-  availability: "available"
+  availability: "available" | "local_file_required"
+  searchMetadata: {
+    title: string
+    artist: string | null
+  } | null
+  originalMetadata: Record<string, string | number | null>
   capabilities: {
     requiresVisiblePlayer: boolean
     supportsSeeking: boolean
     portableAcrossDevices: boolean
   }
   provenance: {
-    provider: "youtube"
+    provider: "local_file" | "youtube"
     inspectedAt: string
   }
 }

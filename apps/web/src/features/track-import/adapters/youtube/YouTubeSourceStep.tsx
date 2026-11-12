@@ -105,6 +105,8 @@ export function YouTubeSourceStep({
       normalizedUrl: reference.normalizedUrl,
       durationSeconds,
       availability: "available",
+      searchMetadata: null,
+      originalMetadata: {},
       capabilities: {
         requiresVisiblePlayer: true,
         supportsSeeking: true,

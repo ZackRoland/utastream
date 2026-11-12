@@ -18,7 +18,7 @@ function Harness() {
 }
 
 describe("AddTrackFlow", () => {
-  it("routes local files through shared guidance and the adapter boundary", () => {
+  it("routes local files through shared guidance to the local adapter", () => {
     render(<Harness />)
 
     expect(screen.getByRole("dialog")).toHaveAccessibleName(
@@ -35,10 +35,11 @@ describe("AddTrackFlow", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "I understand, continue" }),
     )
-    expect(screen.getByRole("status")).toHaveTextContent(
-      "Provider adapter not connected in this increment",
-    )
-    expect(screen.getByText(/next implementation adds duration probing/)).toBeVisible()
+    expect(
+      screen.getByRole("heading", { name: "Choose audio from this device" }),
+    ).toBeVisible()
+    expect(screen.getByLabelText("Choose audio file")).toBeInTheDocument()
+    expect(screen.getByText(/temporary local URL/)).toBeVisible()
   })
 
   it("explains YouTube storage, visibility, availability, and rights", () => {

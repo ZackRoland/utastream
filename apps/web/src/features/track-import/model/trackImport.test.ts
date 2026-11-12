@@ -8,6 +8,8 @@ const youtubeProbe = {
   normalizedUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
   durationSeconds: 137,
   availability: "available" as const,
+  searchMetadata: null,
+  originalMetadata: {},
   capabilities: {
     requiresVisiblePlayer: true,
     supportsSeeking: true,

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react"
 
+import { LocalFileSourceStep } from "../adapters/local-file/LocalFileSourceStep"
 import { YouTubeSourceStep } from "../adapters/youtube/YouTubeSourceStep"
 import type {
   ImportSourceKind,
@@ -26,9 +27,6 @@ const sourceGuidance = {
       "You may need to select the file again after closing the browser.",
       "Track identity, lyrics, and saved learning remain usable if the file is missing.",
     ],
-    handoffTitle: "Local-file selection isn’t connected yet",
-    handoffBody:
-      "This review build stops before file selection. The next implementation adds duration probing, playback, reselection, and cleanup without transmitting the audio bytes.",
   },
   youtube: {
     eyebrow: "YouTube link",
@@ -40,9 +38,6 @@ const sourceGuidance = {
       "YouTube controls and branding remain visible during playback.",
       "A removed, private, restricted, or non-embeddable video may need replacement.",
     ],
-    handoffTitle: "Connect a YouTube video",
-    handoffBody:
-      "Enter a link to validate its video ID and inspect it through the official visible IFrame player.",
   },
 } satisfies Record<
   ImportSourceKind,
@@ -51,8 +46,6 @@ const sourceGuidance = {
     title: string
     summary: string
     points: string[]
-    handoffTitle: string
-    handoffBody: string
   }
 >
 
@@ -128,12 +121,15 @@ export function AddTrackFlow({ state, dispatch, onClose }: AddTrackFlowProps) {
           )}
 
         {state.step === "awaiting_source" &&
-          state.sourceKind === "local_file" &&
-          guidance && (
-          <AdapterHandoff
-            guidance={guidance}
-            onBack={() => dispatch({ type: "back" })}
-          />
+          state.sourceKind === "local_file" && (
+          <div className={styles.content}>
+            <LocalFileSourceStep
+              onBack={() => dispatch({ type: "back" })}
+              onSourceReady={(sourceProbe) =>
+                dispatch({ type: "source_ready", sourceProbe })
+              }
+            />
+          </div>
           )}
 
         {state.step === "confirm_source" && state.sourceProbe && (
@@ -233,35 +229,6 @@ function Guidance({
   )
 }
 
-function AdapterHandoff({
-  guidance,
-  onBack,
-}: {
-  guidance: (typeof sourceGuidance)[ImportSourceKind]
-  onBack: () => void
-}) {
-  return (
-    <div className={styles.content}>
-      <span className={styles.step}>STEP 3 OF 5 · CONNECT SOURCE</span>
-      <h2 id="add-track-title">{guidance.handoffTitle}</h2>
-      <p className={styles.intro}>{guidance.handoffBody}</p>
-      <div className={styles.adapterBoundary} role="status">
-        <span>Shared flow ready</span>
-        <strong>Provider adapter not connected in this increment</strong>
-        <p>
-          The confirmation, lyric matching, and library steps will resume here
-          after the selected adapter returns source metadata.
-        </p>
-      </div>
-      <footer className={styles.actions}>
-        <button type="button" onClick={onBack}>
-          Review guidance
-        </button>
-      </footer>
-    </div>
-  )
-}
-
 function SourceConfirmation({
   sourceProbe,
   onConfirm,
@@ -274,7 +241,11 @@ function SourceConfirmation({
   return (
     <div className={styles.content}>
       <span className={styles.step}>STEP 4 OF 5 · CONFIRM SOURCE</span>
-      <h2 id="add-track-title">Use this YouTube video?</h2>
+      <h2 id="add-track-title">
+        {sourceProbe.kind === "youtube"
+          ? "Use this YouTube video?"
+          : "Use this local audio file?"}
+      </h2>
       <p className={styles.intro}>
         Confirm the playback reference before UtaStream searches for the
         canonical recording and lyrics.
@@ -282,7 +253,10 @@ function SourceConfirmation({
       <dl className={styles.sourceFacts}>
         <div>
           <dt>Provider reference</dt>
-          <dd>{sourceProbe.externalId}</dd>
+          <dd>
+            {sourceProbe.externalId ??
+              String(sourceProbe.originalMetadata.filename ?? "Local file")}
+          </dd>
         </div>
         <div>
           <dt>Duration</dt>
@@ -294,12 +268,17 @@ function SourceConfirmation({
         </div>
         <div>
           <dt>Playback</dt>
-          <dd>Official visible YouTube player</dd>
+          <dd>
+            {sourceProbe.kind === "youtube"
+              ? "Official visible YouTube player"
+              : "Temporary device-local browser audio"}
+          </dd>
         </div>
       </dl>
       <p className={styles.notice}>
-        UtaStream will retain the validated video ID and normalized URL. It will
-        not retain iframe HTML or copy the media.
+        {sourceProbe.kind === "youtube"
+          ? "UtaStream will retain the validated video ID and normalized URL. It will not retain iframe HTML or copy the media."
+          : "UtaStream will retain corrected matching metadata, not the File or temporary object URL. Browser access is released when this preview closes, so the file will be required again for playback."}
       </p>
       <footer className={styles.actions}>
         <button type="button" onClick={onReplace}>
@@ -325,16 +304,22 @@ function SourceConfirmed({
       <span className={styles.step}>STEP 5 OF 5 · SOURCE READY</span>
       <h2 id="add-track-title">Ready for recording and lyric matching</h2>
       <p className={styles.intro}>
-        Video {sourceProbe.externalId} is represented as a replaceable playback
-        source. The source-neutral library track has not been created or changed
-        yet.
+        {sourceProbe.kind === "youtube"
+          ? `Video ${sourceProbe.externalId} is represented as a replaceable playback source.`
+          : "The local file is represented by corrected metadata only; its bytes and temporary playback URL were not retained."} {" "}
+        The source-neutral library track has not been created or changed yet.
       </p>
       <div className={styles.adapterBoundary} role="status">
-        <span>YouTube source ready</span>
+        <span>
+          {sourceProbe.kind === "youtube"
+            ? "YouTube source ready"
+            : "Local-file metadata ready"}
+        </span>
         <strong>Lyric query and confirmation comes next</strong>
         <p>
-          If this source later becomes private, deleted, restricted, or
-          non-embeddable, it can be replaced without changing library identity.
+          {sourceProbe.kind === "youtube"
+            ? "If this source later becomes private, deleted, restricted, or non-embeddable, it can be replaced without changing library identity."
+            : "This source is marked local file required outside the active preview. Reselecting or replacing it will not define library identity."}
         </p>
       </div>
       <footer className={styles.actions}>
