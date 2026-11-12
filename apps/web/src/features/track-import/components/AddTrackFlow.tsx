@@ -9,13 +9,14 @@ import type {
   TrackImportState,
 } from "../model/trackImport"
 import styles from "./AddTrackFlow.module.css"
+import { LyricMatchStep, type LyricLookup } from "./LyricMatchStep"
 
 type AddTrackFlowProps = {
   state: TrackImportState
   dispatch: (action: TrackImportAction) => void
   onClose: () => void
+  lyricLookup?: LyricLookup
 }
-
 const sourceGuidance = {
   local_file: {
     eyebrow: "Audio from this device",
@@ -49,7 +50,7 @@ const sourceGuidance = {
   }
 >
 
-export function AddTrackFlow({ state, dispatch, onClose }: AddTrackFlowProps) {
+export function AddTrackFlow({ state, dispatch, onClose, lyricLookup }: AddTrackFlowProps) {
   const closeButton = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -141,9 +142,10 @@ export function AddTrackFlow({ state, dispatch, onClose }: AddTrackFlowProps) {
         )}
 
         {state.step === "source_confirmed" && state.sourceProbe && (
-          <SourceConfirmed
+          <LyricMatchStep
             sourceProbe={state.sourceProbe}
             onReplace={() => dispatch({ type: "replace_source" })}
+            lookup={lyricLookup}
           />
         )}
       </div>
@@ -228,7 +230,6 @@ function Guidance({
     </div>
   )
 }
-
 function SourceConfirmation({
   sourceProbe,
   onConfirm,
@@ -286,45 +287,6 @@ function SourceConfirmation({
         </button>
         <button className={styles.primary} type="button" onClick={onConfirm}>
           Use this source
-        </button>
-      </footer>
-    </div>
-  )
-}
-
-function SourceConfirmed({
-  sourceProbe,
-  onReplace,
-}: {
-  sourceProbe: PlaybackSourceProbe
-  onReplace: () => void
-}) {
-  return (
-    <div className={styles.content}>
-      <span className={styles.step}>STEP 5 OF 5 · SOURCE READY</span>
-      <h2 id="add-track-title">Ready for recording and lyric matching</h2>
-      <p className={styles.intro}>
-        {sourceProbe.kind === "youtube"
-          ? `Video ${sourceProbe.externalId} is represented as a replaceable playback source.`
-          : "The local file is represented by corrected metadata only; its bytes and temporary playback URL were not retained."} {" "}
-        The source-neutral library track has not been created or changed yet.
-      </p>
-      <div className={styles.adapterBoundary} role="status">
-        <span>
-          {sourceProbe.kind === "youtube"
-            ? "YouTube source ready"
-            : "Local-file metadata ready"}
-        </span>
-        <strong>Lyric query and confirmation comes next</strong>
-        <p>
-          {sourceProbe.kind === "youtube"
-            ? "If this source later becomes private, deleted, restricted, or non-embeddable, it can be replaced without changing library identity."
-            : "This source is marked local file required outside the active preview. Reselecting or replacing it will not define library identity."}
-        </p>
-      </div>
-      <footer className={styles.actions}>
-        <button type="button" onClick={onReplace}>
-          Replace source
         </button>
       </footer>
     </div>

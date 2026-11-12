@@ -69,6 +69,7 @@ The connected/local media objective is complete only when:
 | 3. Generated client contract | Complete | Pinned type-only OpenAPI generation, committed TypeScript contract, drift checks, owned fetch transport, base URL/proxy configuration, and transport tests added on 2026-11-11. |
 | 4. Real fixture media | Complete | Project-authored CC0 audio, media provenance, persistent browser audio session, media-event playback state, source availability, adapter tests, and real-browser verification added on 2026-11-11. |
 | 5. Shared add-track experience | Complete | Source-neutral import state machine, local/YouTube choice, rights-aware how-to guidance, adapter handoff, focus restoration, responsive dialog, and playback-continuity tests added on 2026-11-11. |
-| 6. Local-file adapter | Complete — pending owner review | Browser file selection, object-URL metadata/preview playback, editable matching metadata, reselection cleanup, local-access state, and adapter boundary tests added on 2026-11-11. |
+| 6. Local-file adapter | Complete | Browser file selection, object-URL metadata/preview playback, editable matching metadata, reselection cleanup, local-access state, and adapter boundary tests added on 2026-11-11. |
 | 7. YouTube adapter | Complete | Strict URL normalization, official visible IFrame adapter, bounded loader, duration/capability probe, recoverable provider errors, common confirmation, and source replacement added on 2026-11-11. |
-| 8–9 | Not started | Begin only after the relevant preceding work is reviewed and committed. |
+| 8. Lyric query and confirmation | Complete — pending owner review | Server-owned LRCLIB adapter, versioned normalization/scoring, candidate confirmation, timing offset, provider attribution, and deterministic recovery states added on 2026-11-11. |
+| 9. Integrated persistence and browser acceptance | Not started | Begin after Increment 8 is reviewed and committed. |

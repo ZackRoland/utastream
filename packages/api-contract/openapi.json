@@ -48,6 +48,208 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "LyricCandidate": {
+        "properties": {
+          "album": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Album"
+          },
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "attribution": {
+            "default": "Lyrics supplied by LRCLIB",
+            "title": "Attribution",
+            "type": "string"
+          },
+          "confidenceBand": {
+            "enum": [
+              "strong",
+              "ambiguous",
+              "weak"
+            ],
+            "title": "Confidenceband",
+            "type": "string"
+          },
+          "durationDifferenceSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationdifferenceseconds"
+          },
+          "durationSeconds": {
+            "title": "Durationseconds",
+            "type": "number"
+          },
+          "instrumental": {
+            "title": "Instrumental",
+            "type": "boolean"
+          },
+          "lyricDocumentVersion": {
+            "default": 1,
+            "title": "Lyricdocumentversion",
+            "type": "integer"
+          },
+          "matchingPolicyVersion": {
+            "title": "Matchingpolicyversion",
+            "type": "string"
+          },
+          "normalizedSegments": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Normalizedsegments",
+            "type": "array"
+          },
+          "plainLyrics": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plainlyrics"
+          },
+          "providerRecordId": {
+            "title": "Providerrecordid",
+            "type": "string"
+          },
+          "rightsCapabilities": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Rightscapabilities",
+            "type": "object"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "sourceProvider": {
+            "const": "lrclib",
+            "default": "lrclib",
+            "title": "Sourceprovider",
+            "type": "string"
+          },
+          "syncedLyrics": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Syncedlyrics"
+          },
+          "timingType": {
+            "anyOf": [
+              {
+                "const": "line",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timingtype"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "providerRecordId",
+          "title",
+          "artist",
+          "album",
+          "durationSeconds",
+          "durationDifferenceSeconds",
+          "instrumental",
+          "plainLyrics",
+          "syncedLyrics",
+          "timingType",
+          "normalizedSegments",
+          "rightsCapabilities",
+          "score",
+          "confidenceBand",
+          "warnings",
+          "matchingPolicyVersion"
+        ],
+        "title": "LyricCandidate",
+        "type": "object"
+      },
+      "LyricCandidateResponse": {
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/LyricCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "retryAfterSeconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retryafterseconds"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "missing",
+              "rate_limited",
+              "timeout",
+              "overloaded",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "candidates"
+        ],
+        "title": "LyricCandidateResponse",
+        "type": "object"
+      },
       "ReadinessResponse": {
         "properties": {
           "checks": {
@@ -149,6 +351,106 @@
         "summary": "Get Readiness",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/v1/lyrics/candidates": {
+      "get": {
+        "operationId": "getLyricCandidates",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "maxLength": 300,
+              "minLength": 1,
+              "title": "Title",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "artist",
+            "required": true,
+            "schema": {
+              "maxLength": 300,
+              "minLength": 1,
+              "title": "Artist",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "duration_seconds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 3600,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Duration Seconds"
+            }
+          },
+          {
+            "in": "query",
+            "name": "album",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 300,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Album"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LyricCandidateResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Get Lyric Candidates",
+        "tags": [
+          "lyrics"
         ]
       }
     }

@@ -4,7 +4,7 @@ from utastream import __version__
 
 from .errors import register_error_handlers
 from .request_ids import RequestIdMiddleware
-from .routes import system_router
+from .routes import lyrics_router, system_router
 
 
 def create_app() -> FastAPI:
@@ -16,4 +16,5 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestIdMiddleware)
     register_error_handlers(app)
     app.include_router(system_router)
+    app.include_router(lyrics_router)
     return app
