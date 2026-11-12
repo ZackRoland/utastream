@@ -18,7 +18,7 @@ export function SeededCollection({
       <header className={styles.heading}>
         <span className={styles.eyebrow}>BACK IN YOUR ROTATION</span>
         <h1 id="collection-title">Some songs feel like coming home.</h1>
-        <p>Choose a permitted fixture track for the first listening journey.</p>
+        <p>Choose the permitted audio fixture for the first listening journey.</p>
       </header>
       <div className={styles.grid}>
         {tracks.map((track) => (

@@ -3,6 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import { App } from "./App"
 
+function setMediaTime(seconds: number) {
+  const media = document.querySelector("audio")
+  if (!media) throw new Error("Expected the persistent audio element")
+
+  media.currentTime = seconds
+  fireEvent.timeUpdate(media)
+}
+
 describe("App fixture walkthrough", () => {
   beforeEach(() => vi.useFakeTimers())
   afterEach(() => vi.useRealTimers())
@@ -17,7 +25,7 @@ describe("App fixture walkthrough", () => {
     )
     expect(screen.getByRole("button", { name: "Pause" })).toBeVisible()
 
-    act(() => vi.advanceTimersByTime(1_000))
+    setMediaTime(1)
     fireEvent.click(screen.getByRole("button", { name: "Open lyrics" }))
 
     const playbackPosition = screen.getByRole("slider", {
@@ -37,7 +45,7 @@ describe("App fixture walkthrough", () => {
       name: "Expression 灯りがともる",
     })
     fireEvent.click(expressionTrigger)
-    act(() => vi.advanceTimersByTime(1_000))
+    setMediaTime(2)
     fireEvent.click(screen.getByRole("button", { name: "Save expression" }))
     expect(screen.getByText("Saved with its song and lyric.")).toBeVisible()
     fireEvent.click(
@@ -97,7 +105,7 @@ describe("App fixture walkthrough", () => {
         name: /Beyond the Night album artwork/,
       }),
     )
-    act(() => vi.advanceTimersByTime(3_000))
+    setMediaTime(3)
     fireEvent.click(screen.getByRole("button", { name: "Pause" }))
     fireEvent.click(screen.getByRole("button", { name: "Open lyrics" }))
     fireEvent.click(
@@ -116,24 +124,25 @@ describe("App fixture walkthrough", () => {
     )
   })
 
-  it("keeps playback available when a selected fixture has no lyrics", () => {
+  it("does not replace active playback with a prototype card lacking media", () => {
     render(<App />)
     fireEvent.click(
       screen.getByRole("button", {
-        name: /Room for Blue album artwork/,
+        name: /Beyond the Night album artwork/,
       }),
     )
+    setMediaTime(2)
 
-    expect(
-      screen.getByRole("heading", {
-        name: "Lyrics aren’t available for this fixture.",
-      }),
-    ).toBeVisible()
-    act(() => vi.advanceTimersByTime(2_000))
+    const unavailableTrack = screen.getByRole("button", {
+      name: /Room for Blue album artwork/,
+    })
+    expect(unavailableTrack).toBeDisabled()
+    fireEvent.click(unavailableTrack)
+
     expect(screen.getByRole("slider", { name: "Playback position" })).toHaveValue(
       "2",
     )
-    expect(screen.queryByRole("button", { name: "Open lyrics" })).toBeNull()
     expect(screen.getByRole("button", { name: "Pause" })).toBeVisible()
+    expect(screen.getByRole("button", { name: "Open lyrics" })).toBeVisible()
   })
 })

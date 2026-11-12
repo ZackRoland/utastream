@@ -72,7 +72,7 @@ export function MiniPlayer({
         </span>
       </div>
 
-      <span className={styles.fixture}>Fixture timeline</span>
+      <span className={styles.fixture}>Permitted fixture audio</span>
     </aside>
   )
 }

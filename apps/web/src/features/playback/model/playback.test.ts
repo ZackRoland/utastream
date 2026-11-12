@@ -3,47 +3,58 @@ import { describe, expect, it } from "vitest"
 import { initialPlaybackState, playbackReducer } from "./playback"
 
 describe("playbackReducer", () => {
-  it("loads and starts a selected fixture track", () => {
-    const state = playbackReducer(initialPlaybackState, {
+  it("loads a selected media source before browser playback begins", () => {
+    const loading = playbackReducer(initialPlaybackState, {
       type: "load",
-      input: { trackId: "yoru", durationSeconds: 218 },
-      autoPlay: true,
+      input: {
+        trackId: "yoru",
+        src: "/media/beyond-the-night-fixture.mp3",
+        expectedDurationSeconds: 218,
+      },
     })
 
-    expect(state).toEqual({
+    expect(loading).toEqual({
       trackId: "yoru",
-      status: "playing",
+      status: "loading",
       currentTime: 0,
       duration: 218,
     })
+    expect(playbackReducer(loading, { type: "play" }).status).toBe("playing")
   })
 
-  it("clamps seeking and marks the fixture as ended", () => {
+  it("accepts authoritative duration and time from media events", () => {
     const loaded = playbackReducer(initialPlaybackState, {
       type: "load",
-      input: { trackId: "yoru", durationSeconds: 218 },
-      autoPlay: true,
+      input: {
+        trackId: "yoru",
+        src: "/media/beyond-the-night-fixture.mp3",
+        expectedDurationSeconds: 218,
+      },
+    })
+    const updated = playbackReducer(loaded, {
+      type: "timeupdate",
+      currentTime: 221,
+      duration: 218.07,
     })
 
-    expect(playbackReducer(loaded, { type: "seek", time: 500 })).toMatchObject({
-      currentTime: 218,
-      status: "ended",
+    expect(updated).toMatchObject({
+      currentTime: 218.07,
+      duration: 218.07,
     })
   })
 
-  it("can seek backward and resume after reaching the end", () => {
-    const ended = {
+  it("records ended and recoverable media-error states", () => {
+    const playing = {
       trackId: "yoru",
-      status: "ended" as const,
-      currentTime: 218,
-      duration: 218,
-    }
-    const sought = playbackReducer(ended, { type: "seek", time: 120 })
-
-    expect(sought).toMatchObject({ currentTime: 120, status: "paused" })
-    expect(playbackReducer(sought, { type: "toggle" })).toMatchObject({
+      status: "playing" as const,
       currentTime: 120,
-      status: "playing",
+      duration: 218.07,
+    }
+
+    expect(playbackReducer(playing, { type: "ended" })).toMatchObject({
+      currentTime: 218.07,
+      status: "ended",
     })
+    expect(playbackReducer(playing, { type: "error" }).status).toBe("error")
   })
 })

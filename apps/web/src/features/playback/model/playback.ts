@@ -1,4 +1,10 @@
-export type PlaybackStatus = "idle" | "playing" | "paused" | "ended"
+export type PlaybackStatus =
+  | "idle"
+  | "loading"
+  | "playing"
+  | "paused"
+  | "ended"
+  | "error"
 
 export type PlaybackState = {
   trackId: string | null
@@ -9,14 +15,18 @@ export type PlaybackState = {
 
 export type LoadTrackInput = {
   trackId: string
-  durationSeconds: number
+  src: string
+  expectedDurationSeconds: number
 }
 
 export type PlaybackAction =
-  | { type: "load"; input: LoadTrackInput; autoPlay: boolean }
-  | { type: "toggle" }
-  | { type: "seek"; time: number }
-  | { type: "tick"; seconds: number }
+  | { type: "load"; input: LoadTrackInput }
+  | { type: "metadata"; duration: number }
+  | { type: "play" }
+  | { type: "pause" }
+  | { type: "timeupdate"; currentTime: number; duration: number }
+  | { type: "ended" }
+  | { type: "error" }
 
 export const initialPlaybackState: PlaybackState = {
   trackId: null,
@@ -37,44 +47,27 @@ export function playbackReducer(
     case "load":
       return {
         trackId: action.input.trackId,
-        status: action.autoPlay ? "playing" : "paused",
+        status: "loading",
         currentTime: 0,
-        duration: action.input.durationSeconds,
+        duration: action.input.expectedDurationSeconds,
       }
-    case "toggle":
-      if (!state.trackId) return state
-      if (state.status === "ended") {
-        return { ...state, status: "playing", currentTime: 0 }
-      }
+    case "metadata":
+      return { ...state, duration: action.duration }
+    case "play":
+      return { ...state, status: "playing" }
+    case "pause":
+      return state.status === "ended" ? state : { ...state, status: "paused" }
+    case "timeupdate": {
+      const duration = action.duration > 0 ? action.duration : state.duration
       return {
         ...state,
-        status: state.status === "playing" ? "paused" : "playing",
-      }
-    case "seek": {
-      if (!state.trackId) return state
-      const currentTime = clampTime(action.time, state.duration)
-      return {
-        ...state,
-        currentTime,
-        status:
-          currentTime === state.duration
-            ? "ended"
-            : state.status === "ended"
-              ? "paused"
-              : state.status,
+        currentTime: clampTime(action.currentTime, duration),
+        duration,
       }
     }
-    case "tick": {
-      if (state.status !== "playing") return state
-      const currentTime = clampTime(
-        state.currentTime + action.seconds,
-        state.duration,
-      )
-      return {
-        ...state,
-        currentTime,
-        status: currentTime === state.duration ? "ended" : "playing",
-      }
-    }
+    case "ended":
+      return { ...state, currentTime: state.duration, status: "ended" }
+    case "error":
+      return { ...state, status: "error" }
   }
 }

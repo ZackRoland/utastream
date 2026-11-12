@@ -22,6 +22,7 @@ export function TrackCard({ track, selected, onSelect }: TrackCardProps) {
       className={styles.card}
       type="button"
       aria-pressed={selected}
+      disabled={!track.mediaAsset}
       onClick={() => onSelect(track.id)}
     >
       <span className={styles.artworkWrap}>
@@ -40,6 +41,9 @@ export function TrackCard({ track, selected, onSelect }: TrackCardProps) {
       </span>
       {track.lyricStatus === "ready" && (
         <span className={styles.status}>Lyrics ready</span>
+      )}
+      {!track.mediaAsset && (
+        <span className={styles.status}>Media source pending</span>
       )}
     </button>
   )

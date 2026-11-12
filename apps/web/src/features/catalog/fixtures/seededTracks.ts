@@ -8,6 +8,15 @@ export const seededTracks = [
     artist: "haruno",
     genre: "Indie pop",
     durationSeconds: 218,
+    mediaAsset: {
+      src: "/media/beyond-the-night-fixture.mp3",
+      mimeType: "audio/mpeg",
+      expectedDurationSeconds: 218,
+      provenance: {
+        creator: "UtaStream project",
+        license: "CC0-1.0",
+      },
+    },
     artwork: {
       src: "/images/beyond-the-night.jpg",
       alt: "Beyond the Night album artwork",
@@ -24,6 +33,7 @@ export const seededTracks = [
     artist: "sora & the sea",
     genre: "Dream pop",
     durationSeconds: 218,
+    mediaAsset: null,
     artwork: {
       src: "/images/room-for-blue.jpg",
       alt: "Room for Blue album artwork",
@@ -40,6 +50,7 @@ export const seededTracks = [
     artist: "mizu",
     genre: "City pop",
     durationSeconds: 218,
+    mediaAsset: null,
     artwork: {
       src: "/images/two-am.jpg",
       alt: "2 AM album artwork",
@@ -56,6 +67,7 @@ export const seededTracks = [
     artist: "komorebi",
     genre: "Acoustic",
     durationSeconds: 218,
+    mediaAsset: null,
     artwork: {
       src: "/images/waiting-for-the-wind.jpg",
       alt: "Waiting for the Wind album artwork",

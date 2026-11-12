@@ -1,5 +1,5 @@
 export { MiniPlayer } from "./components/MiniPlayer"
-export { useFixturePlayback } from "./hooks/useFixturePlayback"
+export { useAudioPlayback } from "./hooks/useAudioPlayback"
 export type {
   LoadTrackInput,
   PlaybackState,

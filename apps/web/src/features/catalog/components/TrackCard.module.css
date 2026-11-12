@@ -5,6 +5,15 @@
   text-align: left;
 }
 
+.card:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.card:disabled .play {
+  display: none;
+}
+
 .artworkWrap {
   position: relative;
 }

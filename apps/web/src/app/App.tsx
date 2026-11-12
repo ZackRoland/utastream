@@ -18,7 +18,7 @@ import {
   isLearningItemSaved,
   learningCollectionReducer,
 } from "../features/learning"
-import { MiniPlayer, useFixturePlayback } from "../features/playback"
+import { MiniPlayer, useAudioPlayback } from "../features/playback"
 import { Brand } from "../shared/ui/Brand"
 import styles from "./App.module.css"
 
@@ -32,7 +32,7 @@ export function App() {
     initialLearningCollectionState,
   )
   const lyricsTrigger = useRef<HTMLButtonElement>(null)
-  const playback = useFixturePlayback()
+  const playback = useAudioPlayback()
   const selectedTrack = seededTracks.find(
     (track) => track.id === playback.state.trackId,
   )
@@ -98,8 +98,14 @@ export function App() {
     const track = seededTracks.find((candidate) => candidate.id === trackId)
     if (!track) return
 
+    if (!track.mediaAsset) return
+
     playback.load(
-      { trackId: track.id, durationSeconds: track.durationSeconds },
+      {
+        trackId: track.id,
+        src: track.mediaAsset.src,
+        expectedDurationSeconds: track.mediaAsset.expectedDurationSeconds,
+      },
       { autoPlay: true },
     )
   }
@@ -121,9 +127,15 @@ export function App() {
 
           <p className={styles.selection} aria-live="polite">
             {selectedTrack
-              ? `${selectedTrack.englishTitle} is loaded in the fixture player.`
-              : "Choose a song to establish the catalog-to-playback boundary."}
+              ? `${selectedTrack.englishTitle} is loaded in the browser audio player.`
+              : "Choose the permitted audio fixture to start real playback."}
           </p>
+
+          {playback.state.status === "error" && (
+            <p className={styles.selection} role="alert">
+              The fixture audio could not be played. Choose the track to retry.
+            </p>
+          )}
 
           {selectedTrack?.id === beyondTheNightLyrics.trackId && (
             <LyricsPreview
@@ -201,6 +213,8 @@ export function App() {
           onClose={closeExplanation}
         />
       )}
+
+      <audio ref={playback.mediaRef} preload="metadata" hidden />
     </div>
   )
 }
