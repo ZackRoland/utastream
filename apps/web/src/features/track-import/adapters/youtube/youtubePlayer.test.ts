@@ -16,9 +16,10 @@ describe("mountYouTubePlayer", () => {
     })
     window.YT = { Player: Player as never }
     const onReady = vi.fn()
+    const element = document.createElement("div")
 
     const handle = await mountYouTubePlayer(
-      document.createElement("div"),
+      element,
       "M7lc1UVf-VE",
       { onReady, onError: vi.fn() },
     )
@@ -35,6 +36,7 @@ describe("mountYouTubePlayer", () => {
         },
       }),
     )
+    expect(Player.mock.calls[0][0]).not.toBe(element)
     expect(onReady).toHaveBeenCalledWith(218)
     expect(JSON.stringify(Player.mock.calls[0][1])).not.toContain(
       "modestbranding",

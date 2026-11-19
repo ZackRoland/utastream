@@ -96,7 +96,11 @@ export function useAudioPlayback() {
     })
   }, [])
 
-  return { state, mediaRef, load, toggle, seek }
+  const pause = useCallback(() => {
+    mediaRef.current?.pause()
+  }, [])
+
+  return { state, mediaRef, load, toggle, seek, pause }
 }
 
 function clampTime(time: number, duration: number) {

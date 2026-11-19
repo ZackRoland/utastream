@@ -9,7 +9,14 @@ describe("YouTubeSourceStep", () => {
     let callbacks!: YouTubePlayerCallbacks
     const mountPlayer = vi.fn(async (_element, _videoId, playerCallbacks) => {
       callbacks = playerCallbacks
-      return { destroy: vi.fn() }
+      return {
+        destroy: vi.fn(),
+        getCurrentTime: vi.fn(() => 0),
+        getDuration: vi.fn(() => 137.4),
+        pause: vi.fn(),
+        play: vi.fn(),
+        seek: vi.fn(),
+      }
     })
     const onSourceReady = vi.fn()
     const lookupMetadata = vi.fn().mockResolvedValue({
@@ -68,7 +75,14 @@ describe("YouTubeSourceStep", () => {
     let callbacks!: YouTubePlayerCallbacks
     const mountPlayer = vi.fn(async (_element, _videoId, playerCallbacks) => {
       callbacks = playerCallbacks
-      return { destroy: vi.fn() }
+      return {
+        destroy: vi.fn(),
+        getCurrentTime: vi.fn(() => 0),
+        getDuration: vi.fn(() => 0),
+        pause: vi.fn(),
+        play: vi.fn(),
+        seek: vi.fn(),
+      }
     })
 
     render(

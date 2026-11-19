@@ -5,6 +5,8 @@ import {
   ImportedLibrary,
   LibraryApi,
   seededTracks,
+  YouTubeLibraryPlayer,
+  type LibraryPlaybackSource,
   type LibraryTrack,
   type TrackId,
 } from "../features/catalog"
@@ -35,6 +37,10 @@ const DEVELOPMENT_USER_ID = "00000000-0000-0000-0000-000000000001"
 
 export function App() {
   const [importedTracks, setImportedTracks] = useState<LibraryTrack[]>([])
+  const [activeImportedPlayback, setActiveImportedPlayback] = useState<{
+    track: LibraryTrack
+    source: LibraryPlaybackSource & { externalId: string }
+  } | null>(null)
   const [lyricsOpen, setLyricsOpen] = useState(false)
   const [selectedExplanationId, setSelectedExplanationId] = useState<
     string | null
@@ -138,6 +144,8 @@ export function App() {
 
     if (!track.mediaAsset) return
 
+    setActiveImportedPlayback(null)
+
     playback.load(
       {
         trackId: track.id,
@@ -175,21 +183,40 @@ export function App() {
             selectedTrackId={playback.state.trackId}
             onTrackSelect={selectTrack}
           />
-          <ImportedLibrary items={importedTracks} />
+          <ImportedLibrary
+            items={importedTracks}
+            activeTrackId={activeImportedPlayback?.track.trackId}
+            onPlay={(track, source) => {
+              playback.pause()
+              setActiveImportedPlayback({ track, source })
+            }}
+          />
+
+          {activeImportedPlayback && (
+            <YouTubeLibraryPlayer
+              track={activeImportedPlayback.track}
+              source={activeImportedPlayback.source}
+              onClose={() => setActiveImportedPlayback(null)}
+              onLyricsVisibilityChange={setLyricsOpen}
+            />
+          )}
 
           <p className={styles.selection} aria-live="polite">
-            {selectedTrack
-              ? `${selectedTrack.englishTitle} is loaded in the browser audio player.`
-              : "Choose the permitted audio fixture to start real playback."}
+            {activeImportedPlayback
+              ? `${activeImportedPlayback.track.title} is open in the official YouTube player.`
+              : selectedTrack
+                ? `${selectedTrack.englishTitle} is loaded in the browser audio player.`
+                : "Choose a track to start playback."}
           </p>
 
-          {playback.state.status === "error" && (
+          {playback.state.status === "error" && !activeImportedPlayback && (
             <p className={styles.selection} role="alert">
               The fixture audio could not be played. Choose the track to retry.
             </p>
           )}
 
-          {selectedTrack?.id === beyondTheNightLyrics.trackId && (
+          {!activeImportedPlayback &&
+            selectedTrack?.id === beyondTheNightLyrics.trackId && (
             <LyricsPreview
               document={beyondTheNightLyrics}
               currentTimeSeconds={playback.state.currentTime}
@@ -198,7 +225,8 @@ export function App() {
             />
           )}
 
-          {selectedTrack?.lyricStatus === "unavailable" && (
+          {!activeImportedPlayback &&
+            selectedTrack?.lyricStatus === "unavailable" && (
             <section className={styles.lyricsUnavailable} role="status">
               <span>Playback remains available</span>
               <h2>Lyrics aren’t available for this fixture.</h2>
@@ -209,7 +237,7 @@ export function App() {
           )}
         </main>
 
-        {selectedTrack && !lyricsOpen && (
+        {selectedTrack && !lyricsOpen && !activeImportedPlayback && (
           <MiniPlayer
             track={{
               title: selectedTrack.japaneseTitle,
@@ -225,7 +253,9 @@ export function App() {
         )}
       </div>
 
-      {selectedTrack?.id === beyondTheNightLyrics.trackId && lyricsOpen && (
+      {!activeImportedPlayback &&
+        selectedTrack?.id === beyondTheNightLyrics.trackId &&
+        lyricsOpen && (
         <div
           inert={selectedExplanation ? true : undefined}
           aria-hidden={selectedExplanation ? true : undefined}

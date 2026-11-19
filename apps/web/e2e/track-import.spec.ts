@@ -70,7 +70,17 @@ async function mockApplicationApi(page: Page) {
             durationSeconds: source.durationSeconds,
             capabilities: source.capabilities,
           }],
-          lyrics: null,
+          lyrics: {
+            id: "00000000-0000-0000-0000-000000000040",
+            version: 1,
+            language: "ja",
+            timingType: "line",
+            segments: candidate.normalizedSegments,
+            sourceProvider: candidate.sourceProvider,
+            sourceRecordId: candidate.providerRecordId,
+            attribution: candidate.attribution,
+            rightsCapabilities: candidate.rightsCapabilities,
+          },
         },
         trackCreated: true,
         sourceCreated: true,
@@ -120,15 +130,25 @@ test("imports a local file without uploading its bytes", async ({ page }) => {
 test("imports a YouTube reference through a visible provider boundary", async ({ page }) => {
   await page.addInitScript(() => {
     class Player {
+      frame: HTMLIFrameElement
+      currentTime = 0
+      options: any
+
       constructor(element: HTMLElement, options: any) {
-        const frame = document.createElement("iframe")
-        frame.title = "Mock official YouTube player"
-        element.append(frame)
+        this.options = options
+        this.frame = document.createElement("iframe")
+        this.frame.title = "Mock official YouTube player"
+        element.append(this.frame)
         setTimeout(() =>
           options.events.onReady({ target: { getDuration: () => 218 } }),
         )
       }
-      destroy() {}
+      destroy() { this.frame.remove() }
+      getCurrentTime() { return this.currentTime }
+      getDuration() { return 218 }
+      pauseVideo() { this.options.events.onStateChange({ data: 2 }) }
+      playVideo() { this.options.events.onStateChange({ data: 1 }) }
+      seekTo(seconds: number) { this.currentTime = seconds }
     }
     ;(window as any).YT = { Player }
   })
@@ -144,5 +164,20 @@ test("imports a YouTube reference through a visible provider boundary", async ({
   await expect(page.getByTitle("Mock official YouTube player")).toBeVisible()
   await page.getByRole("button", { name: "Continue with this video" }).click()
   await finishLyrics(page)
-  await expect(page.getByText("YouTube")).toBeVisible()
+  await expect(page.getByText("YouTube", { exact: true })).toBeVisible()
+  await expect(page.getByAltText("Beyond the Night YouTube thumbnail")).toBeVisible()
+  await page.getByRole("button", { name: "Play Beyond the Night with YouTube" }).click()
+  const libraryPlayer = page.getByRole("region", {
+    name: "YouTube player for Beyond the Night",
+  })
+  await expect(libraryPlayer).toBeVisible()
+  await expect(
+    libraryPlayer.getByTitle("Mock official YouTube player"),
+  ).toBeVisible()
+  await page.getByRole("button", { name: "Open lyrics" }).click()
+  const lyricsWorkspace = page.getByRole("dialog", {
+    name: "Synchronized lyrics for Beyond the Night",
+  })
+  await expect(lyricsWorkspace).toBeVisible()
+  await expect(lyricsWorkspace.getByText("夜の向こう")).toBeVisible()
 })

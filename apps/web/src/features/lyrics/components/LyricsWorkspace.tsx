@@ -31,6 +31,7 @@ type LyricsWorkspaceProps = {
   }>
   selectedExplanationId: string | null
   onSelectExplanation: (explanationId: string) => void
+  credit?: string
 }
 
 export function LyricsWorkspace({
@@ -43,6 +44,7 @@ export function LyricsWorkspace({
   annotations,
   selectedExplanationId,
   onSelectExplanation,
+  credit = "Words & music by haruno · Original UtaStream demo",
 }: LyricsWorkspaceProps) {
   const [translationsVisible, setTranslationsVisible] = useState(true)
   const activeIndex = findActiveSegmentIndex(document, playback.currentTime)
@@ -54,6 +56,9 @@ export function LyricsWorkspace({
     : playback.status === "ended"
       ? "Lyrics ended"
       : "Lyrics paused"
+  const translationsAvailable = document.segments.some(
+    (segment) => segment.translation.length > 0,
+  )
 
   useEffect(() => {
     const previousOverflow = documentElementOverflow()
@@ -127,14 +132,16 @@ export function LyricsWorkspace({
               <span className={playing ? styles.liveDot : styles.pausedDot} />
               {lyricStatus}
             </div>
-            <button
-              className={styles.translationToggle}
-              type="button"
-              aria-pressed={translationsVisible}
-              onClick={() => setTranslationsVisible((visible) => !visible)}
-            >
-              Translations {translationsVisible ? "on" : "off"}
-            </button>
+            {translationsAvailable && (
+              <button
+                className={styles.translationToggle}
+                type="button"
+                aria-pressed={translationsVisible}
+                onClick={() => setTranslationsVisible((visible) => !visible)}
+              >
+                Translations {translationsVisible ? "on" : "off"}
+              </button>
+            )}
           </div>
           <div className={styles.scroller}>
             {document.segments.map((segment, index) => {
@@ -164,7 +171,7 @@ export function LyricsWorkspace({
                     <p lang="ja">
                       <JapaneseText parts={segment.parts} />
                     </p>
-                    {translationsVisible && (
+                    {translationsVisible && segment.translation && (
                       <span className={styles.translation}>
                         {segment.translation}
                       </span>
@@ -202,7 +209,7 @@ export function LyricsWorkspace({
               )
             })}
             <p className={styles.credit}>
-              Words & music by haruno · Original UtaStream demo
+              {credit}
             </p>
           </div>
         </section>

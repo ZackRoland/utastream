@@ -6,7 +6,11 @@ const IFRAME_API_URL = "https://www.youtube.com/iframe_api"
 
 type YouTubePlayerInstance = {
   destroy: () => void
+  getCurrentTime: () => number
   getDuration: () => number
+  pauseVideo: () => void
+  playVideo: () => void
+  seekTo: (seconds: number, allowSeekAhead: boolean) => void
 }
 
 type YouTubePlayerConstructor = new (
@@ -24,6 +28,7 @@ type YouTubePlayerConstructor = new (
     events: {
       onReady: (event: { target: YouTubePlayerInstance }) => void
       onError: (event: { data: number }) => void
+      onStateChange: (event: { data: number }) => void
     }
   },
 ) => YouTubePlayerInstance
@@ -37,11 +42,25 @@ declare global {
 
 export type YouTubePlayerHandle = {
   destroy: () => void
+  getCurrentTime: () => number
+  getDuration: () => number
+  pause: () => void
+  play: () => void
+  seek: (seconds: number) => void
 }
+
+export type YouTubePlaybackState =
+  | "unstarted"
+  | "ended"
+  | "playing"
+  | "paused"
+  | "buffering"
+  | "cued"
 
 export type YouTubePlayerCallbacks = {
   onReady: (durationSeconds: number | null) => void
   onError: (error: YouTubeAvailabilityError) => void
+  onStateChange?: (state: YouTubePlaybackState) => void
 }
 
 let apiPromise: Promise<YouTubePlayerConstructor> | null = null
@@ -51,8 +70,13 @@ export async function mountYouTubePlayer(
   videoId: string,
   callbacks: YouTubePlayerCallbacks,
 ): Promise<YouTubePlayerHandle> {
+  const mountPoint = document.createElement("div")
+  mountPoint.style.width = "100%"
+  mountPoint.style.height = "100%"
+  element.replaceChildren(mountPoint)
+
   const Player = await loadYouTubeIframeApi()
-  const player = new Player(element, {
+  const player = new Player(mountPoint, {
     width: "100%",
     height: "100%",
     videoId,
@@ -70,10 +94,33 @@ export async function mountYouTubePlayer(
         )
       },
       onError: (event) => callbacks.onError(mapYouTubePlayerError(event.data)),
+      onStateChange: (event) => {
+        const state = mapYouTubePlaybackState(event.data)
+        if (state) callbacks.onStateChange?.(state)
+      },
     },
   })
 
-  return { destroy: () => player.destroy() }
+  return {
+    destroy: () => player.destroy(),
+    getCurrentTime: () => player.getCurrentTime(),
+    getDuration: () => player.getDuration(),
+    pause: () => player.pauseVideo(),
+    play: () => player.playVideo(),
+    seek: (seconds) => player.seekTo(seconds, true),
+  }
+}
+
+function mapYouTubePlaybackState(value: number): YouTubePlaybackState | null {
+  switch (value) {
+    case -1: return "unstarted"
+    case 0: return "ended"
+    case 1: return "playing"
+    case 2: return "paused"
+    case 3: return "buffering"
+    case 5: return "cued"
+    default: return null
+  }
 }
 
 function loadYouTubeIframeApi(): Promise<YouTubePlayerConstructor> {

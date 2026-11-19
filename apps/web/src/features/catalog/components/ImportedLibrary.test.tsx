@@ -1,12 +1,14 @@
-import { render, screen } from "@testing-library/react"
-import { describe, expect, it } from "vitest"
+import { fireEvent, render, screen } from "@testing-library/react"
+import { describe, expect, it, vi } from "vitest"
 
 import { ImportedLibrary } from "./ImportedLibrary"
 
 describe("ImportedLibrary", () => {
   it("shows one canonical item with multiple source states", () => {
+    const onPlay = vi.fn()
     render(
       <ImportedLibrary
+        onPlay={onPlay}
         items={[{
           libraryItemId: "library-1",
           trackId: "track-1",
@@ -54,5 +56,17 @@ describe("ImportedLibrary", () => {
     expect(screen.getByText("Local file required")).toBeVisible()
     expect(screen.getByText("Version 1")).toBeVisible()
     expect(screen.getByText("2")).toBeVisible()
+    expect(screen.getByAltText("夜の向こう YouTube thumbnail")).toHaveAttribute(
+      "src",
+      "https://i.ytimg.com/vi/M7lc1UVf-VE/hqdefault.jpg",
+    )
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Play 夜の向こう with YouTube" }),
+    )
+    expect(onPlay).toHaveBeenCalledWith(
+      expect.objectContaining({ trackId: "track-1" }),
+      expect.objectContaining({ id: "youtube-1", externalId: "M7lc1UVf-VE" }),
+    )
   })
 })
