@@ -11,7 +11,7 @@ uv sync
 uv run uvicorn apps.api.main:app --reload
 ```
 
-The initial increment exposes deterministic `/health`, `/ready`, and OpenAPI
-contracts without requiring PostgreSQL or external providers. Readiness gains
-database and provider checks only when those dependencies participate in the
-application.
+`/health`, `/ready`, and OpenAPI remain available without external provider
+calls. Library, learning, and import-completion routes require the migrated
+PostgreSQL URL in `UTASTREAM_DATABASE_URL`. Lyric lookup contacts LRCLIB only
+after a user explicitly starts a search.

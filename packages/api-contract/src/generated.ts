@@ -35,6 +35,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/learning-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Save Learning Item */
+        post: operations["saveLearningItem"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/lyrics/candidates": {
         parameters: {
             query?: never;
@@ -52,10 +69,117 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/track-imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Track Import */
+        post: operations["completeTrackImport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user_id}/learning-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User Learning Items */
+        get: operations["getUserLearningItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/users/{user_id}/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get User Library */
+        get: operations["getUserLibrary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CompleteTrackImportRequest */
+        CompleteTrackImportRequest: {
+            /** Album */
+            album?: string | null;
+            /** Artist */
+            artist: string;
+            lyrics: components["schemas"]["ConfirmedLyricInput"];
+            source: components["schemas"]["ImportSourceInput"];
+            /** Title */
+            title: string;
+            /**
+             * Userid
+             * Format: uuid
+             */
+            userId: string;
+        };
+        /** CompleteTrackImportResponse */
+        CompleteTrackImportResponse: {
+            item: components["schemas"]["LibraryTrack"];
+            /** Libraryitemcreated */
+            libraryItemCreated: boolean;
+            /** Sourcecreated */
+            sourceCreated: boolean;
+            /** Trackcreated */
+            trackCreated: boolean;
+        };
+        /** ConfirmedLyricInput */
+        ConfirmedLyricInput: {
+            /** Attribution */
+            attribution: string;
+            /**
+             * Confirmedat
+             * Format: date-time
+             */
+            confirmedAt: string;
+            /** Durationdifferenceseconds */
+            durationDifferenceSeconds: number | null;
+            /** Lyricdocumentversion */
+            lyricDocumentVersion: number;
+            /** Matchingpolicyversion */
+            matchingPolicyVersion: string;
+            /** Normalizedsegments */
+            normalizedSegments: {
+                [key: string]: unknown;
+            }[];
+            /** Providerrecordid */
+            providerRecordId: string;
+            /** Rightscapabilities */
+            rightsCapabilities: {
+                [key: string]: unknown;
+            };
+            /** Score */
+            score: number;
+            /** Timingoffsetms */
+            timingOffsetMs: number;
+        };
         /** ErrorDetail */
         ErrorDetail: {
             /** Code */
@@ -77,6 +201,174 @@ export interface components {
              * @constant
              */
             status: "ok";
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ImportSourceInput */
+        ImportSourceInput: {
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "available" | "local_file_required";
+            /** Capabilities */
+            capabilities: {
+                [key: string]: unknown;
+            };
+            /** Durationseconds */
+            durationSeconds: number;
+            /** Externalid */
+            externalId: string | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "local_file" | "youtube";
+            /** Normalizedurl */
+            normalizedUrl: string | null;
+            /** Originalmetadata */
+            originalMetadata: {
+                [key: string]: unknown;
+            };
+            /** Provenance */
+            provenance: {
+                [key: string]: unknown;
+            };
+        };
+        /** LearningCollectionResponse */
+        LearningCollectionResponse: {
+            /** Items */
+            items: components["schemas"]["LearningItemResponse"][];
+        };
+        /** LearningItemResponse */
+        LearningItemResponse: {
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Lyricdocumentid
+             * Format: uuid
+             */
+            lyricDocumentId: string;
+            /** Segmentkey */
+            segmentKey: string;
+            /** Selectedtext */
+            selectedText: string;
+            /**
+             * Selectionkind
+             * @enum {string}
+             */
+            selectionKind: "expression" | "kanji";
+            /**
+             * Trackid
+             * Format: uuid
+             */
+            trackId: string;
+            /**
+             * Userid
+             * Format: uuid
+             */
+            userId: string;
+        };
+        /** LibraryLyricDocument */
+        LibraryLyricDocument: {
+            /** Attribution */
+            attribution: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Language */
+            language: string;
+            /** Rightscapabilities */
+            rightsCapabilities: {
+                [key: string]: unknown;
+            };
+            /** Segments */
+            segments: {
+                [key: string]: unknown;
+            }[];
+            /** Sourceprovider */
+            sourceProvider: string;
+            /** Sourcerecordid */
+            sourceRecordId: string | null;
+            /**
+             * Timingtype
+             * @enum {string}
+             */
+            timingType: "line" | "word";
+            /** Version */
+            version: number;
+        };
+        /** LibraryPlaybackSource */
+        LibraryPlaybackSource: {
+            /**
+             * Availability
+             * @enum {string}
+             */
+            availability: "available" | "unavailable" | "local_file_required";
+            /** Capabilities */
+            capabilities: {
+                [key: string]: unknown;
+            };
+            /** Durationseconds */
+            durationSeconds: number | null;
+            /** Externalid */
+            externalId: string | null;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "local_file" | "youtube" | "fixture";
+            /** Normalizedurl */
+            normalizedUrl: string | null;
+        };
+        /** LibraryResponse */
+        LibraryResponse: {
+            /** Items */
+            items: components["schemas"]["LibraryTrack"][];
+        };
+        /** LibraryTrack */
+        LibraryTrack: {
+            /** Album */
+            album: string | null;
+            /** Artist */
+            artist: string;
+            /** Durationseconds */
+            durationSeconds: number;
+            /**
+             * Libraryitemid
+             * Format: uuid
+             */
+            libraryItemId: string;
+            lyrics: components["schemas"]["LibraryLyricDocument"] | null;
+            /** Preferredsourceid */
+            preferredSourceId: string | null;
+            /** Sources */
+            sources: components["schemas"]["LibraryPlaybackSource"][];
+            /** Title */
+            title: string;
+            /**
+             * Trackid
+             * Format: uuid
+             */
+            trackId: string;
         };
         /** LyricCandidate */
         LyricCandidate: {
@@ -161,6 +453,46 @@ export interface components {
              */
             status: "ready";
         };
+        /** SaveLearningItemRequest */
+        SaveLearningItemRequest: {
+            /**
+             * Lyricdocumentid
+             * Format: uuid
+             */
+            lyricDocumentId: string;
+            /** Segmentkey */
+            segmentKey: string;
+            /** Selectedtext */
+            selectedText: string;
+            /**
+             * Selectionkind
+             * @enum {string}
+             */
+            selectionKind: "expression" | "kanji";
+            /**
+             * Trackid
+             * Format: uuid
+             */
+            trackId: string;
+            /**
+             * Userid
+             * Format: uuid
+             */
+            userId: string;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -237,6 +569,57 @@ export interface operations {
             };
         };
     };
+    saveLearningItem: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SaveLearningItemRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningItemResponse"];
+                };
+            };
+            /** @description Error response */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     getLyricCandidates: {
         parameters: {
             query: {
@@ -271,6 +654,155 @@ export interface operations {
             };
             /** @description Error response */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    completeTrackImport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CompleteTrackImportRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompleteTrackImportResponse"];
+                };
+            };
+            /** @description Error response */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    getUserLearningItems: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LearningCollectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Error response */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    getUserLibrary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LibraryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Error response */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

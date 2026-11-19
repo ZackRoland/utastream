@@ -18,6 +18,7 @@
     "build:web": "pnpm --filter @utastream/web build",
     "test:api": "uv run pytest",
     "test:web": "pnpm --filter @utastream/web test",
+    "test:e2e": "pnpm --filter @utastream/web test:e2e",
     "typecheck:web": "pnpm --filter @utastream/web typecheck"
   }
 }

@@ -10,12 +10,14 @@ import type {
 } from "../model/trackImport"
 import styles from "./AddTrackFlow.module.css"
 import { LyricMatchStep, type LyricLookup } from "./LyricMatchStep"
+import type { LibraryTrack } from "../../catalog/api/libraryApi"
 
 type AddTrackFlowProps = {
   state: TrackImportState
   dispatch: (action: TrackImportAction) => void
   onClose: () => void
   lyricLookup?: LyricLookup
+  onImported?: (item: LibraryTrack) => void
 }
 const sourceGuidance = {
   local_file: {
@@ -50,7 +52,13 @@ const sourceGuidance = {
   }
 >
 
-export function AddTrackFlow({ state, dispatch, onClose, lyricLookup }: AddTrackFlowProps) {
+export function AddTrackFlow({
+  state,
+  dispatch,
+  onClose,
+  lyricLookup,
+  onImported,
+}: AddTrackFlowProps) {
   const closeButton = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -146,6 +154,7 @@ export function AddTrackFlow({ state, dispatch, onClose, lyricLookup }: AddTrack
             sourceProbe={state.sourceProbe}
             onReplace={() => dispatch({ type: "replace_source" })}
             lookup={lyricLookup}
+            onImported={onImported}
           />
         )}
       </div>

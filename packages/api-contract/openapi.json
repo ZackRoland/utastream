@@ -1,6 +1,147 @@
 {
   "components": {
     "schemas": {
+      "CompleteTrackImportRequest": {
+        "properties": {
+          "album": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Album"
+          },
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "lyrics": {
+            "$ref": "#/components/schemas/ConfirmedLyricInput"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ImportSourceInput"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "userId": {
+            "format": "uuid",
+            "title": "Userid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "title",
+          "artist",
+          "source",
+          "lyrics"
+        ],
+        "title": "CompleteTrackImportRequest",
+        "type": "object"
+      },
+      "CompleteTrackImportResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/LibraryTrack"
+          },
+          "libraryItemCreated": {
+            "title": "Libraryitemcreated",
+            "type": "boolean"
+          },
+          "sourceCreated": {
+            "title": "Sourcecreated",
+            "type": "boolean"
+          },
+          "trackCreated": {
+            "title": "Trackcreated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "item",
+          "trackCreated",
+          "sourceCreated",
+          "libraryItemCreated"
+        ],
+        "title": "CompleteTrackImportResponse",
+        "type": "object"
+      },
+      "ConfirmedLyricInput": {
+        "properties": {
+          "attribution": {
+            "title": "Attribution",
+            "type": "string"
+          },
+          "confirmedAt": {
+            "format": "date-time",
+            "title": "Confirmedat",
+            "type": "string"
+          },
+          "durationDifferenceSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationdifferenceseconds"
+          },
+          "lyricDocumentVersion": {
+            "title": "Lyricdocumentversion",
+            "type": "integer"
+          },
+          "matchingPolicyVersion": {
+            "title": "Matchingpolicyversion",
+            "type": "string"
+          },
+          "normalizedSegments": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Normalizedsegments",
+            "type": "array"
+          },
+          "providerRecordId": {
+            "title": "Providerrecordid",
+            "type": "string"
+          },
+          "rightsCapabilities": {
+            "additionalProperties": true,
+            "title": "Rightscapabilities",
+            "type": "object"
+          },
+          "score": {
+            "title": "Score",
+            "type": "integer"
+          },
+          "timingOffsetMs": {
+            "title": "Timingoffsetms",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "providerRecordId",
+          "lyricDocumentVersion",
+          "normalizedSegments",
+          "attribution",
+          "rightsCapabilities",
+          "score",
+          "matchingPolicyVersion",
+          "confirmedAt",
+          "timingOffsetMs",
+          "durationDifferenceSeconds"
+        ],
+        "title": "ConfirmedLyricInput",
+        "type": "object"
+      },
       "ErrorDetail": {
         "properties": {
           "code": {
@@ -36,6 +177,19 @@
         "title": "ErrorEnvelope",
         "type": "object"
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthResponse": {
         "properties": {
           "status": {
@@ -46,6 +200,400 @@
           }
         },
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "ImportSourceInput": {
+        "properties": {
+          "availability": {
+            "enum": [
+              "available",
+              "local_file_required"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "capabilities": {
+            "additionalProperties": true,
+            "title": "Capabilities",
+            "type": "object"
+          },
+          "durationSeconds": {
+            "title": "Durationseconds",
+            "type": "number"
+          },
+          "externalId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Externalid"
+          },
+          "kind": {
+            "enum": [
+              "local_file",
+              "youtube"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "normalizedUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Normalizedurl"
+          },
+          "originalMetadata": {
+            "additionalProperties": true,
+            "title": "Originalmetadata",
+            "type": "object"
+          },
+          "provenance": {
+            "additionalProperties": true,
+            "title": "Provenance",
+            "type": "object"
+          }
+        },
+        "required": [
+          "kind",
+          "availability",
+          "externalId",
+          "normalizedUrl",
+          "durationSeconds",
+          "originalMetadata",
+          "capabilities",
+          "provenance"
+        ],
+        "title": "ImportSourceInput",
+        "type": "object"
+      },
+      "LearningCollectionResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LearningItemResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "LearningCollectionResponse",
+        "type": "object"
+      },
+      "LearningItemResponse": {
+        "properties": {
+          "createdAt": {
+            "format": "date-time",
+            "title": "Createdat",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lyricDocumentId": {
+            "format": "uuid",
+            "title": "Lyricdocumentid",
+            "type": "string"
+          },
+          "segmentKey": {
+            "title": "Segmentkey",
+            "type": "string"
+          },
+          "selectedText": {
+            "title": "Selectedtext",
+            "type": "string"
+          },
+          "selectionKind": {
+            "enum": [
+              "expression",
+              "kanji"
+            ],
+            "title": "Selectionkind",
+            "type": "string"
+          },
+          "trackId": {
+            "format": "uuid",
+            "title": "Trackid",
+            "type": "string"
+          },
+          "userId": {
+            "format": "uuid",
+            "title": "Userid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "trackId",
+          "lyricDocumentId",
+          "segmentKey",
+          "selectedText",
+          "selectionKind",
+          "createdAt"
+        ],
+        "title": "LearningItemResponse",
+        "type": "object"
+      },
+      "LibraryLyricDocument": {
+        "properties": {
+          "attribution": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attribution"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "language": {
+            "title": "Language",
+            "type": "string"
+          },
+          "rightsCapabilities": {
+            "additionalProperties": true,
+            "title": "Rightscapabilities",
+            "type": "object"
+          },
+          "segments": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Segments",
+            "type": "array"
+          },
+          "sourceProvider": {
+            "title": "Sourceprovider",
+            "type": "string"
+          },
+          "sourceRecordId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcerecordid"
+          },
+          "timingType": {
+            "enum": [
+              "line",
+              "word"
+            ],
+            "title": "Timingtype",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "language",
+          "timingType",
+          "segments",
+          "sourceProvider",
+          "sourceRecordId",
+          "attribution",
+          "rightsCapabilities"
+        ],
+        "title": "LibraryLyricDocument",
+        "type": "object"
+      },
+      "LibraryPlaybackSource": {
+        "properties": {
+          "availability": {
+            "enum": [
+              "available",
+              "unavailable",
+              "local_file_required"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "capabilities": {
+            "additionalProperties": true,
+            "title": "Capabilities",
+            "type": "object"
+          },
+          "durationSeconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Durationseconds"
+          },
+          "externalId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Externalid"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "local_file",
+              "youtube",
+              "fixture"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "normalizedUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Normalizedurl"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "availability",
+          "externalId",
+          "normalizedUrl",
+          "durationSeconds",
+          "capabilities"
+        ],
+        "title": "LibraryPlaybackSource",
+        "type": "object"
+      },
+      "LibraryResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryTrack"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "LibraryResponse",
+        "type": "object"
+      },
+      "LibraryTrack": {
+        "properties": {
+          "album": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Album"
+          },
+          "artist": {
+            "title": "Artist",
+            "type": "string"
+          },
+          "durationSeconds": {
+            "title": "Durationseconds",
+            "type": "number"
+          },
+          "libraryItemId": {
+            "format": "uuid",
+            "title": "Libraryitemid",
+            "type": "string"
+          },
+          "lyrics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LibraryLyricDocument"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "preferredSourceId": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Preferredsourceid"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryPlaybackSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "trackId": {
+            "format": "uuid",
+            "title": "Trackid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "libraryItemId",
+          "trackId",
+          "title",
+          "artist",
+          "album",
+          "durationSeconds",
+          "preferredSourceId",
+          "sources",
+          "lyrics"
+        ],
+        "title": "LibraryTrack",
         "type": "object"
       },
       "LyricCandidate": {
@@ -272,6 +820,91 @@
         ],
         "title": "ReadinessResponse",
         "type": "object"
+      },
+      "SaveLearningItemRequest": {
+        "properties": {
+          "lyricDocumentId": {
+            "format": "uuid",
+            "title": "Lyricdocumentid",
+            "type": "string"
+          },
+          "segmentKey": {
+            "title": "Segmentkey",
+            "type": "string"
+          },
+          "selectedText": {
+            "title": "Selectedtext",
+            "type": "string"
+          },
+          "selectionKind": {
+            "enum": [
+              "expression",
+              "kanji"
+            ],
+            "title": "Selectionkind",
+            "type": "string"
+          },
+          "trackId": {
+            "format": "uuid",
+            "title": "Trackid",
+            "type": "string"
+          },
+          "userId": {
+            "format": "uuid",
+            "title": "Userid",
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId",
+          "trackId",
+          "lyricDocumentId",
+          "segmentKey",
+          "selectedText",
+          "selectionKind"
+        ],
+        "title": "SaveLearningItemRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
       }
     }
   },
@@ -351,6 +984,67 @@
         "summary": "Get Readiness",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/v1/learning-items": {
+      "post": {
+        "operationId": "saveLearningItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveLearningItemRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningItemResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Save Learning Item",
+        "tags": [
+          "library"
         ]
       }
     },
@@ -451,6 +1145,193 @@
         "summary": "Get Lyric Candidates",
         "tags": [
           "lyrics"
+        ]
+      }
+    },
+    "/v1/track-imports": {
+      "post": {
+        "operationId": "completeTrackImport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteTrackImportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompleteTrackImportResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Complete Track Import",
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/learning-items": {
+      "get": {
+        "operationId": "getUserLearningItems",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LearningCollectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Get User Learning Items",
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/library": {
+      "get": {
+        "operationId": "getUserLibrary",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Get User Library",
+        "tags": [
+          "library"
         ]
       }
     }

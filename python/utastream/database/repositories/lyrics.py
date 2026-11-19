@@ -1,9 +1,12 @@
 """SQLAlchemy repository for versioned lyrics and source bindings."""
 
+from uuid import UUID
+
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from utastream.database.models import LyricDocumentRow, PlaybackLyricBindingRow
-from utastream.lyrics import LyricDocument, PlaybackLyricBinding
+from utastream.lyrics import LyricDocument, PlaybackLyricBinding, TimingType
 
 
 class LyricsRepository:
@@ -47,3 +50,71 @@ class LyricsRepository:
         )
         self._session.flush()
         return binding
+
+    def find_document(
+        self, *, track_id: UUID, source_provider: str, source_record_id: str
+    ) -> LyricDocument | None:
+        row = self._session.scalar(
+            select(LyricDocumentRow).where(
+                LyricDocumentRow.track_id == track_id,
+                LyricDocumentRow.source_provider == source_provider,
+                LyricDocumentRow.source_record_id == source_record_id,
+            )
+        )
+        if row is None:
+            return None
+        return self._to_document(row)
+
+    def get_document(self, document_id: UUID) -> LyricDocument | None:
+        row = self._session.get(LyricDocumentRow, document_id)
+        return self._to_document(row) if row is not None else None
+
+    def list_documents(self, track_id: UUID) -> list[LyricDocument]:
+        rows = self._session.scalars(
+            select(LyricDocumentRow)
+            .where(LyricDocumentRow.track_id == track_id)
+            .order_by(LyricDocumentRow.version, LyricDocumentRow.id)
+        )
+        return [self._to_document(row) for row in rows]
+
+    def find_binding(
+        self, *, playback_source_id: UUID, lyric_document_id: UUID
+    ) -> PlaybackLyricBinding | None:
+        row = self._session.scalar(
+            select(PlaybackLyricBindingRow).where(
+                PlaybackLyricBindingRow.playback_source_id == playback_source_id,
+                PlaybackLyricBindingRow.lyric_document_id == lyric_document_id,
+            )
+        )
+        if row is None:
+            return None
+        return PlaybackLyricBinding(
+            id=row.id,
+            track_id=row.track_id,
+            playback_source_id=row.playback_source_id,
+            lyric_document_id=row.lyric_document_id,
+            match_confidence=int(row.match_confidence),
+            matching_policy_version=row.matching_policy_version,
+            confirmed_by_user=row.confirmed_by_user,
+            confirmed_at=row.confirmed_at,
+            timing_offset_ms=row.timing_offset_ms,
+            duration_difference_ms=row.duration_difference_ms,
+            created_at=row.created_at,
+        )
+
+    @staticmethod
+    def _to_document(row: LyricDocumentRow) -> LyricDocument:
+        return LyricDocument(
+            id=row.id,
+            track_id=row.track_id,
+            language=row.language,
+            version=row.version,
+            timing_type=TimingType(row.timing_type),
+            segments=row.segments,
+            source_provider=row.source_provider,
+            source_record_id=row.source_record_id,
+            attribution=row.attribution,
+            rights_capabilities=row.rights_capabilities,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+        )

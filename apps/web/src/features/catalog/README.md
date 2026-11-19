@@ -9,6 +9,7 @@ Consumers import from `features/catalog`, never from its internal folders. A
 collection emits a `TrackId`; it does not start playback itself. The playback
 feature will consume that selection in the next increment.
 
-The current fixture content is prototype evidence. Before the walking skeleton
-is complete, its media and metadata provenance must be documented as required
-by `docs/product/walking-skeleton-v1.md`.
+The seeded fixture collection remains deterministic prototype evidence. The
+persisted-library surface is loaded through the application-owned API and
+shows canonical tracks, attached source count, lyric version, and explicit
+source availability such as `local file required`.

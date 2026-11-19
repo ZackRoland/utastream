@@ -6,6 +6,12 @@ import {
   type LyricCandidateQuery,
   type LyricCandidateResponse,
 } from "../../lyrics/api/lyricsApi"
+import {
+  LibraryApi,
+  type CompleteTrackImportRequest,
+  type CompleteTrackImportResponse,
+  type LibraryTrack,
+} from "../../catalog/api/libraryApi"
 import type { PlaybackSourceProbe } from "../model/trackImport"
 import styles from "./LyricMatchStep.module.css"
 
@@ -23,14 +29,22 @@ type Props = {
   sourceProbe: PlaybackSourceProbe
   onReplace: () => void
   lookup?: LyricLookup
+  persistImport?: (
+    request: CompleteTrackImportRequest,
+  ) => Promise<CompleteTrackImportResponse>
+  onImported?: (item: LibraryTrack) => void
 }
 
 const api = new LyricsApi()
+const libraryApi = new LibraryApi()
+const DEVELOPMENT_USER_ID = "00000000-0000-0000-0000-000000000001"
 
 export function LyricMatchStep({
   sourceProbe,
   onReplace,
   lookup = (query) => api.getCandidates(query),
+  persistImport = (request) => libraryApi.completeImport(request),
+  onImported,
 }: Props) {
   const initial = sourceProbe.searchMetadata
   const [title, setTitle] = useState(initial?.title ?? "")
@@ -43,6 +57,8 @@ export function LyricMatchStep({
   const [loading, setLoading] = useState(false)
   const [failed, setFailed] = useState(false)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
 
   const selected = useMemo(
     () => response?.candidates.find((candidate) => candidate.providerRecordId === selectedId),
@@ -76,6 +92,49 @@ export function LyricMatchStep({
     }
   }
 
+  async function confirm(candidate: LyricCandidate) {
+    setSaving(true)
+    setSaveError(false)
+    const confirmedAt = new Date().toISOString()
+    try {
+      const result = await persistImport({
+        userId: DEVELOPMENT_USER_ID,
+        title: candidate.title,
+        artist: candidate.artist,
+        album: candidate.album,
+        source: {
+          kind: sourceProbe.kind,
+          availability: sourceProbe.availability,
+          externalId: sourceProbe.externalId,
+          normalizedUrl: sourceProbe.normalizedUrl,
+          durationSeconds:
+            sourceProbe.durationSeconds ?? candidate.durationSeconds,
+          originalMetadata: sourceProbe.originalMetadata,
+          capabilities: sourceProbe.capabilities,
+          provenance: sourceProbe.provenance,
+        },
+        lyrics: {
+          providerRecordId: candidate.providerRecordId,
+          lyricDocumentVersion: candidate.lyricDocumentVersion,
+          normalizedSegments: candidate.normalizedSegments,
+          attribution: candidate.attribution,
+          rightsCapabilities: candidate.rightsCapabilities,
+          score: candidate.score,
+          matchingPolicyVersion: candidate.matchingPolicyVersion,
+          confirmedAt,
+          timingOffsetMs: offsetMs,
+          durationDifferenceSeconds: candidate.durationDifferenceSeconds,
+        },
+      })
+      setConfirmation({ candidate, timingOffsetMs: offsetMs, confirmedAt })
+      onImported?.(result.item)
+    } catch {
+      setSaveError(true)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (confirmation) {
     return (
       <div className={styles.content}>
@@ -93,8 +152,8 @@ export function LyricMatchStep({
           <div><dt>Confirmed</dt><dd>{confirmation.confirmedAt}</dd></div>
         </dl>
         <p className={styles.notice}>
-          Increment 9 will persist this confirmation and attach the playback
-          source to the source-neutral library track.
+          This source and lyric version are now attached to the source-neutral
+          library track. Local media bytes were not persisted.
         </p>
         <button type="button" onClick={onReplace}>Replace playback source</button>
       </div>
@@ -203,15 +262,17 @@ export function LyricMatchStep({
           <button
             className={styles.confirm}
             type="button"
-            disabled={!selected}
-            onClick={() => selected && setConfirmation({
-              candidate: selected,
-              timingOffsetMs: offsetMs,
-              confirmedAt: new Date().toISOString(),
-            })}
+            disabled={!selected || saving}
+            onClick={() => selected && void confirm(selected)}
           >
-            Confirm recording and lyrics
+            {saving ? "Adding to library…" : "Confirm recording and lyrics"}
           </button>
+          {saveError && (
+            <p className={styles.failure} role="alert">
+              The track could not be saved. Your source selection remains here
+              so you can retry.
+            </p>
+          )}
         </section>
       )}
     </div>

@@ -22,11 +22,14 @@ metadata but never the `File`, its bytes, or the object URL. Shared state marks
 that source `local_file_required` because it cannot be reopened from server
 metadata.
 
-Neither adapter may pretend that a canonical track was persisted before the
-integrated persistence increment exists.
-
 After source confirmation, the shared lyric step submits corrected metadata to
 the application API. The API identifies itself to LRCLIB, normalizes provider
 records into versioned line segments, and applies the versioned ADR-0008 score.
 Strong results may be preselected but always require user confirmation. Missing,
 rate-limited, overloaded, timeout, and unavailable states leave playback usable.
+
+Confirmed imports are completed atomically by the application API. The API
+reuses a canonical track and library item where metadata and duration identify
+the same recording, attaches each playback source, stores the versioned lyric
+document and source binding, and updates the preferred source. Local bytes and
+temporary object URLs never enter the persistence request.

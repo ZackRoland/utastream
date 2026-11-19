@@ -13,6 +13,10 @@ export interface RequestOptions {
   signal?: AbortSignal
 }
 
+export interface JsonRequestOptions extends RequestOptions {
+  body: unknown
+}
+
 export class ApiClientError extends Error {
   readonly code: string
   readonly requestId: string | null
@@ -53,6 +57,21 @@ export class HttpClient {
       throw await normalizeApiError(response)
     }
 
+    return (await response.json()) as TResponse
+  }
+
+  async post<TResponse>(path: `/${string}`, options: JsonRequestOptions) {
+    const response = await this.#fetcher(`${this.#baseUrl}${path}`, {
+      body: JSON.stringify(options.body),
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      signal: options.signal,
+    })
+    if (!response.ok) throw await normalizeApiError(response)
     return (await response.json()) as TResponse
   }
 }

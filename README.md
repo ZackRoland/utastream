@@ -69,11 +69,13 @@ separate terminal.
 ### Start the application API
 
 ```sh
-npx pnpm@10.34.3 dev:api
+UTASTREAM_DATABASE_URL=postgresql+psycopg://localhost/utastream \
+  npx pnpm@10.34.3 dev:api
 ```
 
-The initial API exposes `http://127.0.0.1:8000/health`, `/ready`, and `/docs`.
-It does not require PostgreSQL until the catalog persistence increment.
+The API exposes `http://127.0.0.1:8000/health`, `/ready`, and `/docs`. Track
+import, personal-library retrieval, and learning-history persistence require
+the migrated PostgreSQL database configured above.
 
 Export the committed OpenAPI contract after changing an API model or route:
 
@@ -102,6 +104,7 @@ npx pnpm@10.34.3 format:check:api
 npx pnpm@10.34.3 lint:api
 npx pnpm@10.34.3 test:api
 npx pnpm@10.34.3 test:web
+npx pnpm@10.34.3 test:e2e
 npx pnpm@10.34.3 build:web
 ```
 
@@ -113,7 +116,9 @@ These commands perform the following checks:
 4. `lint:api` checks the Python process, shared modules, scripts, and tests.
 5. `test:api` runs the Python API and contract suite.
 6. `test:web` runs the Vitest unit and integration suite once.
-7. `build:web` runs the TypeScript build and creates an optimized Vite bundle.
+7. `test:e2e` runs deterministic local-file and YouTube browser journeys in an
+   installed Chrome browser.
+8. `build:web` runs the TypeScript build and creates an optimized Vite bundle.
 
 The production output is written to `apps/web/dist/`. That directory is
 generated, ignored by Git, and should not be committed.

@@ -1,8 +1,11 @@
-import { useCallback, useReducer, useRef, useState } from "react"
+import { useCallback, useEffect, useReducer, useRef, useState } from "react"
 
 import {
   SeededCollection,
+  ImportedLibrary,
+  LibraryApi,
   seededTracks,
+  type LibraryTrack,
   type TrackId,
 } from "../features/catalog"
 import {
@@ -27,7 +30,11 @@ import {
 import { Brand } from "../shared/ui/Brand"
 import styles from "./App.module.css"
 
+const libraryApi = new LibraryApi()
+const DEVELOPMENT_USER_ID = "00000000-0000-0000-0000-000000000001"
+
 export function App() {
+  const [importedTracks, setImportedTracks] = useState<LibraryTrack[]>([])
   const [lyricsOpen, setLyricsOpen] = useState(false)
   const [selectedExplanationId, setSelectedExplanationId] = useState<
     string | null
@@ -70,6 +77,22 @@ export function App() {
   const closeTrackImport = useCallback(() => {
     dispatchTrackImport({ type: "close" })
     requestAnimationFrame(() => addTrackTrigger.current?.focus())
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    void libraryApi
+      .getLibrary(DEVELOPMENT_USER_ID, { signal: controller.signal })
+      .then((library) => setImportedTracks(library.items))
+      .catch(() => undefined)
+    return () => controller.abort()
+  }, [])
+
+  const acceptImportedTrack = useCallback((item: LibraryTrack) => {
+    setImportedTracks((current) => [
+      ...current.filter((candidate) => candidate.trackId !== item.trackId),
+      item,
+    ])
   }, [])
   const selectedExplanation = beyondTheNightExplanations.find(
     (explanation) => explanation.id === selectedExplanationId,
@@ -152,6 +175,7 @@ export function App() {
             selectedTrackId={playback.state.trackId}
             onTrackSelect={selectTrack}
           />
+          <ImportedLibrary items={importedTracks} />
 
           <p className={styles.selection} aria-live="polite">
             {selectedTrack
@@ -246,6 +270,7 @@ export function App() {
         state={trackImport}
         dispatch={dispatchTrackImport}
         onClose={closeTrackImport}
+        onImported={acceptImportedTrack}
       />
 
       <audio ref={playback.mediaRef} preload="metadata" hidden />

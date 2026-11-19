@@ -8,6 +8,7 @@ from tests.python.conftest import alembic_config
 EXPECTED_TABLES = {
     "alembic_version",
     "library_items",
+    "learning_items",
     "lyric_documents",
     "playback_lyric_bindings",
     "playback_sources",

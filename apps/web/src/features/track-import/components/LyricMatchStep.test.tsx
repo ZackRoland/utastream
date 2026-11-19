@@ -48,6 +48,18 @@ const strongCandidate = {
   },
 }
 
+const persistedItem = {
+  libraryItemId: "library-1",
+  trackId: "track-1",
+  title: "夜の向こう",
+  artist: "Uta",
+  album: "Blue",
+  durationSeconds: 180,
+  preferredSourceId: "source-1",
+  sources: [],
+  lyrics: null,
+}
+
 describe("LyricMatchStep", () => {
   it("requires confirmation even when a strong candidate is preselected", async () => {
     const lookup = vi.fn().mockResolvedValue({
@@ -55,7 +67,20 @@ describe("LyricMatchStep", () => {
       candidates: [strongCandidate],
       retryAfterSeconds: null,
     })
-    render(<LyricMatchStep sourceProbe={sourceProbe} onReplace={vi.fn()} lookup={lookup} />)
+    const persistImport = vi.fn().mockResolvedValue({
+      item: persistedItem,
+      trackCreated: true,
+      sourceCreated: true,
+      libraryItemCreated: true,
+    })
+    render(
+      <LyricMatchStep
+        sourceProbe={sourceProbe}
+        onReplace={vi.fn()}
+        lookup={lookup}
+        persistImport={persistImport}
+      />,
+    )
 
     fireEvent.click(screen.getByRole("button", { name: "Search lyrics" }))
     expect(await screen.findByText("98/100 · strong · 180 seconds")).toBeVisible()
@@ -65,7 +90,10 @@ describe("LyricMatchStep", () => {
     })
     fireEvent.click(screen.getByRole("button", { name: "Confirm recording and lyrics" }))
 
-    expect(screen.getByRole("heading", { name: "Ready to add to the library" })).toBeVisible()
+    expect(
+      await screen.findByRole("heading", { name: "Ready to add to the library" }),
+    ).toBeVisible()
+    expect(persistImport).toHaveBeenCalledOnce()
     expect(screen.getByText("metadata-v1")).toBeVisible()
     expect(screen.getByText("350 ms")).toBeVisible()
   })
