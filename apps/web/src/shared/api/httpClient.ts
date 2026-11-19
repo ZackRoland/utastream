@@ -46,12 +46,14 @@ export class HttpClient {
   }
 
   async get<TResponse>(path: `/${string}`, options: RequestOptions = {}) {
-    const response = await this.#fetcher(`${this.#baseUrl}${path}`, {
-      credentials: "same-origin",
-      headers: { Accept: "application/json" },
-      method: "GET",
-      signal: options.signal,
-    })
+    const response = await fetchApiResponse(() =>
+      this.#fetcher(`${this.#baseUrl}${path}`, {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+        method: "GET",
+        signal: options.signal,
+      }),
+    )
 
     if (!response.ok) {
       throw await normalizeApiError(response)
@@ -61,18 +63,34 @@ export class HttpClient {
   }
 
   async post<TResponse>(path: `/${string}`, options: JsonRequestOptions) {
-    const response = await this.#fetcher(`${this.#baseUrl}${path}`, {
-      body: JSON.stringify(options.body),
-      credentials: "same-origin",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      signal: options.signal,
-    })
+    const response = await fetchApiResponse(() =>
+      this.#fetcher(`${this.#baseUrl}${path}`, {
+        body: JSON.stringify(options.body),
+        credentials: "same-origin",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        signal: options.signal,
+      }),
+    )
     if (!response.ok) throw await normalizeApiError(response)
     return (await response.json()) as TResponse
+  }
+}
+
+async function fetchApiResponse(request: () => Promise<Response>): Promise<Response> {
+  try {
+    return await request()
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error
+    throw new ApiClientError({
+      code: "network_error",
+      message: "The UtaStream API could not be reached.",
+      requestId: null,
+      status: 0,
+    })
   }
 }
 

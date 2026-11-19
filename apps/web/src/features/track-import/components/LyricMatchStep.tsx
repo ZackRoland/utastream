@@ -13,6 +13,7 @@ import {
   type LibraryTrack,
 } from "../../catalog/api/libraryApi"
 import type { PlaybackSourceProbe } from "../model/trackImport"
+import { ApiClientError } from "../../../shared/api"
 import styles from "./LyricMatchStep.module.css"
 
 export type LyricLookup = (
@@ -55,7 +56,7 @@ export function LyricMatchStep({
   const [rejectedIds, setRejectedIds] = useState<Set<string>>(() => new Set())
   const [offsetMs, setOffsetMs] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [failed, setFailed] = useState(false)
+  const [failureMessage, setFailureMessage] = useState<string | null>(null)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState(false)
@@ -68,7 +69,7 @@ export function LyricMatchStep({
   async function search() {
     if (!title.trim() || !artist.trim()) return
     setLoading(true)
-    setFailed(false)
+    setFailureMessage(null)
     setConfirmation(null)
     try {
       const result = await lookup({
@@ -84,8 +85,8 @@ export function LyricMatchStep({
           !rejectedIds.has(candidate.providerRecordId),
       )
       setSelectedId(strong?.providerRecordId ?? null)
-    } catch {
-      setFailed(true)
+    } catch (error) {
+      setFailureMessage(lyricLookupFailureMessage(error))
       setResponse(null)
     } finally {
       setLoading(false)
@@ -165,8 +166,8 @@ export function LyricMatchStep({
       <span className={styles.step}>STEP 5 · MATCH RECORDING AND LYRICS</span>
       <h2 id="add-track-title">Find the right lyrics</h2>
       <p className={styles.intro}>
-        Confirm the recording and timing. Playback remains usable if lookup is
-        missing or temporarily unavailable.
+        Title and artist are filled from the source when available. Correct them
+        only if needed, then confirm the recording and timing.
       </p>
       <div className={styles.fields}>
         <label>Title<input value={title} onChange={(event) => setTitle(event.target.value)} /></label>
@@ -185,9 +186,10 @@ export function LyricMatchStep({
         </button>
       </div>
 
-      {(failed || response?.status === "unavailable") && (
+      {(failureMessage || response?.status === "unavailable") && (
         <p className={styles.failure} role="alert">
-          Lyrics are temporarily unavailable. Playback is unaffected; retry later.
+          {failureMessage ?? "Lyrics are temporarily unavailable."} Playback is
+          unaffected; retry later.
         </p>
       )}
       {(response?.status === "timeout" || response?.status === "overloaded") && (
@@ -277,4 +279,16 @@ export function LyricMatchStep({
       )}
     </div>
   )
+}
+
+function lyricLookupFailureMessage(error: unknown): string {
+  if (error instanceof ApiClientError) {
+    return error.code === "network_error"
+      ? `${error.message} Start the API process and try again.`
+      : error.message
+  }
+  if (error instanceof TypeError) {
+    return "The UtaStream API could not be reached. Start the API process and try again."
+  }
+  return "The lyric request failed before LRCLIB could be reached."
 }

@@ -77,6 +77,12 @@ The API exposes `http://127.0.0.1:8000/health`, `/ready`, and `/docs`. Track
 import, personal-library retrieval, and learning-history persistence require
 the migrated PostgreSQL database configured above.
 
+Keep both development processes running in separate terminals while testing
+track import: Vite serves the interface, while the API reads YouTube metadata,
+queries LRCLIB, and persists confirmed tracks. The lyric and YouTube metadata
+lookups can run without PostgreSQL, but confirming a track into the library
+requires the migrated database.
+
 Export the committed OpenAPI contract after changing an API model or route:
 
 ```sh

@@ -37,6 +37,17 @@ async function mockApplicationApi(page: Page) {
       json: { status: "ready", candidates: [candidate], retryAfterSeconds: null },
     }),
   )
+  await page.route("**/api/v1/youtube/metadata?*", (route) =>
+    route.fulfill({
+      json: {
+        status: "ready",
+        title: "Beyond the Night",
+        artist: "Uta",
+        providerTitle: "Beyond the Night",
+        providerAuthor: "Uta - Topic",
+      },
+    }),
+  )
   await page.route("**/api/v1/track-imports", async (route) => {
     const request = route.request().postDataJSON()
     const source = request.source
@@ -132,6 +143,6 @@ test("imports a YouTube reference through a visible provider boundary", async ({
   await page.getByRole("button", { name: "Load preview" }).click()
   await expect(page.getByTitle("Mock official YouTube player")).toBeVisible()
   await page.getByRole("button", { name: "Continue with this video" }).click()
-  await finishLyrics(page, { title: "Beyond the Night", artist: "Uta" })
+  await finishLyrics(page)
   await expect(page.getByText("YouTube")).toBeVisible()
 })

@@ -13,6 +13,10 @@ import {
   type YouTubeReference,
 } from "./youtubeUrl"
 import styles from "./YouTubeSourceStep.module.css"
+import {
+  YouTubeMetadataApi,
+  type YouTubeMetadataResponse,
+} from "./youtubeMetadataApi"
 
 type MountPlayer = (
   element: HTMLElement,
@@ -24,16 +28,23 @@ type YouTubeSourceStepProps = {
   onBack: () => void
   onSourceReady: (sourceProbe: PlaybackSourceProbe) => void
   mountPlayer?: MountPlayer
+  lookupMetadata?: (videoId: string) => Promise<YouTubeMetadataResponse>
 }
+
+const metadataApi = new YouTubeMetadataApi()
+const defaultMetadataLookup = (videoId: string) => metadataApi.getMetadata(videoId)
 
 export function YouTubeSourceStep({
   onBack,
   onSourceReady,
   mountPlayer = mountYouTubePlayer,
+  lookupMetadata = defaultMetadataLookup,
 }: YouTubeSourceStepProps) {
   const [input, setInput] = useState("")
   const [reference, setReference] = useState<YouTubeReference | null>(null)
   const [durationSeconds, setDurationSeconds] = useState<number | null>(null)
+  const [metadata, setMetadata] = useState<YouTubeMetadataResponse | null>(null)
+  const [metadataLoading, setMetadataLoading] = useState(false)
   const [inputError, setInputError] = useState<string | null>(null)
   const [playerError, setPlayerError] = useState<YouTubeAvailabilityError | null>(
     null,
@@ -48,7 +59,28 @@ export function YouTubeSourceStep({
     let handle: YouTubePlayerHandle | null = null
     setLoading(true)
     setDurationSeconds(null)
+    setMetadata(null)
     setPlayerError(null)
+    setMetadataLoading(true)
+
+    void lookupMetadata(reference.videoId)
+      .then((result) => {
+        if (active) setMetadata(result)
+      })
+      .catch(() => {
+        if (active) {
+          setMetadata({
+            status: "unavailable",
+            title: null,
+            artist: null,
+            providerTitle: null,
+            providerAuthor: null,
+          })
+        }
+      })
+      .finally(() => {
+        if (active) setMetadataLoading(false)
+      })
 
     void mountPlayer(playerHost.current, reference.videoId, {
       onReady: (duration) => {
@@ -80,7 +112,7 @@ export function YouTubeSourceStep({
       active = false
       handle?.destroy()
     }
-  }, [mountPlayer, reference])
+  }, [lookupMetadata, mountPlayer, reference])
 
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -105,8 +137,17 @@ export function YouTubeSourceStep({
       normalizedUrl: reference.normalizedUrl,
       durationSeconds,
       availability: "available",
-      searchMetadata: null,
-      originalMetadata: {},
+      searchMetadata:
+        metadata?.status === "ready" && metadata.title && metadata.artist
+          ? { title: metadata.title, artist: metadata.artist }
+          : null,
+      originalMetadata:
+        metadata?.status === "ready"
+          ? {
+              providerTitle: metadata.providerTitle ?? null,
+              providerAuthor: metadata.providerAuthor ?? null,
+            }
+          : {},
       capabilities: {
         requiresVisiblePlayer: true,
         supportsSeeking: true,
@@ -172,6 +213,16 @@ export function YouTubeSourceStep({
                   ? "Duration unavailable"
                   : `${Math.round(durationSeconds)} seconds`}
               </small>
+              {metadataLoading && <small>Reading title and artist from YouTube…</small>}
+              {!metadataLoading && metadata?.status === "ready" && (
+                <strong>{metadata.title} · {metadata.artist}</strong>
+              )}
+              {!metadataLoading && metadata?.status === "unavailable" && (
+                <small>
+                  YouTube metadata could not be read. You can enter it manually
+                  on the next step.
+                </small>
+              )}
             </div>
           )}
         </section>
@@ -184,7 +235,7 @@ export function YouTubeSourceStep({
         <button
           className={styles.primary}
           type="button"
-          disabled={!reference || loading || !!playerError}
+          disabled={!reference || loading || metadataLoading || !!playerError}
           onClick={useSource}
         >
           Continue with this video

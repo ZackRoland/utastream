@@ -65,6 +65,14 @@ class LyricCandidateResponse(ApiModel):
     retry_after_seconds: int | None = None
 
 
+class YouTubeMetadataResponse(ApiModel):
+    status: Literal["ready", "unavailable"]
+    title: str | None = None
+    artist: str | None = None
+    provider_title: str | None = None
+    provider_author: str | None = None
+
+
 class ImportSourceInput(ApiModel):
     kind: Literal["local_file", "youtube"]
     availability: Literal["available", "local_file_required"]

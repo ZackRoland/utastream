@@ -12,12 +12,20 @@ describe("YouTubeSourceStep", () => {
       return { destroy: vi.fn() }
     })
     const onSourceReady = vi.fn()
+    const lookupMetadata = vi.fn().mockResolvedValue({
+      status: "ready",
+      title: "家族の結末",
+      artist: "österreich",
+      providerTitle: "家族の結末",
+      providerAuthor: "österreich - Topic",
+    })
 
     render(
       <YouTubeSourceStep
         onBack={vi.fn()}
         onSourceReady={onSourceReady}
         mountPlayer={mountPlayer}
+        lookupMetadata={lookupMetadata}
       />,
     )
     fireEvent.change(screen.getByLabelText("YouTube URL"), {
@@ -41,6 +49,11 @@ describe("YouTubeSourceStep", () => {
         normalizedUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
         durationSeconds: 137.4,
         availability: "available",
+        searchMetadata: { title: "家族の結末", artist: "österreich" },
+        originalMetadata: {
+          providerTitle: "家族の結末",
+          providerAuthor: "österreich - Topic",
+        },
         capabilities: {
           requiresVisiblePlayer: true,
           supportsSeeking: true,
@@ -63,6 +76,7 @@ describe("YouTubeSourceStep", () => {
         onBack={vi.fn()}
         onSourceReady={vi.fn()}
         mountPlayer={mountPlayer}
+        lookupMetadata={vi.fn().mockResolvedValue({ status: "unavailable" })}
       />,
     )
     fireEvent.change(screen.getByLabelText("YouTube URL"), {
@@ -93,6 +107,7 @@ describe("YouTubeSourceStep", () => {
         onBack={vi.fn()}
         onSourceReady={vi.fn()}
         mountPlayer={mountPlayer}
+        lookupMetadata={vi.fn()}
       />,
     )
     fireEvent.change(screen.getByLabelText("YouTube URL"), {

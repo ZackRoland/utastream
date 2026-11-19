@@ -138,6 +138,23 @@ describe("LyricMatchStep", () => {
     expect(screen.getByRole("button", { name: "Confirm recording and lyrics" })).toBeDisabled()
   })
 
+  it("explains when the application API is not running", async () => {
+    const lookup = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"))
+    render(
+      <LyricMatchStep
+        sourceProbe={sourceProbe}
+        onReplace={vi.fn()}
+        lookup={lookup}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole("button", { name: "Search lyrics" }))
+
+    expect(
+      await screen.findByText(/UtaStream API could not be reached/),
+    ).toBeVisible()
+  })
+
   it("retains rejected candidates for the active import", async () => {
     const lookup = vi.fn().mockResolvedValue({
       status: "ready",

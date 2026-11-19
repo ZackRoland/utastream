@@ -65,4 +65,18 @@ describe("SystemApi", () => {
       status: 503,
     })
   })
+
+  it("normalizes a stopped API as a network error", async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockRejectedValue(new TypeError("Failed to fetch"))
+    const api = new SystemApi(new HttpClient({ fetcher }))
+
+    await expect(api.getHealth()).rejects.toMatchObject({
+      code: "network_error",
+      message: "The UtaStream API could not be reached.",
+      requestId: null,
+      status: 0,
+    })
+  })
 })

@@ -905,6 +905,67 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "YouTubeMetadataResponse": {
+        "properties": {
+          "artist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Artist"
+          },
+          "providerAuthor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Providerauthor"
+          },
+          "providerTitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Providertitle"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "YouTubeMetadataResponse",
+        "type": "object"
       }
     }
   },
@@ -1332,6 +1393,59 @@
         "summary": "Get User Library",
         "tags": [
           "library"
+        ]
+      }
+    },
+    "/v1/youtube/metadata": {
+      "get": {
+        "operationId": "getYouTubeMetadata",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "video_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Za-z0-9_-]{11}$",
+              "title": "Video Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YouTubeMetadataResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Get Youtube Metadata",
+        "tags": [
+          "youtube"
         ]
       }
     }
