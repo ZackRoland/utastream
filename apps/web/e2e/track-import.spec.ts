@@ -28,13 +28,16 @@ const candidate = {
   attribution: "Lyrics supplied by LRCLIB",
 }
 
-async function mockApplicationApi(page: Page) {
+async function mockApplicationApi(
+  page: Page,
+  candidates = [candidate],
+) {
   await page.route("**/api/v1/users/*/library", (route) =>
     route.fulfill({ json: { items: [] } }),
   )
   await page.route("**/api/v1/lyrics/candidates?*", (route) =>
     route.fulfill({
-      json: { status: "ready", candidates: [candidate], retryAfterSeconds: null },
+      json: { status: "ready", candidates, retryAfterSeconds: null },
     }),
   )
   await page.route("**/api/v1/youtube/metadata?*", (route) =>
@@ -127,6 +130,53 @@ test("imports a local file without uploading its bytes", async ({ page }) => {
   await expect(page.getByText("Local file required")).toBeVisible()
 })
 
+test("keeps ten lyric candidates usable in a bounded scrolling panel", async ({
+  page,
+}) => {
+  const candidates = Array.from({ length: 10 }, (_, index) => ({
+    ...candidate,
+    providerRecordId: String(100 + index),
+    durationSeconds: 210 + index,
+    durationDifferenceSeconds: 8 + index,
+    score: 98 - index,
+  }))
+  await page.setViewportSize({ width: 1000, height: 600 })
+  await mockApplicationApi(page, candidates)
+  await page.goto("/")
+  await page.getByRole("button", { name: "Add track" }).click()
+  await page.getByRole("button", { name: /Choose an audio file/ }).click()
+  await page.getByRole("button", { name: "I understand, continue" }).click()
+  await page.locator('input[type="file"]').setInputFiles(
+    "public/media/beyond-the-night-fixture.mp3",
+  )
+  await page.getByLabel(/Artist/).fill("Uta")
+  await page.getByRole("button", { name: "Continue with this file" }).click()
+  await page.getByRole("button", { name: "Use this source" }).click()
+  await page.getByRole("button", { name: "Search lyrics" }).click()
+
+  await expect(page.getByRole("radio")).toHaveCount(10)
+  await page.getByRole("button", { name: "Preview lyrics" }).first().click()
+  await expect(
+    page.getByLabel("Lyric preview for Beyond the Night by Uta"),
+  ).toBeVisible()
+  const panel = page.getByRole("dialog").locator(":scope > div")
+  const dimensions = await panel.evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    scrollHeight: element.scrollHeight,
+  }))
+  expect(dimensions.scrollHeight).toBeGreaterThan(dimensions.clientHeight)
+
+  await panel.evaluate((element) => {
+    element.scrollTop = element.scrollHeight
+  })
+  await expect(page.getByRole("button", { name: "Close add track" })).toBeInViewport()
+
+  await panel.evaluate((element) => {
+    element.scrollTop = 0
+  })
+  await expect(page.getByRole("heading", { name: "Find the right lyrics" })).toBeInViewport()
+})
+
 test("imports a YouTube reference through a visible provider boundary", async ({ page }) => {
   await page.addInitScript(() => {
     class Player {
@@ -164,9 +214,13 @@ test("imports a YouTube reference through a visible provider boundary", async ({
   await expect(page.getByTitle("Mock official YouTube player")).toBeVisible()
   await page.getByRole("button", { name: "Continue with this video" }).click()
   await finishLyrics(page)
-  await expect(page.getByText("YouTube", { exact: true })).toBeVisible()
+  await expect(
+    page.getByText("Uta · Blue · YouTube · 3:38"),
+  ).toBeVisible()
   await expect(page.getByAltText("Beyond the Night YouTube thumbnail")).toBeVisible()
-  await page.getByRole("button", { name: "Play Beyond the Night with YouTube" }).click()
+  await page.getByRole("button", {
+    name: /Beyond the Night.*Uta.*YouTube.*3:38.*Lyrics ready/,
+  }).click()
   const libraryPlayer = page.getByRole("region", {
     name: "YouTube player for Beyond the Night",
   })

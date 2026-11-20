@@ -1,6 +1,8 @@
+import math
+
 from fastapi import APIRouter, Query
 
-from utastream.lyrics.lrc import parse_lrc
+from utastream.lyrics.lrc import LYRIC_NORMALIZATION_VERSION, parse_lrc
 from utastream.lyrics.lrclib import (
     LrclibClient,
     LrclibError,
@@ -10,6 +12,7 @@ from utastream.lyrics.lrclib import (
 )
 from utastream.lyrics.matching import (
     MATCHING_POLICY_VERSION,
+    MAX_CANDIDATE_RESULTS,
     CandidateMetadata,
     SearchMetadata,
     score_candidate,
@@ -86,6 +89,7 @@ def get_lyric_candidates(
                 instrumental=record.instrumental,
                 plain_lyrics=record.plain_lyrics,
                 synced_lyrics=record.synced_lyrics,
+                lyric_document_version=LYRIC_NORMALIZATION_VERSION,
                 timing_type="line" if segments else None,
                 normalized_segments=segments,
                 rights_capabilities={
@@ -100,7 +104,25 @@ def get_lyric_candidates(
             )
         )
     candidates.sort(key=lambda candidate: candidate.score, reverse=True)
+    candidates = _unique_duration_candidates(candidates)
     return LyricCandidateResponse(
         status="ready" if candidates else "missing",
         candidates=candidates,
     )
+
+
+def _unique_duration_candidates(
+    candidates: list[LyricCandidate],
+) -> list[LyricCandidate]:
+    """Keep the best-ranked candidate for each displayed whole-second duration."""
+    selected: list[LyricCandidate] = []
+    seen_durations: set[int] = set()
+    for candidate in candidates:
+        duration_seconds = math.floor(candidate.duration_seconds + 0.5)
+        if duration_seconds in seen_durations:
+            continue
+        seen_durations.add(duration_seconds)
+        selected.append(candidate)
+        if len(selected) == MAX_CANDIDATE_RESULTS:
+            break
+    return selected

@@ -10,12 +10,20 @@
   opacity: 0.58;
 }
 
-.card:disabled .play {
-  display: none;
-}
-
 .artworkWrap {
   position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-high);
+}
+
+.artworkWrap > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
 }
 
 .play {
@@ -65,4 +73,10 @@
   margin-top: var(--space-2);
   color: var(--color-accent);
   font-size: var(--font-size-xs);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card:hover .artworkWrap > img {
+    transform: scale(1.025);
+  }
 }

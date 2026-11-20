@@ -118,6 +118,13 @@ constants. A reasonable initial interpretation is:
 These values are starting hypotheses and must be calibrated against test data.
 No score silently establishes a permanent association on first import.
 
+The `metadata-v2` result-selection policy keeps confirmation usable when a
+provider returns many near-duplicate records. Candidates are scored and sorted
+before filtering. UtaStream then keeps only the highest-ranked candidate for
+each rounded whole-second duration and returns at most ten candidates. This is
+a presentation and review bound, not evidence that duration establishes
+canonical identity; the user must still confirm the selected lyric record.
+
 Duration comparison must distinguish an approximately matching recording from
 a clearly different performance. Covers, live versions, remixes, and videos
 with long intros require an explicit warning or manual timing offset even when
@@ -331,3 +338,5 @@ Reconsider this decision if:
 | --- | --- | --- |
 | 2026-10-27 | Accepted metadata-first identification, confirmation, and deferred fingerprinting strategy | Codex with Zack Roland |
 | 2026-11-10 | Clarified canonical library and source-to-lyric identity under ADR-0009 | Codex with Zack Roland |
+| 2026-11-19 | Added the `metadata-v2` ten-result cap and same-duration candidate collapse | Codex with Zack Roland |
+| 2026-11-19 | Defined blank LRC timestamps as non-visible timing boundaries and added pre-confirmation candidate previews | Codex with Zack Roland |

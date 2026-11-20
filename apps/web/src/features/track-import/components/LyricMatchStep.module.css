@@ -10,14 +10,27 @@
 .actions .primary, .confirm { border-color: var(--color-accent); color: var(--color-background); background: var(--color-accent); }
 .failure { padding: var(--space-4); border-left: 3px solid var(--color-accent); }
 .results { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
-.candidate { display: flex; align-items: start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.resultPolicy { color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.5; }
+.candidate { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
 .candidate label { display: flex; gap: var(--space-3); cursor: pointer; }
 .candidate button { color: var(--color-text-muted); font-size: var(--font-size-sm); text-decoration: underline; }
 .candidate span { display: grid; gap: var(--space-1); }
 .candidate small, .candidate em { color: var(--color-text-muted); }
+.candidateActions { display: flex; flex: 0 0 auto; gap: var(--space-3); }
+.candidatePreview { grid-column: 1 / -1; display: grid; max-height: 15rem; gap: var(--space-2); overflow-y: auto; padding: var(--space-3); border-left: 2px solid var(--color-text-secondary); background: rgb(181 210 211 / 5%); }
+.candidatePreview p { display: grid; grid-template-columns: 3rem 1fr; gap: var(--space-3); color: var(--color-text-muted); font-size: var(--font-size-sm); line-height: 1.5; }
+.candidatePreview .plainLyrics { display: block; color: var(--color-text); white-space: pre-line; }
+.candidatePreview time { color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+.candidatePreview span { color: var(--color-text); }
 .offset { margin-top: var(--space-3); }
 .confirm { justify-self: end; }
 .summary { display: grid; gap: var(--space-3); margin: var(--space-6) 0; }
 .summary > div { display: grid; grid-template-columns: 9rem 1fr; padding-bottom: var(--space-2); border-bottom: 1px solid var(--color-border); }
 .summary dt { color: var(--color-text-muted); }
-@media (max-width: 40rem) { .fields { grid-template-columns: 1fr; } .actions { align-items: stretch; flex-direction: column-reverse; } }
+@media (max-width: 40rem) {
+  .fields { grid-template-columns: 1fr; }
+  .actions { align-items: stretch; flex-direction: column-reverse; }
+  .candidate { grid-template-columns: 1fr; }
+  .candidatePreview { grid-column: 1; }
+  .candidateActions { flex-wrap: wrap; }
+}

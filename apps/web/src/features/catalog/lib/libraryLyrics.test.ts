@@ -3,33 +3,33 @@ import { describe, expect, it } from "vitest"
 import type { LibraryTrack } from "../api/libraryApi"
 import { toLyricDocument } from "./libraryLyrics"
 
+const track = {
+  album: null,
+  artist: "Artist",
+  libraryItemId: "library-1",
+  trackId: "track-1",
+  title: "Song",
+  durationSeconds: 120,
+  preferredSourceId: null,
+  sources: [],
+  lyrics: {
+    attribution: "Lyrics supplied by LRCLIB",
+    id: "lyrics-1",
+    language: "ja",
+    rightsCapabilities: {},
+    sourceProvider: "lrclib",
+    sourceRecordId: "42",
+    timingType: "line" as const,
+    version: 1,
+    segments: [
+      { startSeconds: 1, endSeconds: 4, text: "最初" },
+      { startSeconds: 4, endSeconds: null, text: "最後" },
+    ],
+  },
+} satisfies LibraryTrack
+
 describe("toLyricDocument", () => {
   it("normalizes persisted provider segments for the shared lyric workspace", () => {
-    const track = {
-      album: null,
-      artist: "Artist",
-      libraryItemId: "library-1",
-      trackId: "track-1",
-      title: "Song",
-      durationSeconds: 12,
-      preferredSourceId: null,
-      sources: [],
-      lyrics: {
-        attribution: "Lyrics supplied by LRCLIB",
-        id: "lyrics-1",
-        language: "ja",
-        rightsCapabilities: {},
-        sourceProvider: "lrclib",
-        sourceRecordId: "42",
-        timingType: "line",
-        version: 1,
-        segments: [
-          { startSeconds: 1, endSeconds: 4, text: "最初" },
-          { startSeconds: 4, endSeconds: null, text: "最後" },
-        ],
-      },
-    } satisfies LibraryTrack
-
     expect(toLyricDocument(track)?.segments).toEqual([
       {
         id: "lyrics-1:0",
@@ -41,10 +41,31 @@ describe("toLyricDocument", () => {
       {
         id: "lyrics-1:1",
         startSeconds: 4,
-        endSeconds: 12,
+        endSeconds: 120,
         parts: [{ text: "最後" }],
         translation: "",
       },
     ])
+  })
+
+  it("omits persisted blank timing markers without extending the prior line", () => {
+    const document = toLyricDocument({
+      ...track,
+      lyrics: {
+        ...track.lyrics!,
+        segments: [
+          { startSeconds: 87, endSeconds: 93, text: "Discordに耽美して" },
+          { startSeconds: 93, endSeconds: 111, text: "" },
+          { startSeconds: 111, endSeconds: null, text: "不条理" },
+        ],
+      },
+    })
+
+    expect(document?.segments).toHaveLength(2)
+    expect(document?.segments[0]).toMatchObject({
+      endSeconds: 93,
+      parts: [{ text: "Discordに耽美して" }],
+    })
+    expect(document?.segments[1]).toMatchObject({ startSeconds: 111 })
   })
 })

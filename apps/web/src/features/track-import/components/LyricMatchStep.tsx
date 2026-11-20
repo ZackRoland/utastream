@@ -14,6 +14,7 @@ import {
 } from "../../catalog/api/libraryApi"
 import type { PlaybackSourceProbe } from "../model/trackImport"
 import { ApiClientError } from "../../../shared/api"
+import { formatPlaybackTime } from "../../playback/lib/formatPlaybackTime"
 import styles from "./LyricMatchStep.module.css"
 
 export type LyricLookup = (
@@ -53,6 +54,7 @@ export function LyricMatchStep({
   const [album, setAlbum] = useState("")
   const [response, setResponse] = useState<LyricCandidateResponse | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [previewedId, setPreviewedId] = useState<string | null>(null)
   const [rejectedIds, setRejectedIds] = useState<Set<string>>(() => new Set())
   const [offsetMs, setOffsetMs] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -79,6 +81,7 @@ export function LyricMatchStep({
         durationSeconds: sourceProbe.durationSeconds ?? undefined,
       })
       setResponse(result)
+      setPreviewedId(null)
       const strong = result.candidates.find(
         (candidate) =>
           candidate.confidenceBand === "strong" &&
@@ -218,6 +221,10 @@ export function LyricMatchStep({
       ).length && (
         <section className={styles.results} aria-label="Lyric candidates">
           <h3>Confirm a candidate</h3>
+          <p className={styles.resultPolicy}>
+            Showing up to 10 ranked matches. Duplicate whole-second durations
+            are combined automatically.
+          </p>
           {response.candidates
             .filter((candidate) => !rejectedIds.has(candidate.providerRecordId))
             .map((candidate) => (
@@ -235,15 +242,56 @@ export function LyricMatchStep({
                     {candidate.warnings.map((warning) => <em key={warning}>{warning}</em>)}
                   </span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setRejectedIds((current) => new Set(current).add(candidate.providerRecordId))
-                    if (selectedId === candidate.providerRecordId) setSelectedId(null)
-                  }}
-                >
-                  Reject candidate
-                </button>
+                <div className={styles.candidateActions}>
+                  <button
+                    type="button"
+                    aria-expanded={previewedId === candidate.providerRecordId}
+                    onClick={() => setPreviewedId((current) =>
+                      current === candidate.providerRecordId
+                        ? null
+                        : candidate.providerRecordId
+                    )}
+                  >
+                    {previewedId === candidate.providerRecordId
+                      ? "Hide preview"
+                      : "Preview lyrics"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRejectedIds((current) => new Set(current).add(candidate.providerRecordId))
+                      if (selectedId === candidate.providerRecordId) setSelectedId(null)
+                      if (previewedId === candidate.providerRecordId) setPreviewedId(null)
+                    }}
+                  >
+                    Reject candidate
+                  </button>
+                </div>
+                {previewedId === candidate.providerRecordId && (
+                  <div
+                    className={styles.candidatePreview}
+                    aria-label={`Lyric preview for ${candidate.title} by ${candidate.artist}`}
+                  >
+                    {candidate.normalizedSegments.some(hasVisibleLyricText) ? (
+                      candidate.normalizedSegments
+                        .filter(hasVisibleLyricText)
+                        .map((segment, index) => (
+                          <p key={`${candidate.providerRecordId}:${index}`}>
+                            <time>
+                              {formatPlaybackTime(Number(segment.startSeconds))}
+                            </time>
+                            <span lang="ja">{String(segment.text)}</span>
+                          </p>
+                        ))
+                    ) : candidate.plainLyrics?.trim() ? (
+                      <p className={styles.plainLyrics} lang="ja">
+                        {candidate.plainLyrics}
+                      </p>
+                    ) : (
+                      <p>Timed lyric lines are unavailable for this candidate.</p>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           <label className={styles.offset}>
@@ -291,4 +339,8 @@ function lyricLookupFailureMessage(error: unknown): string {
     return "The UtaStream API could not be reached. Start the API process and try again."
   }
   return "The lyric request failed before LRCLIB could be reached."
+}
+
+function hasVisibleLyricText(segment: Record<string, unknown>): boolean {
+  return typeof segment.text === "string" && segment.text.trim().length > 0
 }

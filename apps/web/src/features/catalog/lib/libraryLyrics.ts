@@ -26,7 +26,11 @@ function toLyricSegment(
 ): LyricSegment | null {
   const startSeconds = value.startSeconds
   const text = value.text
-  if (typeof startSeconds !== "number" || typeof text !== "string") return null
+  if (
+    typeof startSeconds !== "number" ||
+    typeof text !== "string" ||
+    !text.trim()
+  ) return null
 
   const next = track.lyrics?.segments[index + 1]?.startSeconds
   const providerEnd = value.endSeconds
@@ -41,7 +45,7 @@ function toLyricSegment(
     id: `${track.lyrics?.id ?? track.trackId}:${index}`,
     startSeconds,
     endSeconds: Math.max(startSeconds, endSeconds),
-    parts: [{ text }],
+    parts: [{ text: text.trim() }],
     translation: "",
   }
 }

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
 import type { PlaybackSourceProbe } from "../model/trackImport"
@@ -84,6 +84,7 @@ describe("LyricMatchStep", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Search lyrics" }))
     expect(await screen.findByText("98/100 · strong · 180 seconds")).toBeVisible()
+    expect(screen.getByText(/Showing up to 10 ranked matches/)).toBeVisible()
     expect(screen.getByRole("radio", { name: /夜の向こう/ })).toBeChecked()
     fireEvent.change(screen.getByLabelText("Timing offset (milliseconds)"), {
       target: { value: "350" },
@@ -136,6 +137,26 @@ describe("LyricMatchStep", () => {
     expect(await screen.findByText("Edition or performance qualifiers differ.")).toBeVisible()
     expect(screen.getByRole("radio", { name: /夜の向こう Live/ })).not.toBeChecked()
     expect(screen.getByRole("button", { name: "Confirm recording and lyrics" })).toBeDisabled()
+  })
+
+  it("previews one timed lyric candidate before confirmation", async () => {
+    const lookup = vi.fn().mockResolvedValue({
+      status: "ready",
+      candidates: [strongCandidate],
+      retryAfterSeconds: null,
+    })
+    render(<LyricMatchStep sourceProbe={sourceProbe} onReplace={vi.fn()} lookup={lookup} />)
+    fireEvent.click(screen.getByRole("button", { name: "Search lyrics" }))
+    await screen.findByRole("radio", { name: /夜の向こう/ })
+
+    fireEvent.click(screen.getByRole("button", { name: "Preview lyrics" }))
+    const preview = screen.getByLabelText("Lyric preview for 夜の向こう by Uta")
+    expect(within(preview).getByText("0:01")).toBeVisible()
+    expect(within(preview).getByText("夜の向こう")).toBeVisible()
+    expect(screen.getByRole("button", { name: "Hide preview" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    )
   })
 
   it("explains when the application API is not running", async () => {

@@ -4,7 +4,7 @@
   inset: 0;
   display: grid;
   overflow-y: auto;
-  place-items: center;
+  place-items: start center;
   padding: var(--space-5);
   background: rgb(4 10 18 / 82%);
   backdrop-filter: blur(0.75rem);
@@ -12,7 +12,9 @@
 
 .panel {
   width: min(100%, 48rem);
-  overflow: hidden;
+  max-height: calc(100dvh - var(--space-5) - var(--space-5));
+  margin: auto 0;
+  overflow-y: auto;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm) var(--radius-lg) var(--radius-sm) var(--radius-sm);
   background: var(--color-surface);
@@ -20,12 +22,16 @@
 }
 
 .header {
+  position: sticky;
+  z-index: 2;
+  top: 0;
   display: flex;
   min-height: 4rem;
   align-items: center;
   justify-content: space-between;
   padding: var(--space-3) var(--space-5);
   border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .header > span,
@@ -219,7 +225,7 @@
 
   .panel {
     max-height: 94dvh;
-    overflow-y: auto;
+    margin: auto 0 0;
     border-right: 0;
     border-bottom: 0;
     border-left: 0;

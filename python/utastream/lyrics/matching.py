@@ -5,7 +5,8 @@ import unicodedata
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 
-MATCHING_POLICY_VERSION = "metadata-v1"
+MATCHING_POLICY_VERSION = "metadata-v2"
+MAX_CANDIDATE_RESULTS = 10
 
 
 @dataclass(frozen=True, slots=True)

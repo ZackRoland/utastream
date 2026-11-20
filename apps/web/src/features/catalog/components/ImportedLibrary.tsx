@@ -1,3 +1,4 @@
+import { formatTrackDuration } from "../lib/formatTrackDuration"
 import type { LibraryTrack } from "../api/libraryApi"
 import {
   getPlayableYouTubeSource,
@@ -5,6 +6,7 @@ import {
   youtubeThumbnailUrl,
 } from "../lib/libraryPlayback"
 import styles from "./ImportedLibrary.module.css"
+import { MusicCard } from "./MusicCard"
 
 type Props = {
   items: LibraryTrack[]
@@ -28,70 +30,48 @@ export function ImportedLibrary({ items, activeTrackId = null, onPlay }: Props) 
         {items.map((item) => {
           const playableSource = getPlayableYouTubeSource(item)
           const selected = item.trackId === activeTrackId
+          const sourceLabel = playableSource ? "YouTube" : "Local file"
+          const descriptiveMetadata = [
+            item.artist,
+            item.album,
+            sourceLabel,
+            formatTrackDuration(item.durationSeconds),
+          ].filter(Boolean).join(" · ")
+
           return (
-            <article
-              className={`${styles.card} ${selected ? styles.selected : ""}`}
+            <MusicCard
               key={item.libraryItemId}
-            >
-              {playableSource && (
+              artwork={playableSource ? (
                 <img
-                  className={styles.artwork}
                   src={youtubeThumbnailUrl(playableSource.externalId)}
                   alt={`${item.title} YouTube thumbnail`}
                 />
-              )}
-              <div className={styles.metadata}>
-                <h3>{item.title}</h3>
-                <p>{item.artist}</p>
-              </div>
-              <dl>
-                <div>
-                  <dt>Playback sources</dt>
-                  <dd>{item.sources.length}</dd>
-                </div>
-                <div>
-                  <dt>Lyrics</dt>
-                  <dd>
-                    {item.lyrics
-                      ? `Version ${item.lyrics.version}`
-                      : "Unavailable"}
-                  </dd>
-                </div>
-              </dl>
-              <ul>
-                {item.sources.map((source) => (
-                  <li key={source.id}>
-                    <strong>
-                      {source.kind === "youtube" ? "YouTube" : "Local file"}
-                    </strong>
-                    <span>
-                      {source.availability === "local_file_required"
-                        ? "Local file required"
-                        : "Available"}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              {playableSource ? (
-                <button
-                  className={styles.play}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => onPlay?.(item, playableSource)}
-                >
-                  {selected
-                    ? "Player open"
-                    : `Play ${item.title} with YouTube`}
-                </button>
               ) : (
-                <p className={styles.unavailable}>
-                  Reselect a local file to play this track.
-                </p>
+                <span className={styles.fallbackArtwork} aria-hidden="true">
+                  <span>{initialsFor(item.title)}</span>
+                  <small>{item.artist}</small>
+                </span>
               )}
-            </article>
+              title={item.title}
+              details={descriptiveMetadata}
+              status={
+                playableSource
+                  ? item.lyrics ? "Lyrics ready" : "Lyrics unavailable"
+                  : "Local file required"
+              }
+              selected={selected}
+              disabled={!playableSource}
+              onSelect={() => {
+                if (playableSource) onPlay?.(item, playableSource)
+              }}
+            />
           )
         })}
       </div>
     </section>
   )
+}
+
+function initialsFor(title: string): string {
+  return Array.from(title.trim()).slice(0, 2).join("").toUpperCase() || "♪"
 }
