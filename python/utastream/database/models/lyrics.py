@@ -10,10 +10,12 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     ForeignKeyConstraint,
+    Index,
     Numeric,
     String,
     UniqueConstraint,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PostgreSQLUUID
@@ -91,6 +93,12 @@ class PlaybackLyricBindingRow(Base):
             "(NOT confirmed_by_user AND confirmed_at IS NULL)",
             name="confirmation_consistent",
         ),
+        Index(
+            "uq_playback_lyric_bindings_active_source",
+            "playback_source_id",
+            unique=True,
+            postgresql_where=text("is_active"),
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(
@@ -109,6 +117,9 @@ class PlaybackLyricBindingRow(Base):
     confirmed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     timing_offset_ms: Mapped[int] = mapped_column(default=0)
     duration_difference_ms: Mapped[int | None]
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default="true"
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

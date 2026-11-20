@@ -39,5 +39,6 @@ class PlaybackLyricBinding:
     confirmed_at: datetime | None = None
     timing_offset_ms: int = 0
     duration_difference_ms: int | None = None
+    is_active: bool = True
     id: UUID = field(default_factory=uuid4)
     created_at: datetime | None = None

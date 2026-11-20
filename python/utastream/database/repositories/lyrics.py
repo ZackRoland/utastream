@@ -2,7 +2,7 @@
 
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from utastream.database.models import LyricDocumentRow, PlaybackLyricBindingRow
@@ -46,6 +46,7 @@ class LyricsRepository:
                 confirmed_at=binding.confirmed_at,
                 timing_offset_ms=binding.timing_offset_ms,
                 duration_difference_ms=binding.duration_difference_ms,
+                is_active=binding.is_active,
             )
         )
         self._session.flush()
@@ -88,19 +89,35 @@ class LyricsRepository:
         )
         if row is None:
             return None
-        return PlaybackLyricBinding(
-            id=row.id,
-            track_id=row.track_id,
-            playback_source_id=row.playback_source_id,
-            lyric_document_id=row.lyric_document_id,
-            match_confidence=int(row.match_confidence),
-            matching_policy_version=row.matching_policy_version,
-            confirmed_by_user=row.confirmed_by_user,
-            confirmed_at=row.confirmed_at,
-            timing_offset_ms=row.timing_offset_ms,
-            duration_difference_ms=row.duration_difference_ms,
-            created_at=row.created_at,
+        return self._to_binding(row)
+
+    def get_active_binding(
+        self, playback_source_id: UUID
+    ) -> PlaybackLyricBinding | None:
+        row = self._session.scalar(
+            select(PlaybackLyricBindingRow).where(
+                PlaybackLyricBindingRow.playback_source_id == playback_source_id,
+                PlaybackLyricBindingRow.is_active.is_(True),
+            )
         )
+        return self._to_binding(row) if row is not None else None
+
+    def activate_binding(self, binding_id: UUID) -> PlaybackLyricBinding | None:
+        row = self._session.get(PlaybackLyricBindingRow, binding_id)
+        if row is None:
+            return None
+        self._session.execute(
+            update(PlaybackLyricBindingRow)
+            .where(
+                PlaybackLyricBindingRow.playback_source_id == row.playback_source_id,
+                PlaybackLyricBindingRow.is_active.is_(True),
+                PlaybackLyricBindingRow.id != binding_id,
+            )
+            .values(is_active=False)
+        )
+        row.is_active = True
+        self._session.flush()
+        return self._to_binding(row)
 
     @staticmethod
     def _to_document(row: LyricDocumentRow) -> LyricDocument:
@@ -117,4 +134,21 @@ class LyricsRepository:
             rights_capabilities=row.rights_capabilities,
             created_at=row.created_at,
             updated_at=row.updated_at,
+        )
+
+    @staticmethod
+    def _to_binding(row: PlaybackLyricBindingRow) -> PlaybackLyricBinding:
+        return PlaybackLyricBinding(
+            id=row.id,
+            track_id=row.track_id,
+            playback_source_id=row.playback_source_id,
+            lyric_document_id=row.lyric_document_id,
+            match_confidence=int(row.match_confidence),
+            matching_policy_version=row.matching_policy_version,
+            confirmed_by_user=row.confirmed_by_user,
+            confirmed_at=row.confirmed_at,
+            timing_offset_ms=row.timing_offset_ms,
+            duration_difference_ms=row.duration_difference_ms,
+            is_active=row.is_active,
+            created_at=row.created_at,
         )
