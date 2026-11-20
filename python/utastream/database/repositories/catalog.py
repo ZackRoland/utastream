@@ -115,6 +115,25 @@ class CatalogRepository:
             for row in rows
         ]
 
+    def get_playback_source(self, source_id: UUID) -> PlaybackSource | None:
+        row = self._session.get(PlaybackSourceRow, source_id)
+        if row is None:
+            return None
+        return PlaybackSource(
+            id=row.id,
+            track_id=row.track_id,
+            kind=PlaybackSourceKind(row.kind),
+            external_id=row.external_id,
+            source_uri=row.source_uri,
+            original_metadata=row.original_metadata,
+            duration_ms=row.duration_ms,
+            availability=SourceAvailability(row.availability),
+            capabilities=row.capabilities,
+            provenance=row.provenance,
+            created_at=row.created_at,
+            updated_at=row.updated_at,
+        )
+
     def find_playback_source(
         self,
         *,

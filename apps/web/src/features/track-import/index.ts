@@ -1,4 +1,5 @@
 export { AddTrackFlow } from "./components/AddTrackFlow"
+export { ChangeLyricsDialog } from "./components/ChangeLyricsDialog"
 export {
   initialTrackImportState,
   trackImportReducer,

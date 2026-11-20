@@ -109,3 +109,110 @@ def test_two_source_imports_reuse_track_library_and_lyrics_across_restart(
     assert len(learning_items) == 1
     assert learning_items[0]["id"] == learning_id
     assert learning_items[0]["trackId"] == items[0]["trackId"]
+
+
+def test_replacing_source_lyrics_survives_reload_and_preserves_learning(
+    migrated_database_url: str,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("UTASTREAM_DATABASE_URL", migrated_database_url)
+    client = TestClient(create_app())
+    imported = client.post("/v1/track-imports", json=_request()).json()["item"]
+    original_document_id = imported["lyrics"]["id"]
+    source_id = imported["preferredSourceId"]
+    saved = client.post(
+        "/v1/learning-items",
+        json={
+            "userId": USER_ID,
+            "trackId": imported["trackId"],
+            "lyricDocumentId": original_document_id,
+            "segmentKey": "segment-1",
+            "selectedText": "向こう",
+            "selectionKind": "expression",
+        },
+    ).json()
+    replacement = deepcopy(_request()["lyrics"])
+    replacement.update(
+        {
+            "providerRecordId": "84",
+            "normalizedSegments": [
+                {
+                    "startSeconds": 3,
+                    "endSeconds": None,
+                    "text": "正しい歌詞",
+                }
+            ],
+            "score": 96,
+            "matchingPolicyVersion": "metadata-v2",
+            "timingOffsetMs": 750,
+        }
+    )
+
+    response = client.put(
+        f"/v1/users/{USER_ID}/library/{imported['trackId']}/sources/{source_id}/lyrics",
+        json={"lyrics": replacement},
+    )
+
+    assert response.status_code == 200
+    changed = response.json()["item"]
+    assert changed["trackId"] == imported["trackId"]
+    assert changed["preferredSourceId"] == source_id
+    assert changed["sources"] == imported["sources"]
+    assert changed["lyrics"]["sourceRecordId"] == "84"
+    assert changed["lyrics"]["version"] == imported["lyrics"]["version"] + 1
+    assert changed["lyrics"]["timingOffsetMs"] == 750
+    assert changed["lyrics"]["playbackSourceId"] == source_id
+
+    reloaded = (
+        TestClient(create_app()).get(f"/v1/users/{USER_ID}/library").json()["items"][0]
+    )
+    assert reloaded["lyrics"] == changed["lyrics"]
+    learning_items = client.get(f"/v1/users/{USER_ID}/learning-items").json()["items"]
+    assert learning_items == [saved]
+    assert learning_items[0]["lyricDocumentId"] == original_document_id
+
+
+def test_library_reads_lyrics_for_preferred_source_not_latest_track_document(
+    migrated_database_url: str,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("UTASTREAM_DATABASE_URL", migrated_database_url)
+    client = TestClient(create_app())
+    local = client.post("/v1/track-imports", json=_request()).json()["item"]
+    local_source_id = local["preferredSourceId"]
+    replacement = deepcopy(_request()["lyrics"])
+    replacement.update(
+        {
+            "providerRecordId": "84",
+            "normalizedSegments": [
+                {"startSeconds": 3, "endSeconds": None, "text": "ローカル版"}
+            ],
+            "timingOffsetMs": 500,
+        }
+    )
+    changed_local = client.put(
+        f"/v1/users/{USER_ID}/library/{local['trackId']}"
+        f"/sources/{local_source_id}/lyrics",
+        json={"lyrics": replacement},
+    ).json()["item"]
+    assert changed_local["lyrics"]["sourceRecordId"] == "84"
+
+    youtube_request = deepcopy(_request())
+    youtube_request["source"] = {
+        "kind": "youtube",
+        "availability": "available",
+        "externalId": "M7lc1UVf-VE",
+        "normalizedUrl": "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+        "durationSeconds": 181,
+        "originalMetadata": {},
+        "capabilities": {"requiresVisiblePlayer": True},
+        "provenance": {"provider": "youtube"},
+    }
+    youtube = client.post("/v1/track-imports", json=youtube_request).json()["item"]
+
+    assert youtube["preferredSourceId"] != local_source_id
+    assert youtube["lyrics"]["playbackSourceId"] == youtube["preferredSourceId"]
+    assert youtube["lyrics"]["sourceRecordId"] == "42"
+    assert youtube["lyrics"]["timingOffsetMs"] == 250
+    reloaded = client.get(f"/v1/users/{USER_ID}/library").json()["items"][0]
+    assert reloaded["lyrics"]["sourceRecordId"] == "42"

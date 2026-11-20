@@ -11,6 +11,8 @@ import {
   type CompleteTrackImportRequest,
   type CompleteTrackImportResponse,
   type LibraryTrack,
+  type ReplaceTrackLyricsRequest,
+  type ReplaceTrackLyricsResponse,
 } from "../../catalog/api/libraryApi"
 import type { PlaybackSourceProbe } from "../model/trackImport"
 import { ApiClientError } from "../../../shared/api"
@@ -35,6 +37,13 @@ type Props = {
     request: CompleteTrackImportRequest,
   ) => Promise<CompleteTrackImportResponse>
   onImported?: (item: LibraryTrack) => void
+  purpose?: "import" | "replacement"
+  initialMetadata?: { title: string; artist: string; album?: string | null }
+  initialOffsetMs?: number
+  currentProviderRecordId?: string | null
+  persistReplacement?: (
+    request: ReplaceTrackLyricsRequest,
+  ) => Promise<ReplaceTrackLyricsResponse>
 }
 
 const api = new LyricsApi()
@@ -47,16 +56,23 @@ export function LyricMatchStep({
   lookup = (query) => api.getCandidates(query),
   persistImport = (request) => libraryApi.completeImport(request),
   onImported,
+  purpose = "import",
+  initialMetadata,
+  initialOffsetMs = 0,
+  currentProviderRecordId = null,
+  persistReplacement,
 }: Props) {
   const initial = sourceProbe.searchMetadata
-  const [title, setTitle] = useState(initial?.title ?? "")
-  const [artist, setArtist] = useState(initial?.artist ?? "")
-  const [album, setAlbum] = useState("")
+  const [title, setTitle] = useState(initialMetadata?.title ?? initial?.title ?? "")
+  const [artist, setArtist] = useState(initialMetadata?.artist ?? initial?.artist ?? "")
+  const [album, setAlbum] = useState(initialMetadata?.album ?? "")
   const [response, setResponse] = useState<LyricCandidateResponse | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [previewedId, setPreviewedId] = useState<string | null>(null)
-  const [rejectedIds, setRejectedIds] = useState<Set<string>>(() => new Set())
-  const [offsetMs, setOffsetMs] = useState(0)
+  const [rejectedIds, setRejectedIds] = useState<Set<string>>(
+    () => new Set(currentProviderRecordId ? [currentProviderRecordId] : []),
+  )
+  const [offsetMs, setOffsetMs] = useState(initialOffsetMs)
   const [loading, setLoading] = useState(false)
   const [failureMessage, setFailureMessage] = useState<string | null>(null)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
@@ -100,36 +116,39 @@ export function LyricMatchStep({
     setSaving(true)
     setSaveError(false)
     const confirmedAt = new Date().toISOString()
+    const lyrics = {
+      providerRecordId: candidate.providerRecordId,
+      lyricDocumentVersion: candidate.lyricDocumentVersion,
+      normalizedSegments: candidate.normalizedSegments,
+      attribution: candidate.attribution,
+      rightsCapabilities: candidate.rightsCapabilities,
+      score: candidate.score,
+      matchingPolicyVersion: candidate.matchingPolicyVersion,
+      confirmedAt,
+      timingOffsetMs: offsetMs,
+      durationDifferenceSeconds: candidate.durationDifferenceSeconds,
+    }
     try {
-      const result = await persistImport({
-        userId: DEVELOPMENT_USER_ID,
-        title: candidate.title,
-        artist: candidate.artist,
-        album: candidate.album,
-        source: {
-          kind: sourceProbe.kind,
-          availability: sourceProbe.availability,
-          externalId: sourceProbe.externalId,
-          normalizedUrl: sourceProbe.normalizedUrl,
-          durationSeconds:
-            sourceProbe.durationSeconds ?? candidate.durationSeconds,
-          originalMetadata: sourceProbe.originalMetadata,
-          capabilities: sourceProbe.capabilities,
-          provenance: sourceProbe.provenance,
-        },
-        lyrics: {
-          providerRecordId: candidate.providerRecordId,
-          lyricDocumentVersion: candidate.lyricDocumentVersion,
-          normalizedSegments: candidate.normalizedSegments,
-          attribution: candidate.attribution,
-          rightsCapabilities: candidate.rightsCapabilities,
-          score: candidate.score,
-          matchingPolicyVersion: candidate.matchingPolicyVersion,
-          confirmedAt,
-          timingOffsetMs: offsetMs,
-          durationDifferenceSeconds: candidate.durationDifferenceSeconds,
-        },
-      })
+      const result = persistReplacement
+        ? await persistReplacement({ lyrics })
+        : await persistImport({
+            userId: DEVELOPMENT_USER_ID,
+            title: candidate.title,
+            artist: candidate.artist,
+            album: candidate.album,
+            source: {
+              kind: sourceProbe.kind,
+              availability: sourceProbe.availability,
+              externalId: sourceProbe.externalId,
+              normalizedUrl: sourceProbe.normalizedUrl,
+              durationSeconds:
+                sourceProbe.durationSeconds ?? candidate.durationSeconds,
+              originalMetadata: sourceProbe.originalMetadata,
+              capabilities: sourceProbe.capabilities,
+              provenance: sourceProbe.provenance,
+            },
+            lyrics,
+          })
       setConfirmation({ candidate, timingOffsetMs: offsetMs, confirmedAt })
       onImported?.(result.item)
     } catch {
@@ -143,7 +162,9 @@ export function LyricMatchStep({
     return (
       <div className={styles.content}>
         <span className={styles.step}>LYRICS CONFIRMED</span>
-        <h2 id="add-track-title">Ready to add to the library</h2>
+        <h2 id="add-track-title">
+          {purpose === "replacement" ? "Lyrics changed" : "Ready to add to the library"}
+        </h2>
         <p className={styles.intro}>
           {confirmation.candidate.title} by {confirmation.candidate.artist} is
           confirmed with LRCLIB record {confirmation.candidate.providerRecordId}.
@@ -156,21 +177,29 @@ export function LyricMatchStep({
           <div><dt>Confirmed</dt><dd>{confirmation.confirmedAt}</dd></div>
         </dl>
         <p className={styles.notice}>
-          This source and lyric version are now attached to the source-neutral
-          library track. Local media bytes were not persisted.
+          {purpose === "replacement"
+            ? "The selected playback source now uses this lyric version. Earlier versions and saved learning remain unchanged."
+            : "This source and lyric version are now attached to the source-neutral library track. Local media bytes were not persisted."}
         </p>
-        <button type="button" onClick={onReplace}>Replace playback source</button>
+        <button type="button" onClick={onReplace}>
+          {purpose === "replacement" ? "Done" : "Replace playback source"}
+        </button>
       </div>
     )
   }
 
   return (
     <div className={styles.content}>
-      <span className={styles.step}>STEP 5 · MATCH RECORDING AND LYRICS</span>
-      <h2 id="add-track-title">Find the right lyrics</h2>
+      <span className={styles.step}>
+        {purpose === "replacement" ? "LYRIC MANAGEMENT" : "STEP 5 · MATCH RECORDING AND LYRICS"}
+      </span>
+      <h2 id="add-track-title">
+        {purpose === "replacement" ? "Review/change lyrics" : "Find the right lyrics"}
+      </h2>
       <p className={styles.intro}>
-        Title and artist are filled from the source when available. Correct them
-        only if needed, then confirm the recording and timing.
+        {purpose === "replacement"
+          ? "Search and preview alternatives for this playback source. Confirming a better match keeps the track, source, and saved learning history intact."
+          : "Title and artist are filled from the source when available. Correct them only if needed, then confirm the recording and timing."}
       </p>
       <div className={styles.fields}>
         <label>Title<input value={title} onChange={(event) => setTitle(event.target.value)} /></label>
@@ -178,7 +207,9 @@ export function LyricMatchStep({
         <label>Album <span>(optional)</span><input value={album} onChange={(event) => setAlbum(event.target.value)} /></label>
       </div>
       <div className={styles.actions}>
-        <button type="button" onClick={onReplace}>Replace source</button>
+        <button type="button" onClick={onReplace}>
+          {purpose === "replacement" ? "Cancel" : "Replace source"}
+        </button>
         <button
           className={styles.primary}
           type="button"
@@ -315,12 +346,15 @@ export function LyricMatchStep({
             disabled={!selected || saving}
             onClick={() => selected && void confirm(selected)}
           >
-            {saving ? "Adding to library…" : "Confirm recording and lyrics"}
+            {saving
+              ? purpose === "replacement" ? "Changing lyrics…" : "Adding to library…"
+              : purpose === "replacement" ? "Use these lyrics" : "Confirm recording and lyrics"}
           </button>
           {saveError && (
             <p className={styles.failure} role="alert">
-              The track could not be saved. Your source selection remains here
-              so you can retry.
+              {purpose === "replacement"
+                ? "The lyrics could not be changed. Playback and the current lyric version are unaffected."
+                : "The track could not be saved. Your source selection remains here so you can retry."}
             </p>
           )}
         </section>

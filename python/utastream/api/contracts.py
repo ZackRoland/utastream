@@ -118,6 +118,8 @@ class LibraryPlaybackSource(ApiModel):
 
 class LibraryLyricDocument(ApiModel):
     id: UUID
+    binding_id: UUID
+    playback_source_id: UUID
     version: int
     language: str
     timing_type: Literal["line", "word"]
@@ -126,6 +128,7 @@ class LibraryLyricDocument(ApiModel):
     source_record_id: str | None
     attribution: str | None
     rights_capabilities: dict[str, Any]
+    timing_offset_ms: int
 
 
 class LibraryTrack(ApiModel):
@@ -149,6 +152,14 @@ class CompleteTrackImportResponse(ApiModel):
 
 class LibraryResponse(ApiModel):
     items: list[LibraryTrack]
+
+
+class ReplaceTrackLyricsRequest(ApiModel):
+    lyrics: ConfirmedLyricInput
+
+
+class ReplaceTrackLyricsResponse(ApiModel):
+    item: LibraryTrack
 
 
 class SaveLearningItemRequest(ApiModel):

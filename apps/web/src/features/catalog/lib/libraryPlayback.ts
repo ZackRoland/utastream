@@ -2,6 +2,12 @@ import type { LibraryTrack } from "../api/libraryApi"
 
 export type LibraryPlaybackSource = LibraryTrack["sources"][number]
 
+export function getPreferredSource(
+  item: LibraryTrack,
+): LibraryPlaybackSource | null {
+  return item.sources.find((source) => source.id === item.preferredSourceId) ?? null
+}
+
 export function getPlayableYouTubeSource(
   item: LibraryTrack,
 ): (LibraryPlaybackSource & { externalId: string }) | null {
@@ -9,7 +15,7 @@ export function getPlayableYouTubeSource(
     (source) => source.id === item.preferredSourceId,
   )
   if (isPlayableYouTubeSource(preferred)) return preferred
-  return item.sources.find(isPlayableYouTubeSource) ?? null
+  return null
 }
 
 export function youtubeThumbnailUrl(videoId: string): string {

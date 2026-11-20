@@ -19,6 +19,8 @@ describe("ImportedLibrary", () => {
           preferredSourceId: "youtube-1",
           lyrics: {
             id: "lyrics-1",
+            bindingId: "binding-1",
+            playbackSourceId: "youtube-1",
             version: 1,
             language: "ja",
             timingType: "line",
@@ -27,6 +29,7 @@ describe("ImportedLibrary", () => {
             sourceRecordId: "42",
             attribution: "Lyrics supplied by LRCLIB",
             rightsCapabilities: { status: "unknown" },
+            timingOffsetMs: 0,
           },
           sources: [
             {

@@ -14,11 +14,14 @@ const track = {
   sources: [],
   lyrics: {
     attribution: "Lyrics supplied by LRCLIB",
+    bindingId: "binding-1",
     id: "lyrics-1",
     language: "ja",
     rightsCapabilities: {},
     sourceProvider: "lrclib",
     sourceRecordId: "42",
+    playbackSourceId: "source-1",
+    timingOffsetMs: 0,
     timingType: "line" as const,
     version: 1,
     segments: [
@@ -67,5 +70,21 @@ describe("toLyricDocument", () => {
       parts: [{ text: "Discordに耽美して" }],
     })
     expect(document?.segments[1]).toMatchObject({ startSeconds: 111 })
+  })
+
+  it("applies the source binding timing offset to synchronized segments", () => {
+    const document = toLyricDocument({
+      ...track,
+      lyrics: { ...track.lyrics!, timingOffsetMs: 750 },
+    })
+
+    expect(document?.segments[0]).toMatchObject({
+      startSeconds: 1.75,
+      endSeconds: 4.75,
+    })
+    expect(document?.segments[1]).toMatchObject({
+      startSeconds: 4.75,
+      endSeconds: 120.75,
+    })
   })
 })

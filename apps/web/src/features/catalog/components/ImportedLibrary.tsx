@@ -2,6 +2,7 @@ import { formatTrackDuration } from "../lib/formatTrackDuration"
 import type { LibraryTrack } from "../api/libraryApi"
 import {
   getPlayableYouTubeSource,
+  getPreferredSource,
   type LibraryPlaybackSource,
   youtubeThumbnailUrl,
 } from "../lib/libraryPlayback"
@@ -15,9 +16,15 @@ type Props = {
     track: LibraryTrack,
     source: LibraryPlaybackSource & { externalId: string },
   ) => void
+  onReviewLyrics?: (item: LibraryTrack, source: LibraryPlaybackSource) => void
 }
 
-export function ImportedLibrary({ items, activeTrackId = null, onPlay }: Props) {
+export function ImportedLibrary({
+  items,
+  activeTrackId = null,
+  onPlay,
+  onReviewLyrics,
+}: Props) {
   if (!items.length) return null
 
   return (
@@ -30,6 +37,7 @@ export function ImportedLibrary({ items, activeTrackId = null, onPlay }: Props) 
         {items.map((item) => {
           const playableSource = getPlayableYouTubeSource(item)
           const selected = item.trackId === activeTrackId
+          const preferredSource = getPreferredSource(item)
           const sourceLabel = playableSource ? "YouTube" : "Local file"
           const descriptiveMetadata = [
             item.artist,
@@ -39,32 +47,42 @@ export function ImportedLibrary({ items, activeTrackId = null, onPlay }: Props) 
           ].filter(Boolean).join(" · ")
 
           return (
-            <MusicCard
-              key={item.libraryItemId}
-              artwork={playableSource ? (
-                <img
-                  src={youtubeThumbnailUrl(playableSource.externalId)}
-                  alt={`${item.title} YouTube thumbnail`}
-                />
-              ) : (
-                <span className={styles.fallbackArtwork} aria-hidden="true">
-                  <span>{initialsFor(item.title)}</span>
-                  <small>{item.artist}</small>
-                </span>
+            <div className={styles.cardGroup} key={item.libraryItemId}>
+              <MusicCard
+                artwork={playableSource ? (
+                  <img
+                    src={youtubeThumbnailUrl(playableSource.externalId)}
+                    alt={`${item.title} YouTube thumbnail`}
+                  />
+                ) : (
+                  <span className={styles.fallbackArtwork} aria-hidden="true">
+                    <span>{initialsFor(item.title)}</span>
+                    <small>{item.artist}</small>
+                  </span>
+                )}
+                title={item.title}
+                details={descriptiveMetadata}
+                status={
+                  playableSource
+                    ? item.lyrics ? "Lyrics ready" : "Lyrics unavailable"
+                    : "Local file required"
+                }
+                selected={selected}
+                disabled={!playableSource}
+                onSelect={() => {
+                  if (playableSource) onPlay?.(item, playableSource)
+                }}
+              />
+              {onReviewLyrics && preferredSource && preferredSource.kind !== "fixture" && (
+                <button
+                  className={styles.reviewLyrics}
+                  type="button"
+                  onClick={() => onReviewLyrics?.(item, preferredSource)}
+                >
+                  Review/change lyrics
+                </button>
               )}
-              title={item.title}
-              details={descriptiveMetadata}
-              status={
-                playableSource
-                  ? item.lyrics ? "Lyrics ready" : "Lyrics unavailable"
-                  : "Local file required"
-              }
-              selected={selected}
-              disabled={!playableSource}
-              onSelect={() => {
-                if (playableSource) onPlay?.(item, playableSource)
-              }}
-            />
+            </div>
           )
         })}
       </div>

@@ -11,6 +11,12 @@ from utastream.database.repositories.catalog import CatalogRepository
 from utastream.database.repositories.learning import LearningRepository
 from utastream.database.repositories.lyrics import LyricsRepository
 from utastream.database.session import create_database_engine, create_session_factory
+from utastream.lyrics.replacement import (
+    LibraryTrackNotFoundError,
+    PlaybackSourceNotFoundError,
+    ReplaceLyricsCommand,
+    replace_active_lyrics,
+)
 from utastream.track_import import ImportCommand, complete_import
 
 from ..contracts import (
@@ -22,6 +28,8 @@ from ..contracts import (
     LibraryPlaybackSource,
     LibraryResponse,
     LibraryTrack,
+    ReplaceTrackLyricsRequest,
+    ReplaceTrackLyricsResponse,
     SaveLearningItemRequest,
 )
 from ..errors import error_responses
@@ -120,6 +128,49 @@ def get_user_library(
     )
 
 
+@router.put(
+    "/users/{user_id}/library/{track_id}/sources/{source_id}/lyrics",
+    operation_id="replaceLibraryTrackLyrics",
+    response_model=ReplaceTrackLyricsResponse,
+    responses=error_responses(404, 422, 500, 503),
+)
+def replace_library_track_lyrics(
+    user_id: UUID,
+    track_id: UUID,
+    source_id: UUID,
+    request: ReplaceTrackLyricsRequest,
+    session: DatabaseSession,
+) -> ReplaceTrackLyricsResponse:
+    try:
+        replace_active_lyrics(
+            session,
+            ReplaceLyricsCommand(
+                user_id=user_id,
+                track_id=track_id,
+                playback_source_id=source_id,
+                provider_record_id=request.lyrics.provider_record_id,
+                segments=request.lyrics.normalized_segments,
+                attribution=request.lyrics.attribution,
+                rights_capabilities=request.lyrics.rights_capabilities,
+                match_confidence=request.lyrics.score,
+                matching_policy_version=request.lyrics.matching_policy_version,
+                confirmed_at=request.lyrics.confirmed_at,
+                timing_offset_ms=request.lyrics.timing_offset_ms,
+                duration_difference_ms=(
+                    round(request.lyrics.duration_difference_seconds * 1000)
+                    if request.lyrics.duration_difference_seconds is not None
+                    else None
+                ),
+            ),
+        )
+    except (LibraryTrackNotFoundError, PlaybackSourceNotFoundError) as error:
+        raise HTTPException(
+            status_code=404,
+            detail="Library track or playback source was not found.",
+        ) from error
+    return ReplaceTrackLyricsResponse(item=_library_track(session, user_id, track_id))
+
+
 @router.post(
     "/learning-items",
     operation_id="saveLearningItem",
@@ -163,8 +214,14 @@ def _library_track(session: Session, user_id: UUID, track_id: UUID) -> LibraryTr
     if track is None or item is None:
         raise HTTPException(status_code=404, detail="Library track was not found.")
     sources = catalog.list_playback_sources(track_id)
-    documents = lyrics.list_documents(track_id)
-    document = documents[-1] if documents else None
+    binding = (
+        lyrics.get_active_binding(item.preferred_source_id)
+        if item.preferred_source_id is not None
+        else None
+    )
+    document = (
+        lyrics.get_document(binding.lyric_document_id) if binding is not None else None
+    )
     return LibraryTrack(
         library_item_id=item.id,
         track_id=track.id,
@@ -192,6 +249,8 @@ def _library_track(session: Session, user_id: UUID, track_id: UUID) -> LibraryTr
         lyrics=(
             LibraryLyricDocument(
                 id=document.id,
+                binding_id=binding.id,
+                playback_source_id=binding.playback_source_id,
                 version=document.version,
                 language=document.language,
                 timing_type=document.timing_type.value,
@@ -200,8 +259,9 @@ def _library_track(session: Session, user_id: UUID, track_id: UUID) -> LibraryTr
                 source_record_id=document.source_record_id,
                 attribution=document.attribution,
                 rights_capabilities=document.rights_capabilities,
+                timing_offset_ms=binding.timing_offset_ms,
             )
-            if document is not None
+            if document is not None and binding is not None
             else None
         ),
     )

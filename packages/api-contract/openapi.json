@@ -361,6 +361,11 @@
             ],
             "title": "Attribution"
           },
+          "bindingId": {
+            "format": "uuid",
+            "title": "Bindingid",
+            "type": "string"
+          },
           "id": {
             "format": "uuid",
             "title": "Id",
@@ -368,6 +373,11 @@
           },
           "language": {
             "title": "Language",
+            "type": "string"
+          },
+          "playbackSourceId": {
+            "format": "uuid",
+            "title": "Playbacksourceid",
             "type": "string"
           },
           "rightsCapabilities": {
@@ -398,6 +408,10 @@
             ],
             "title": "Sourcerecordid"
           },
+          "timingOffsetMs": {
+            "title": "Timingoffsetms",
+            "type": "integer"
+          },
           "timingType": {
             "enum": [
               "line",
@@ -413,6 +427,8 @@
         },
         "required": [
           "id",
+          "bindingId",
+          "playbackSourceId",
           "version",
           "language",
           "timingType",
@@ -420,7 +436,8 @@
           "sourceProvider",
           "sourceRecordId",
           "attribution",
-          "rightsCapabilities"
+          "rightsCapabilities",
+          "timingOffsetMs"
         ],
         "title": "LibraryLyricDocument",
         "type": "object"
@@ -819,6 +836,30 @@
           "checks"
         ],
         "title": "ReadinessResponse",
+        "type": "object"
+      },
+      "ReplaceTrackLyricsRequest": {
+        "properties": {
+          "lyrics": {
+            "$ref": "#/components/schemas/ConfirmedLyricInput"
+          }
+        },
+        "required": [
+          "lyrics"
+        ],
+        "title": "ReplaceTrackLyricsRequest",
+        "type": "object"
+      },
+      "ReplaceTrackLyricsResponse": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/LibraryTrack"
+          }
+        },
+        "required": [
+          "item"
+        ],
+        "title": "ReplaceTrackLyricsResponse",
         "type": "object"
       },
       "SaveLearningItemRequest": {
@@ -1391,6 +1432,109 @@
           }
         },
         "summary": "Get User Library",
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/v1/users/{user_id}/library/{track_id}/sources/{source_id}/lyrics": {
+      "put": {
+        "operationId": "replaceLibraryTrackLyrics",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "track_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Track Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "source_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Source Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceTrackLyricsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplaceTrackLyricsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Error response"
+          }
+        },
+        "summary": "Replace Library Track Lyrics",
         "tags": [
           "library"
         ]

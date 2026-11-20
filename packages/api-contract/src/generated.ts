@@ -120,6 +120,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/users/{user_id}/library/{track_id}/sources/{source_id}/lyrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Replace Library Track Lyrics */
+        put: operations["replaceLibraryTrackLyrics"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/youtube/metadata": {
         parameters: {
             query?: never;
@@ -302,12 +319,22 @@ export interface components {
             /** Attribution */
             attribution: string | null;
             /**
+             * Bindingid
+             * Format: uuid
+             */
+            bindingId: string;
+            /**
              * Id
              * Format: uuid
              */
             id: string;
             /** Language */
             language: string;
+            /**
+             * Playbacksourceid
+             * Format: uuid
+             */
+            playbackSourceId: string;
             /** Rightscapabilities */
             rightsCapabilities: {
                 [key: string]: unknown;
@@ -320,6 +347,8 @@ export interface components {
             sourceProvider: string;
             /** Sourcerecordid */
             sourceRecordId: string | null;
+            /** Timingoffsetms */
+            timingOffsetMs: number;
             /**
              * Timingtype
              * @enum {string}
@@ -469,6 +498,14 @@ export interface components {
              * @constant
              */
             status: "ready";
+        };
+        /** ReplaceTrackLyricsRequest */
+        ReplaceTrackLyricsRequest: {
+            lyrics: components["schemas"]["ConfirmedLyricInput"];
+        };
+        /** ReplaceTrackLyricsResponse */
+        ReplaceTrackLyricsResponse: {
+            item: components["schemas"]["LibraryTrack"];
         };
         /** SaveLearningItemRequest */
         SaveLearningItemRequest: {
@@ -823,6 +860,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Error response */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    replaceLibraryTrackLyrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+                track_id: string;
+                user_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReplaceTrackLyricsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReplaceTrackLyricsResponse"];
+                };
+            };
+            /** @description Error response */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Error response */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
             /** @description Error response */

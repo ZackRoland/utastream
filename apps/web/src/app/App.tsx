@@ -26,6 +26,7 @@ import {
 import { MiniPlayer, useAudioPlayback } from "../features/playback"
 import {
   AddTrackFlow,
+  ChangeLyricsDialog,
   initialTrackImportState,
   trackImportReducer,
 } from "../features/track-import"
@@ -42,6 +43,10 @@ export function App() {
     source: LibraryPlaybackSource & { externalId: string }
   } | null>(null)
   const [lyricsOpen, setLyricsOpen] = useState(false)
+  const [lyricReview, setLyricReview] = useState<{
+    track: LibraryTrack
+    source: LibraryPlaybackSource
+  } | null>(null)
   const [selectedExplanationId, setSelectedExplanationId] = useState<
     string | null
   >(null)
@@ -57,6 +62,7 @@ export function App() {
   const addTrackTrigger = useRef<HTMLButtonElement>(null)
   const playback = useAudioPlayback()
   const importOpen = trackImport.step !== "closed"
+  const lyricReviewOpen = lyricReview !== null
   const selectedTrack = seededTracks.find(
     (track) => track.id === playback.state.trackId,
   )
@@ -99,6 +105,16 @@ export function App() {
       ...current.filter((candidate) => candidate.trackId !== item.trackId),
       item,
     ])
+    setActiveImportedPlayback((current) =>
+      current?.track.trackId === item.trackId
+        ? { ...current, track: item }
+        : current,
+    )
+    setLyricReview((current) =>
+      current?.track.trackId === item.trackId
+        ? { ...current, track: item }
+        : current,
+    )
   }, [])
   const selectedExplanation = beyondTheNightExplanations.find(
     (explanation) => explanation.id === selectedExplanationId,
@@ -159,8 +175,8 @@ export function App() {
   return (
     <div className={styles.shell}>
       <div
-        inert={lyricsOpen || importOpen || undefined}
-        aria-hidden={lyricsOpen || importOpen || undefined}
+        inert={lyricsOpen || importOpen || lyricReviewOpen || undefined}
+        aria-hidden={lyricsOpen || importOpen || lyricReviewOpen || undefined}
       >
         <header className={styles.header}>
           <Brand />
@@ -190,6 +206,9 @@ export function App() {
               playback.pause()
               setActiveImportedPlayback({ track, source })
             }}
+            onReviewLyrics={(track, source) =>
+              setLyricReview({ track, source })
+            }
           />
 
           {activeImportedPlayback && (
@@ -302,6 +321,15 @@ export function App() {
         onClose={closeTrackImport}
         onImported={acceptImportedTrack}
       />
+
+      {lyricReview && (
+        <ChangeLyricsDialog
+          track={lyricReview.track}
+          source={lyricReview.source}
+          onClose={() => setLyricReview(null)}
+          onChanged={acceptImportedTrack}
+        />
+      )}
 
       <audio ref={playback.mediaRef} preload="metadata" hidden />
     </div>

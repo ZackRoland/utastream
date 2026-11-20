@@ -32,6 +32,7 @@ function toLyricSegment(
     !text.trim()
   ) return null
 
+  const offsetSeconds = (track.lyrics?.timingOffsetMs ?? 0) / 1000
   const next = track.lyrics?.segments[index + 1]?.startSeconds
   const providerEnd = value.endSeconds
   const endSeconds =
@@ -43,8 +44,11 @@ function toLyricSegment(
 
   return {
     id: `${track.lyrics?.id ?? track.trackId}:${index}`,
-    startSeconds,
-    endSeconds: Math.max(startSeconds, endSeconds),
+    startSeconds: Math.max(0, startSeconds + offsetSeconds),
+    endSeconds: Math.max(
+      Math.max(0, startSeconds + offsetSeconds),
+      endSeconds + offsetSeconds,
+    ),
     parts: [{ text: text.trim() }],
     translation: "",
   }

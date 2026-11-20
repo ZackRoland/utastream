@@ -75,6 +75,8 @@ async function mockApplicationApi(
           }],
           lyrics: {
             id: "00000000-0000-0000-0000-000000000040",
+            bindingId: "00000000-0000-0000-0000-000000000050",
+            playbackSourceId: "00000000-0000-0000-0000-000000000030",
             version: 1,
             language: "ja",
             timingType: "line",
@@ -83,6 +85,7 @@ async function mockApplicationApi(
             sourceRecordId: candidate.providerRecordId,
             attribution: candidate.attribution,
             rightsCapabilities: candidate.rightsCapabilities,
+            timingOffsetMs: request.lyrics.timingOffsetMs,
           },
         },
         trackCreated: true,
@@ -234,4 +237,159 @@ test("imports a YouTube reference through a visible provider boundary", async ({
   })
   await expect(lyricsWorkspace).toBeVisible()
   await expect(lyricsWorkspace.getByText("夜の向こう")).toBeVisible()
+})
+
+test("changes saved lyrics without interrupting playback and keeps them after reload", async ({
+  page,
+}) => {
+  const replacementCandidate = {
+    ...candidate,
+    providerRecordId: "84",
+    normalizedSegments: [
+      { startSeconds: 3, endSeconds: null, text: "正しい歌詞" },
+    ],
+    syncedLyrics: "[00:03.00] 正しい歌詞",
+    plainLyrics: "正しい歌詞",
+    score: 96,
+  }
+  const source = {
+    id: "00000000-0000-0000-0000-000000000030",
+    kind: "youtube",
+    availability: "available",
+    externalId: "M7lc1UVf-VE",
+    normalizedUrl: "https://www.youtube.com/watch?v=M7lc1UVf-VE",
+    durationSeconds: 218,
+    capabilities: { requiresVisiblePlayer: true, supportsSeeking: true },
+  }
+  let libraryItem = {
+    libraryItemId: "00000000-0000-0000-0000-000000000010",
+    trackId: "00000000-0000-0000-0000-000000000020",
+    title: "Asphyxia",
+    artist: "Cö shu Nie",
+    album: "Asphyxia",
+    durationSeconds: 218,
+    preferredSourceId: source.id,
+    sources: [source],
+    lyrics: {
+      id: "00000000-0000-0000-0000-000000000040",
+      bindingId: "00000000-0000-0000-0000-000000000050",
+      playbackSourceId: source.id,
+      version: 1,
+      language: "ja",
+      timingType: "line",
+      segments: candidate.normalizedSegments,
+      sourceProvider: "lrclib",
+      sourceRecordId: candidate.providerRecordId,
+      attribution: candidate.attribution,
+      rightsCapabilities: candidate.rightsCapabilities,
+      timingOffsetMs: 0,
+    },
+  }
+  await page.addInitScript(() => {
+    ;(window as any).__playerMounts = 0
+    ;(window as any).__playerDestroys = 0
+    class Player {
+      frame: HTMLIFrameElement
+      currentTime = 3.5
+      options: any
+
+      constructor(element: HTMLElement, options: any) {
+        ;(window as any).__playerMounts += 1
+        this.options = options
+        this.frame = document.createElement("iframe")
+        this.frame.title = "Persistent official YouTube player"
+        element.append(this.frame)
+        setTimeout(() => {
+          options.events.onReady({ target: { getDuration: () => 218 } })
+          options.events.onStateChange({ data: 1 })
+        })
+      }
+      destroy() {
+        ;(window as any).__playerDestroys += 1
+        this.frame.remove()
+      }
+      getCurrentTime() { return this.currentTime }
+      getDuration() { return 218 }
+      pauseVideo() { this.options.events.onStateChange({ data: 2 }) }
+      playVideo() { this.options.events.onStateChange({ data: 1 }) }
+      seekTo(seconds: number) { this.currentTime = seconds }
+    }
+    ;(window as any).YT = { Player }
+  })
+  await page.route("**/api/v1/users/*/library", (route) =>
+    route.fulfill({ json: { items: [libraryItem] } }),
+  )
+  await page.route("**/api/v1/lyrics/candidates?*", (route) =>
+    route.fulfill({
+      json: {
+        status: "ready",
+        candidates: [candidate, replacementCandidate],
+        retryAfterSeconds: null,
+      },
+    }),
+  )
+  await page.route("**/api/v1/users/*/library/*/sources/*/lyrics", async (route) => {
+    const request = route.request().postDataJSON()
+    expect(route.request().method()).toBe("PUT")
+    expect(request.lyrics.providerRecordId).toBe("84")
+    libraryItem = {
+      ...libraryItem,
+      lyrics: {
+        ...libraryItem.lyrics,
+        id: "00000000-0000-0000-0000-000000000041",
+        bindingId: "00000000-0000-0000-0000-000000000051",
+        version: 2,
+        segments: replacementCandidate.normalizedSegments,
+        sourceRecordId: replacementCandidate.providerRecordId,
+        timingOffsetMs: request.lyrics.timingOffsetMs,
+      },
+    }
+    await route.fulfill({ json: { item: libraryItem } })
+  })
+
+  await page.goto("/")
+  await page.getByRole("button", {
+    name: /Asphyxia.*Cö shu Nie.*YouTube.*3:38.*Lyrics ready/,
+  }).click()
+  await expect(page.getByTitle("Persistent official YouTube player")).toBeVisible()
+  const playerCountsBeforeReplacement = await page.evaluate(() => ({
+    mounts: (window as any).__playerMounts,
+    destroys: (window as any).__playerDestroys,
+  }))
+  await page.getByRole("button", { name: "Review/change lyrics" }).click()
+  await expect(
+    page.getByRole("dialog", { name: "Review/change lyrics for Asphyxia" }),
+  ).toBeVisible()
+  await page.getByRole("button", { name: "Search lyrics" }).click()
+  await expect(page.getByRole("radio")).toHaveCount(1)
+  await page.getByRole("button", { name: "Preview lyrics" }).click()
+  await expect(page.getByText("正しい歌詞")).toBeVisible()
+  await page.getByLabel("Timing offset (milliseconds)").fill("750")
+  await page.getByRole("button", { name: "Use these lyrics" }).click()
+  await expect(page.getByRole("heading", { name: "Lyrics changed" })).toBeVisible()
+  await page.getByRole("button", { name: "Done" }).click()
+
+  expect(await page.evaluate(() => ({
+    mounts: (window as any).__playerMounts,
+    destroys: (window as any).__playerDestroys,
+  }))).toEqual(playerCountsBeforeReplacement)
+  await expect(page.getByTitle("Persistent official YouTube player")).toBeVisible()
+  await page.getByRole("button", { name: "Open lyrics" }).click()
+  await expect(
+    page.getByRole("dialog", { name: "Synchronized lyrics for Asphyxia" })
+      .getByText("正しい歌詞"),
+  ).toBeVisible()
+
+  await page.getByRole("button", {
+    name: "Close lyrics and return to collection",
+  }).click()
+  await page.reload()
+  await page.getByRole("button", {
+    name: /Asphyxia.*Cö shu Nie.*YouTube.*3:38.*Lyrics ready/,
+  }).click()
+  await page.getByRole("button", { name: "Open lyrics" }).click()
+  await expect(
+    page.getByRole("dialog", { name: "Synchronized lyrics for Asphyxia" })
+      .getByText("正しい歌詞"),
+  ).toBeVisible()
 })

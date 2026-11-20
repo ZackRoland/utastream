@@ -63,6 +63,18 @@ export class HttpClient {
   }
 
   async post<TResponse>(path: `/${string}`, options: JsonRequestOptions) {
+    return this.write<TResponse>("POST", path, options)
+  }
+
+  async put<TResponse>(path: `/${string}`, options: JsonRequestOptions) {
+    return this.write<TResponse>("PUT", path, options)
+  }
+
+  private async write<TResponse>(
+    method: "POST" | "PUT",
+    path: `/${string}`,
+    options: JsonRequestOptions,
+  ) {
     const response = await fetchApiResponse(() =>
       this.#fetcher(`${this.#baseUrl}${path}`, {
         body: JSON.stringify(options.body),
@@ -71,7 +83,7 @@ export class HttpClient {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        method: "POST",
+        method,
         signal: options.signal,
       }),
     )

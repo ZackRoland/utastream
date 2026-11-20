@@ -1,8 +1,9 @@
 """SQLAlchemy repository for versioned lyrics and source bindings."""
 
+from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import select, update
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from utastream.database.models import LyricDocumentRow, PlaybackLyricBindingRow
@@ -78,6 +79,15 @@ class LyricsRepository:
         )
         return [self._to_document(row) for row in rows]
 
+    def next_document_version(self, *, track_id: UUID, language: str) -> int:
+        latest = self._session.scalar(
+            select(func.max(LyricDocumentRow.version)).where(
+                LyricDocumentRow.track_id == track_id,
+                LyricDocumentRow.language == language,
+            )
+        )
+        return int(latest or 0) + 1
+
     def find_binding(
         self, *, playback_source_id: UUID, lyric_document_id: UUID
     ) -> PlaybackLyricBinding | None:
@@ -116,6 +126,28 @@ class LyricsRepository:
             .values(is_active=False)
         )
         row.is_active = True
+        self._session.flush()
+        return self._to_binding(row)
+
+    def update_binding_confirmation(
+        self,
+        binding_id: UUID,
+        *,
+        match_confidence: int,
+        matching_policy_version: str,
+        confirmed_at: datetime,
+        timing_offset_ms: int,
+        duration_difference_ms: int | None,
+    ) -> PlaybackLyricBinding | None:
+        row = self._session.get(PlaybackLyricBindingRow, binding_id)
+        if row is None:
+            return None
+        row.match_confidence = match_confidence
+        row.matching_policy_version = matching_policy_version
+        row.confirmed_by_user = True
+        row.confirmed_at = confirmed_at
+        row.timing_offset_ms = timing_offset_ms
+        row.duration_difference_ms = duration_difference_ms
         self._session.flush()
         return self._to_binding(row)
 
